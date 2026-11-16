@@ -1,0 +1,1492 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="Identidad IA: carnés digitales con QR que cualquiera verifica en segundos, con control de acceso y asistencia. Una aplicación de SkyNet Genesis."><meta name="theme-color" content="#0B4F8A"><style>[hidden]{display:none!important}</style></head><body>
+<title>Identidad IA</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+<style>
+/* Layout: barra superior blanca + menú lateral por perfil; el carné CR80 (85,6 × 54 mm) es la pieza central. Solo modo claro (paleta FamilIA Salud). */
+:root{
+  --azul:#0B4F8A; --azul2:#1867B0; --verde:#14A38B; --verde-o:#0E8571; --wa:#1F8A4C;
+  --fondo:#F4F8FB; --sup:#FFFFFF; --txt:#1C2B39; --suave:#5D6B78; --borde:#DCE5EE;
+  --fa:#E8F1FA; --fv:#E3F6F2; --rojo:#C0392B; --frojo:#FCECEA; --ambar:#B7791F; --fambar:#FDF3E1;
+  --tit:"Barlow Condensed","Arial Narrow",sans-serif; --cuerpo:"Public Sans",system-ui,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--fondo);color:var(--txt);font:15px/1.5 var(--cuerpo)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--sup)}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--verde);outline-offset:2px}
+h1,h2,h3{font-family:var(--tit);letter-spacing:.01em;text-wrap:balance;margin:0}
+.barra{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--sup);box-shadow:0 2px 10px rgba(11,79,138,.08);display:flex;align-items:center;gap:12px;padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));flex-wrap:wrap}
+.marca{display:flex;align-items:center;gap:10px;font-family:var(--tit);font-weight:700;font-size:22px;color:var(--azul)}
+.marca svg{width:34px;height:34px}
+.marca small{display:block;font:500 11px var(--cuerpo);color:var(--suave);letter-spacing:.06em;text-transform:uppercase}
+.espacio{flex:1}
+.perfil{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--suave)}
+.perfil select{padding:7px 10px;border:1px solid var(--borde);border-radius:8px;background:var(--sup);max-width:220px}
+.app{display:grid;grid-template-columns:230px 1fr;min-height:calc(100% - 60px)}
+nav.menu{background:var(--sup);border-right:1px solid var(--borde);padding:14px 10px;display:flex;flex-direction:column;gap:4px}
+nav.menu button{display:flex;align-items:center;gap:10px;text-align:left;border:0;background:none;padding:10px 12px;border-radius:10px;color:var(--txt);font-weight:500}
+nav.menu button:hover{background:var(--fa)}
+nav.menu button.on{background:var(--fv);color:var(--verde-o);font-weight:700}
+nav.menu .grupo{font:600 11px var(--cuerpo);letter-spacing:.08em;text-transform:uppercase;color:var(--suave);padding:12px 12px 4px}
+main{padding:22px max(16px,env(safe-area-inset-right,0px)) 40px max(16px,env(safe-area-inset-left,0px));min-width:0}
+.cont{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+.tit-p{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.tit-p h1{font-size:34px;color:var(--azul);line-height:1.05}
+.tit-p p{margin:2px 0 0;color:var(--suave)}
+.caja{background:var(--sup);border:1px solid var(--borde);border-radius:14px;padding:18px}
+.fila{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.cifras{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.cifra{background:var(--sup);border:1px solid var(--borde);border-radius:12px;padding:14px}
+.cifra b{display:block;font:700 30px var(--tit);color:var(--azul);font-variant-numeric:tabular-nums}
+.cifra span{color:var(--suave);font-size:13px}
+.btn{border:0;border-radius:10px;padding:10px 16px;font-weight:600;background:var(--azul);color:#fff;display:inline-flex;align-items:center;gap:8px}
+.btn:hover{background:var(--azul2)}
+.btn.v{background:var(--verde)} .btn.v:hover{background:var(--verde-o)}
+.btn.l{background:var(--fa);color:var(--azul)} .btn.l:hover{background:#D7E7F7}
+.btn.r{background:var(--frojo);color:var(--rojo)}
+.btn.wa{background:var(--wa)}
+.btn.chico{padding:6px 10px;font-size:13px;border-radius:8px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+label.c{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--suave);font-weight:600}
+input[type=text],input[type=date],input[type=number],input[type=email],select,textarea{border:1px solid var(--borde);border-radius:9px;padding:9px 11px;background:var(--sup);width:100%;color:var(--txt);font-weight:400}
+textarea{min-height:70px}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.tabla{overflow-x:auto;border:1px solid var(--borde);border-radius:12px;background:var(--sup)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th{text-align:left;font:600 12px var(--cuerpo);letter-spacing:.05em;text-transform:uppercase;color:var(--suave);background:var(--fondo);padding:10px 12px;border-bottom:1px solid var(--borde);white-space:nowrap}
+td{padding:9px 12px;border-bottom:1px solid var(--borde);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:700;white-space:nowrap}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.p-ok{background:var(--fv);color:var(--verde-o)} .p-no{background:var(--frojo);color:var(--rojo)} .p-esp{background:var(--fambar);color:var(--ambar)} .p-int{background:var(--fa);color:var(--azul)}
+.mini{width:34px;height:34px;border-radius:50%;object-fit:cover;background:var(--fa);flex:none}
+.persona-cel{display:flex;gap:10px;align-items:center}
+.aviso{border-radius:12px;padding:12px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.aviso.rojo{background:var(--frojo);color:var(--rojo);border:1px solid #F3C5BF}
+.aviso.azul{background:var(--fa);color:var(--azul);border:1px solid #C9DDF1}
+.aviso.verde{background:var(--fv);color:var(--verde-o);border:1px solid #BFE7DE}
+.nota{font-size:13px;color:var(--suave)}
+/* ---- carné CR80 ---- */
+.carne{width:min(100%,428px);aspect-ratio:85.6/54;border-radius:18px;position:relative;overflow:hidden;box-shadow:0 10px 30px rgba(11,79,138,.18);color:#fff;font-family:var(--cuerpo);container-type:inline-size;flex:none}
+.carne .fondo{position:absolute;inset:0;background:linear-gradient(135deg,var(--c1),var(--c2))}
+.carne .fondo::after{content:"";position:absolute;right:-18%;top:-40%;width:70%;aspect-ratio:1;border-radius:50%;background:rgba(255,255,255,.09)}
+.carne .cab{position:absolute;left:5%;right:5%;top:6%;display:flex;align-items:center;gap:3cqw}
+.carne .cab .lg{width:9cqw;height:9cqw;border-radius:2cqw;background:rgba(255,255,255,.95);color:var(--c1);display:grid;place-items:center;font:700 3.8cqw var(--tit);overflow:hidden}
+.carne .cab .lg img{width:100%;height:100%;object-fit:contain}
+.carne .cab b{font:700 4.6cqw/1 var(--tit);letter-spacing:.03em;display:block;text-transform:uppercase}
+.carne .cab span{font-size:2.5cqw;opacity:.85;display:block}
+.carne .foto{position:absolute;left:5%;top:27%;width:24%;aspect-ratio:3/4;border-radius:2.2cqw;object-fit:cover;background:#fff;border:.8cqw solid rgba(255,255,255,.9)}
+.carne .datos{position:absolute;left:33%;right:28%;top:28%;display:flex;flex-direction:column;gap:1.1cqw}
+.carne .datos .rol{font:700 2.6cqw var(--cuerpo);letter-spacing:.12em;text-transform:uppercase;background:rgba(255,255,255,.18);align-self:flex-start;padding:.5cqw 1.8cqw;border-radius:99px}
+.carne .datos .nom{font:700 5.2cqw/1.02 var(--tit);text-transform:uppercase}
+.carne .datos .det{font-size:2.9cqw;opacity:.92;line-height:1.25}
+.carne .datos .vence{font-size:2.5cqw;opacity:.85}
+.carne .qr{position:absolute;right:5%;top:28%;width:21%;aspect-ratio:1;background:#fff;border-radius:2cqw;padding:1.2cqw}
+.carne .qr svg{width:100%;height:100%;display:block}
+.carne .pie{position:absolute;left:0;right:0;bottom:0;padding:1.6cqw 5%;background:rgba(0,0,0,.18);display:flex;justify-content:space-between;align-items:center;font-size:2.3cqw;gap:2cqw}
+.carne .pie .est{font-weight:700;letter-spacing:.08em}
+.carne.no .fondo{filter:grayscale(.85) brightness(.85)}
+.carne .sello{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-12deg);border:.8cqw solid #fff;color:#fff;font:700 6cqw var(--tit);padding:.6cqw 3cqw;border-radius:2cqw;background:rgba(192,57,43,.82);letter-spacing:.08em;white-space:nowrap}
+.carne.reverso{color:var(--txt)}
+.carne.reverso .fondo{background:#fff}
+.carne.reverso .fondo::after{display:none}
+.carne.reverso .franja{position:absolute;left:0;right:0;top:0;height:14%;background:linear-gradient(90deg,var(--c1),var(--c2))}
+.carne.reverso .txt{position:absolute;left:5%;right:5%;top:19%;font-size:2.6cqw;line-height:1.4;display:flex;flex-direction:column;gap:1.2cqw}
+.carne.reverso .txt b{font-family:var(--tit);font-size:3.4cqw;color:var(--c1)}
+.carne.reverso .firma{position:absolute;left:5%;bottom:13%;width:38%;border-top:.3cqw solid var(--suave);font-size:2.2cqw;padding-top:.6cqw;color:var(--suave)}
+.carne.reverso .sg{position:absolute;left:5%;right:5%;bottom:3%;font-size:2cqw;color:var(--suave);display:flex;justify-content:space-between}
+.dos-caras{display:flex;gap:18px;flex-wrap:wrap}
+/* verificación */
+.verif{max-width:460px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.verif .estado{border-radius:16px;padding:18px;text-align:center;color:#fff}
+.verif .estado b{font:700 34px var(--tit);display:block;letter-spacing:.04em}
+.verif .estado.ok{background:linear-gradient(135deg,var(--verde),var(--verde-o))}
+.verif .estado.no{background:linear-gradient(135deg,#C0392B,#962D22)}
+.verif .ficha{display:flex;gap:14px;align-items:center}
+.verif .ficha img{width:92px;height:122px;border-radius:12px;object-fit:cover;background:var(--fa)}
+/* hoja de impresión */
+.hoja{background:#fff;border:1px solid var(--borde);border-radius:8px;padding:12px;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.hoja .carne{width:100%;box-shadow:none;border-radius:10px}
+/* ventanas */
+.velo{position:fixed;inset:0;background:rgba(28,43,57,.45);display:grid;place-items:center;z-index:30;padding:16px}
+.ventana{background:var(--sup);border-radius:16px;max-width:640px;width:100%;max-height:90vh;overflow:auto;padding:20px;display:flex;flex-direction:column;gap:14px}
+.ventana h2{color:var(--azul);font-size:26px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(24px + env(safe-area-inset-bottom,0px));background:var(--azul);color:#fff;font-weight:700;font-size:16px;padding:14px 22px;border-radius:12px;z-index:50;box-shadow:0 8px 24px rgba(0,0,0,.2);max-width:calc(100% - 32px)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--borde);background:var(--sup);border-radius:99px;padding:6px 12px;font-size:13px}
+.chip.on{background:var(--azul);border-color:var(--azul);color:#fff}
+.planes{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.plan{border:1px solid var(--borde);border-radius:14px;padding:16px;background:var(--sup);display:flex;flex-direction:column;gap:6px}
+.plan b{font:700 26px var(--tit);color:var(--azul)}
+.plan.dest{border:2px solid var(--verde)}
+/* portada, ingreso y registro */
+.app.sinmenu{grid-template-columns:1fr}
+.app.sinmenu nav.menu{display:none}
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:28px;align-items:center;padding:8px 0}
+.hero h1{font-size:46px;line-height:1.02;color:var(--azul);margin:10px 0}
+.hero p{font-size:17px;color:var(--suave);margin:0 0 16px}
+.hero .lado{display:flex;flex-direction:column;gap:12px;align-items:center}
+.btn.grande{font-size:17px;padding:14px 22px}
+.sec{display:flex;flex-direction:column;gap:12px}
+.sec>h2{font-size:30px;color:var(--azul)}
+.tarjetas{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.tarjeta{background:var(--sup);border:1px solid var(--borde);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:6px}
+.tarjeta>b{font-family:var(--tit);font-size:21px;color:var(--azul);line-height:1.1}
+.tarjeta .ic{font-size:26px}
+.paso-n{width:34px;height:34px;border-radius:50%;background:var(--verde);color:#fff;display:grid;place-items:center;font:700 18px var(--tit)}
+.foto-sec{margin:0;min-height:210px;border-radius:16px;background:linear-gradient(135deg,var(--fa),var(--fv));display:flex;align-items:flex-end;overflow:hidden;position:relative}
+.foto-sec img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.foto-sec figcaption{position:relative;margin:10px;background:rgba(255,255,255,.92);border-radius:8px;padding:4px 10px;font-size:12px;color:var(--suave)}
+.dos{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:center}
+details.faq{background:var(--sup);border:1px solid var(--borde);border-radius:12px;padding:12px 16px}
+details.faq summary{font-weight:700;cursor:pointer}
+details.faq p{margin:8px 0 0;color:var(--suave)}
+.final{background:linear-gradient(135deg,var(--azul),var(--azul2));color:#fff;border-radius:18px;padding:26px;display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.final h2{font-size:30px;color:#fff}
+.barra-fija{display:none}
+td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+input[type=checkbox]{width:18px;height:18px;accent-color:var(--verde);background:#fff;flex:none;margin:2px 0 0;color-scheme:light}
+label.chk{flex-direction:row!important;align-items:flex-start;gap:8px;font-weight:500!important;color:var(--txt)!important;font-size:14px!important}
+.clave-caja{position:relative;display:block}
+.clave-caja input{padding-right:86px!important}
+.ojo{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:var(--fa);color:var(--azul);border-radius:7px;padding:5px 9px;font-size:12px;font-weight:700}
+.enlace{border:0;background:none;color:var(--azul);text-decoration:underline;padding:0;font:inherit;cursor:pointer}
+.ingreso{max-width:460px;margin:6px auto;width:100%}
+h2.sub{font-size:24px;color:var(--azul)}
+.perfil .btn{white-space:nowrap}
+body.con-fija .toast{bottom:calc(88px + env(safe-area-inset-bottom,0px))}
+@media (max-width:820px){
+  .hero,.dos{grid-template-columns:1fr}
+  .hero h1{font-size:34px}
+  .barra-fija{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--sup);box-shadow:0 -4px 16px rgba(11,79,138,.14);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));gap:10px;align-items:center}
+  .barra-fija .btn{flex:1;justify-content:center}
+  body.con-fija .pieapp{padding-bottom:96px}
+  .perfil{width:100%;flex-wrap:wrap}
+  .perfil select{max-width:none;flex:1}
+}
+.pieapp{font-size:12px;color:var(--suave);text-align:center;padding:18px 16px 26px}
+@media (max-width:820px){
+  .app{grid-template-columns:1fr}
+  nav.menu{flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1px solid var(--borde);padding:8px max(16px,env(safe-area-inset-left,0px))}
+  nav.menu .grupo{display:none}
+  nav.menu button{white-space:nowrap}
+  .tit-p h1{font-size:28px}
+}
+@media (prefers-reduced-motion:no-preference){.btn,nav.menu button{transition:background .15s}}
+</style>
+
+<header class="barra">
+  <div class="marca">
+    <svg viewBox="0 0 200 200" aria-hidden="true"><rect x="4" y="4" width="192" height="192" rx="46" fill="#1E3A4C"/><g stroke="#FFFFFF" stroke-linecap="round"><polygon points="100,42 150.2,71 150.2,129 100,158 49.8,129 49.8,71" fill="none" stroke-opacity=".35" stroke-width="4"/><path d="M100 100L100 42M100 100L150.2 71M100 100L150.2 129M100 100L100 158M100 100L49.8 129M100 100L49.8 71" stroke-width="6"/></g><g fill="#FFFFFF"><circle cx="150.2" cy="71" r="10"/><circle cx="150.2" cy="129" r="10"/><circle cx="100" cy="158" r="10"/><circle cx="49.8" cy="129" r="10"/><circle cx="49.8" cy="71" r="10"/></g><circle cx="100" cy="42" r="13" fill="#E0A21A"/><circle cx="100" cy="100" r="20" fill="#E0A21A"/></svg>
+    <div>Identidad IA<small>Carnés digitales con QR · SkyNet Genesis</small></div>
+  </div>
+  <div class="espacio"></div>
+  <div class="perfil" id="barraDer"></div>
+</header>
+<div class="app">
+  <nav class="menu" id="menu" aria-label="Menú"></nav>
+  <main><div class="cont" id="vista"></div></main>
+</div>
+<div class="pieapp">Identidad IA es una aplicación de SkyNet Genesis · contacto@skynetgenesis.com · WhatsApp 304 437 5758 · Versión de prueba en Claude: los datos son de ejemplo y se guardan solo en este navegador.</div>
+<div id="capa"></div>
+
+<script>
+(() => {
+'use strict';
+/* ================= utilidades ================= */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const hoy = () => new Date(Date.now() - 5 * 3600e3).toISOString().slice(0, 10); /* fecha de Colombia (UTC-5) */
+const minCO = () => Math.floor(((Date.now() - 5 * 3600e3) % 864e5) / 6e4);
+const sumMeses = (f, m) => { const d = new Date(f + 'T12:00:00'); d.setMonth(d.getMonth() + m); return d.toISOString().slice(0, 10); };
+const fmtF = f => f ? new Date(f + 'T12:00:00').toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
+const fmtH = t => new Date(t).toLocaleString('es-CO', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+const peso = n => '$' + Number(n || 0).toLocaleString('es-CO');
+const uid = (p = '') => p + Math.random().toString(36).slice(2, 8) + Date.now().toString(36).slice(-4);
+const token = () => Array.from(crypto.getRandomValues(new Uint8Array(9))).map(b => 'abcdefghjkmnpqrstuvwxyz23456789'[b % 31]).join('');
+let tt; const toast = m => { clearTimeout(tt); const e = document.createElement('div'); e.className = 'toast'; e.textContent = m; document.querySelectorAll('.toast').forEach(x => x.remove()); document.body.appendChild(e); tt = setTimeout(() => e.remove(), 5500); };
+const URL_VERIF = 'identidad-ia.skynetgenesis.com/?v=';
+const WA = 'https://wa.me/573044375758?text=' + encodeURIComponent('Hola, quiero información sobre Identidad IA (carnés digitales con QR).');
+const sumDias = (f, n) => { const d = new Date(f + 'T12:00:00'); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
+const finMes = f => { const d = new Date(f.slice(0, 8) + '01T12:00:00'); d.setMonth(d.getMonth() + 1); d.setDate(0); return d.toISOString().slice(0, 10); };
+const finMesMas = (f, m) => finMes(sumMeses(f.slice(0, 8) + '01', m));
+const diasEntre = (a, b) => Math.round((new Date(b + 'T12:00:00') - new Date(a + 'T12:00:00')) / 864e5);
+const mask = s => { const [u, d] = String(s).split('@'); return u.slice(0, 2) + '••••••' + (d ? '@' + d : ''); };
+/* solo para la versión de prueba: en producción el servidor guarda las contraseñas con scrypt */
+const hashS = s => { let h = 5381; for (const ch of String(s)) h = ((h << 5) + h + ch.charCodeAt(0)) | 0; return 'h' + (h >>> 0).toString(36); };
+const imgOk = s => typeof s === 'string' && /^data:image\/(png|jpeg|webp|gif);base64,[A-Za-z0-9+/=]+$/.test(s);
+const nomCorto = n => { const p = String(n).split(/\s+/).filter(Boolean); return p[0] + (p[1] ? ' ' + p[1][0] + '.' : ''); };
+
+
+/* avatar de ejemplo (sin fotos externas) */
+const avatar = (nombre, c = '#0B4F8A') => { const ini = nombre.split(/\s+/).filter(Boolean).slice(0, 2).map(x => x[0]).join('').toUpperCase(); const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 160"><rect width="120" height="160" fill="#E8F1FA"/><circle cx="60" cy="58" r="30" fill="${c}" opacity=".25"/><rect x="18" y="98" width="84" height="70" rx="40" fill="${c}" opacity=".25"/><text x="60" y="70" font-family="Arial" font-weight="700" font-size="30" text-anchor="middle" fill="${c}">${ini}</text></svg>`; return 'data:image/svg+xml;base64,' + btoa(svg); };
+
+/* ================= datos ================= */
+const CLAVE = 'identidadia_v3';
+const PLANES = [
+  { id: 'p100', nombre: 'Hasta 100 carnés', max: 100, precio: 39000 },
+  { id: 'p500', nombre: 'Hasta 500 carnés', max: 500, precio: 89000 },
+  { id: 'p2000', nombre: 'Hasta 2.000 carnés', max: 2000, precio: 179000 },
+  { id: 'pmax', nombre: 'Más de 2.000 carnés', max: 1e9, precio: 299000 }
+];
+/* Cobro aprobado por el señor (15 nov 2026): $3.000 por cada carné hecho (nuevo, duplicado o cambio de foto) + mensualidad por mantener la comprobación del QR */
+const PRECIO_CARNE = 3000;
+/* Aprobado (15 nov 2026): SkyNet Genesis imprime en PVC dos caras (Zebra ZC32) a $8.000 por carné y envía por Interrapidísimo; el envío se cobra aparte por paquete */
+const PRECIO_IMPRESO = 8000;
+/* Control de acceso y asistencia: adicional mensual según el plan (aprobado por el señor el 15 nov 2026) */
+const ASIS = { p100: 19000, p500: 39000, p2000: 69000, pmax: 99000 };
+/* ASISTENCIA-INICIO */
+const ASIS_DEF = { entrada: '07:00', salida: '17:00', tolerancia: 10, dias: [1, 2, 3, 4, 5], porRol: {} };
+function asisCfg(c) {
+  c = c || {}; const hh = v => /^([01]\d|2[0-3]):[0-5]\d$/.test(v || '') ? v : null;
+  const porRol = {};
+  Object.keys(c.porRol || {}).slice(0, 20).forEach(r => { if (/^(__proto__|constructor|prototype)$/.test(r)) return; const x = c.porRol[r] || {}; const en = hh(x.entrada), sa = hh(x.salida); if (en || sa) porRol[String(r).slice(0, 30)] = { entrada: en || '', salida: sa || '' }; });
+  const dias = Array.isArray(c.dias) ? [...new Set(c.dias.map(Number).filter(d => d >= 0 && d <= 6))].sort() : ASIS_DEF.dias;
+  return { entrada: hh(c.entrada) || ASIS_DEF.entrada, salida: hh(c.salida) || ASIS_DEF.salida, tolerancia: Math.max(0, Math.min(120, parseInt(c.tolerancia, 10) || 0)), dias, porRol };
+}
+const aMin = v => +v.slice(0, 2) * 60 + +v.slice(3, 5);
+const aHora = m => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
+const locCO = iso => { const d = new Date(Date.parse(iso) - 5 * 3600e3); return { f: d.toISOString().slice(0, 10), m: d.getUTCHours() * 60 + d.getUTCMinutes() }; };
+const sigDia = f => { const d = new Date(f + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + 1); return d.toISOString().slice(0, 10); };
+const horasTxt = m => m ? Math.floor(m / 60) + ' h ' + String(m % 60).padStart(2, '0') + ' min' : '—';
+/* personas: [{id,nombre,rol,detalle,estado,autorizado,emitido}] · accesos: [{t (ISO), persona, salida, ok}]
+   Devuelve el detalle por día, el resumen por persona y el cuadro de hoy. */
+function calcAsistencia({ personas, accesos, cfg, desde, hasta, hoy, ahoraMin }) {
+  cfg = asisCfg(cfg); const fin = hasta < hoy ? hasta : hoy;
+  const porP = new Map();
+  for (const a of accesos) { if (!a.ok || !a.persona) continue; const l = locCO(a.t); if (l.f < desde || l.f > fin) continue; const k = a.persona + '|' + l.f; if (!porP.has(k)) porP.set(k, []); porP.get(k).push({ m: l.m, salida: !!a.salida }); }
+  const detalle = [], resumen = [], hoyC = { presentes: [], salieron: [], sinLlegar: [], retardos: [] };
+  const ps = personas.filter(p => p.autorizado && p.estado !== 'anulado');
+  for (const p of ps) {
+    const h = cfg.porRol[p.rol] || {}; const hE = aMin(h.entrada || cfg.entrada), hS = aMin(h.salida || cfg.salida);
+    const r = { persona: p.id, nombre: p.nombre, rol: p.rol, detalle: p.detalle || '', asistidos: 0, retardos: 0, minRetardo: 0, faltas: 0, minutos: 0, sinSalida: 0 };
+    for (let f = desde; f <= fin; f = sigDia(f)) {
+      const dow = new Date(f + 'T12:00:00Z').getUTCDay(); const laboral = cfg.dias.includes(dow);
+      const ev = (porP.get(p.id + '|' + f) || []).sort((a, b) => a.m - b.m);
+      if (!ev.length) {
+        if (!laboral || p.estado !== 'activo' || (p.emitido && f < p.emitido)) continue;
+        if (f < hoy || ahoraMin > hS) { r.faltas++; detalle.push({ persona: p.id, nombre: p.nombre, rol: p.rol, fecha: f, entrada: '', salida: '', minutos: 0, retardo: 0, estado: 'Falta' }); }
+        else if (f === hoy) { hoyC.sinLlegar.push({ persona: p.id, nombre: p.nombre, rol: p.rol, hora: aHora(hE) }); detalle.push({ persona: p.id, nombre: p.nombre, rol: p.rol, fecha: f, entrada: '', salida: '', minutos: 0, retardo: 0, estado: 'Sin llegar' }); }
+        continue;
+      }
+      let ini = null, minutos = 0, primera = null, ultimaSal = null;
+      for (const x of ev) {
+        if (!x.salida) { if (ini === null) ini = x.m; if (primera === null) primera = x.m; }
+        else if (ini !== null) { minutos += x.m - ini; ini = null; ultimaSal = x.m; }
+        else ultimaSal = x.m;
+      }
+      if (primera === null) primera = ev[0].m;
+      const abierta = ini !== null; const retardo = laboral && primera > hE + cfg.tolerancia ? primera - hE : 0;
+      r.asistidos++; r.minutos += minutos; if (retardo) { r.retardos++; r.minRetardo += retardo; }
+      let estado = retardo ? 'Retardo' : 'Asistió';
+      if (abierta && f < hoy) { r.sinSalida++; estado += ' · sin salida'; }
+      detalle.push({ persona: p.id, nombre: p.nombre, rol: p.rol, fecha: f, entrada: aHora(primera), salida: ultimaSal !== null && !abierta ? aHora(ultimaSal) : '', minutos, retardo, estado });
+      if (f === hoy) {
+        const it = { persona: p.id, nombre: p.nombre, rol: p.rol, entrada: aHora(primera), retardo };
+        if (abierta) hoyC.presentes.push(it); else hoyC.salieron.push({ ...it, salida: ultimaSal !== null ? aHora(ultimaSal) : '' });
+        if (retardo) hoyC.retardos.push(it);
+      }
+    }
+    resumen.push(r);
+  }
+  detalle.sort((a, b) => a.fecha < b.fecha ? 1 : a.fecha > b.fecha ? -1 : a.nombre.localeCompare(b.nombre));
+  resumen.sort((a, b) => a.nombre.localeCompare(b.nombre));
+  return { desde, hasta: fin, cfg, detalle, resumen, hoy: hoyC };
+}
+/* ASISTENCIA-FIN */
+const envioAprox = n => 18000 + Math.floor(Math.max(0, n - 1) / 50) * 6000;
+const ROLES = ['Estudiante', 'Docente', 'Administrativo', 'Empleado', 'Alumno', 'Paciente', 'Afiliado', 'Contratista', 'Visitante', 'Residente'];
+
+/* lecturas de ejemplo de las últimas dos semanas, para ver los informes de asistencia en la demostración */
+function accesosDemo(P) {
+  let sem = 7; const al = () => (sem = (sem * 9301 + 49297) % 233280) / 233280;
+  const iso = (f, m) => new Date(Date.parse(f + 'T00:00:00Z') + (m + 300) * 6e4).toISOString();
+  const out = []; const f0 = hoy(), ahora = minCO();
+  for (let d = 14; d >= 0; d--) {
+    const f = sumDias(f0, -d); const dow = new Date(f + 'T12:00:00Z').getUTCDay(); if (dow === 0 || dow === 6) continue;
+    for (const p of P) {
+      if (!p.autorizado || p.empresa === 'e-reina' || al() < 0.1) continue;
+      const en = 405 + Math.floor(al() * 50), sa = 960 + Math.floor(al() * 90);
+      if (d === 0 && en > ahora) continue;
+      out.push({ t: iso(f, en), empresa: p.empresa, persona: p.id, ok: true, motivo: 'Vigente', salida: false, quien: 'Portería' });
+      if (d > 0 || sa < ahora) out.push({ t: iso(f, sa), empresa: p.empresa, persona: p.id, ok: true, motivo: 'Vigente', salida: true, quien: 'Portería' });
+    }
+  }
+  return out.sort((a, b) => a.t < b.t ? 1 : -1);
+}
+function semilla() {
+  const f = hoy();
+  const E = [
+    { id: 'e-poli', nombre: 'POLIANDES', largo: 'Politécnico Industrial de Los Andes', nit: '900043963-7', tipo: 'Institución ETDH', c1: '#0B2E59', c2: '#1867B0', interna: true, plan: 'p500', pagadoHasta: '', origen: 'AcademIA', vigencia: 6, requierePago: true, valor: 25000, reverso: 'Este carné identifica a su portador como miembro de POLIANDES, institución de educación para el trabajo y el desarrollo humano. Es personal e intransferible. Si lo encuentra, devuélvalo en la Calle 11D No. 22-90, Santa Marta.', firma: 'Rector', alDiaDesdeApp: true },
+    { id: 'e-anglo', nombre: 'Colegio Anglocolombiano', largo: 'Colegio Cristiano Anglocolombiano', nit: '', tipo: 'Colegio', c1: '#7A1F2B', c2: '#C0392B', interna: true, plan: 'p500', pagadoHasta: '', origen: 'Colegio-IA', vigencia: 12, requierePago: false, valor: 0, reverso: 'Carné escolar del Colegio Cristiano Anglocolombiano. En caso de emergencia, comuníquese con el acudiente registrado.', firma: 'Rectoría', alDiaDesdeApp: true, verif: 'reducida' },
+    { id: 'e-reina', nombre: 'Reina Elizabeth IPS', largo: 'Clínica Reina Elizabeth IPS', nit: '', tipo: 'IPS', c1: '#0E8571', c2: '#14A38B', interna: true, plan: 'p500', pagadoHasta: '', origen: 'Clínica-IA', vigencia: 12, requierePago: false, valor: 0, reverso: 'Carné de paciente de la Clínica Reina Elizabeth IPS. Preséntelo en recepción para agilizar su atención. Calle 22 No. 18-18, Santa Marta.', firma: 'Dirección', alDiaDesdeApp: false, verif: 'reducida' },
+    { id: 'e-gym', nombre: 'Gimnasio Fuerza Caribe', largo: 'Gimnasio Fuerza Caribe (ejemplo)', nit: '901000000-1', tipo: 'Gimnasio', c1: '#1C2B39', c2: '#0B4F8A', interna: false, plan: 'p100', pagadoHasta: finMes(f), origen: 'manual', vigencia: 1, requierePago: false, valor: 0, reverso: 'Membresía personal. Preséntela en la entrada.', firma: 'Administración', alDiaDesdeApp: false, verif: 'completa', cupoCarnes: 48, usadosPrueba: 0 },
+    { id: 'e-conj', nombre: 'Conjunto Altos del Mar', largo: 'Conjunto Residencial Altos del Mar (ejemplo)', nit: '901222333-4', tipo: 'Conjunto residencial', c1: '#0E8571', c2: '#0B4F8A', interna: false, plan: 'p500', pagadoHasta: '', pruebaHasta: sumDias(f, 8), origen: 'manual', vigencia: 12, requierePago: false, valor: 0, reverso: 'Carné de residente. Preséntelo en la portería.', firma: 'Administración', alDiaDesdeApp: false, verif: 'completa', cupoCarnes: 0, usadosPrueba: 2, cantidad: 300 }
+  ];
+  const nombres = {
+    'e-poli': [['Valentina Rojas Mejía', 'Estudiante', 'Técnico en Veterinaria · Semestre 3', true], ['Andrés Felipe Ospina', 'Estudiante', 'Técnico en Administración · Semestre 2', true], ['Mariana Castro Peña', 'Estudiante', 'Técnico en Preescolar · Semestre 1', false], ['Luis Eduardo Barrios', 'Docente', 'Docente de Maquinaria Pesada', true], ['Daniela Suárez Gil', 'Estudiante', 'Técnico en Maquinaria Pesada · Semestre 4', true]],
+    'e-anglo': [['Samuel Herrera Díaz', 'Alumno', 'Grado 5.º · Primaria', true], ['Sofía Martínez Ruiz', 'Alumno', 'Transición · Preescolar', true], ['Camila Ortega León', 'Docente', 'Docente de Inglés', true]],
+    'e-reina': [['Jorge Iván Pacheco', 'Paciente', 'Paciente', true], ['Laura Gómez Vargas', 'Paciente', 'Paciente', true]],
+    'e-conj': [['Marcela Pinto Ríos', 'Residente', 'Torre 2 · Apto 501', true], ['Hernán Gutiérrez Mora', 'Residente', 'Torre 1 · Apto 203', true]],
+    'e-gym': [['Kevin Torres Molina', 'Afiliado', 'Plan mensual', true], ['Paola Vega Ríos', 'Afiliado', 'Plan trimestral', true]]
+  };
+  const P = [];
+  for (const e of E) nombres[e.id].forEach(([n, r, d, al], i) => {
+    const pagado = !e.requierePago || i !== 2;
+    P.push({ id: uid('p'), empresa: e.id, nombre: n, documento: String(1000000000 + Math.floor(Math.random() * 99999999)), rol: r, detalle: d, rh: ['O+', 'A+', 'B+', 'O-'][i % 4], emergencia: 'Acudiente · 300 000 0000', foto: '', alDia: al, estado: 'activo', token: token(), pagado, autorizado: pagado && i !== 4, emitido: pagado && i !== 4 ? sumDias(f, -40) : '', vence: sumMeses(f, e.vigencia), origen: e.origen });
+  });
+  E.forEach(e => { e.asistencia = { activa: e.interna || e.id === 'e-conj', ...ASIS_DEF, hasta: '' }; });
+  return { empresas: E, personas: P, accesos: accesosDemo(P), bitacora: [{ t: Date.now(), quien: 'Sistema', que: 'Datos de ejemplo creados' }], cuentas: [
+    { correo: 'superadmin.identidad@skynetgenesis.com', nombre: 'Superadministrador', empresa: '', perfil: 'superadmin', clave: true, ultimo: Date.now() },
+    { correo: 'rector@poliandes.com', nombre: 'Rectoría POLIANDES', empresa: 'e-poli', perfil: 'admin', clave: true, ultimo: Date.now() - 864e5 },
+    { correo: 'anglo@anglocolombiano.com', nombre: 'Rectoría Anglo', empresa: 'e-anglo', perfil: 'admin', clave: true, ultimo: Date.now() - 3 * 864e5 },
+    { correo: 'contacto@reinaelizabeth.com', nombre: 'Recepción Reina Elizabeth', empresa: 'e-reina', perfil: 'admin', clave: false, ultimo: 0 },
+    { correo: 'porteria@poliandes.com', nombre: 'Portería POLIANDES', empresa: 'e-poli', perfil: 'porteria', clave: true, ultimo: Date.now() - 36e5 },
+    { correo: 'demo@skynetgenesis.com', nombre: 'Gimnasio (ejemplo)', empresa: 'e-gym', perfil: 'admin', clave: true, ultimo: Date.now() - 7 * 864e5 },
+    { correo: 'admin@altosdelmar.com', nombre: 'Administración Altos del Mar', empresa: 'e-conj', perfil: 'admin', clave: false, ultimo: 0 }
+  ] };
+}
+let D;
+try { D = JSON.parse(localStorage.getItem(CLAVE) || 'null'); } catch (e) { D = null; }
+if (!D || !D.empresas) D = semilla();
+if (!D.claves) { D.claves = {}; D.cuentas.forEach(c => { if (c.clave) D.claves[c.correo] = hashS('Identidad2026'); }); }
+if (!D.registros) D.registros = [];
+if (!D.intentos) D.intentos = {};
+if (!D.pedidos) D.pedidos = [];
+const guardar = () => { if (SESION && SESION.real) return; try { localStorage.setItem(CLAVE, JSON.stringify(D)); } catch (e) { } };
+const bit = (que) => { D.bitacora.unshift({ t: Date.now(), quien: PERFIL.nombre, que }); D.bitacora = D.bitacora.slice(0, 300); };
+const emp = id => D.empresas.find(e => e.id === id);
+
+/* ================= reglas ================= */
+/* Estado del carné. Nunca se expone la cédula en la verificación. */
+function estadoCarne(p) {
+  const e = emp(p.empresa);
+  if (!e) return { ok: false, motivo: 'Institución no encontrada' };
+  if (!e.interna && estadoCuenta(e).bloqueada) return { ok: false, motivo: 'Servicio de la institución suspendido' };
+  if (p.estado === 'anulado') return { ok: false, motivo: 'Carné anulado' };
+  if (p.estado === 'suspendido') return { ok: false, motivo: 'Carné suspendido por la institución' };
+  if (e.requierePago && !p.pagado) return { ok: false, motivo: 'Pendiente de pago', espera: true };
+  if (!p.autorizado) return { ok: false, motivo: 'Por autorizar', espera: true };
+  if (p.vence && p.vence < hoy()) return { ok: false, motivo: 'Vencido' };
+  if (e.alDiaDesdeApp && !p.alDia) return { ok: false, motivo: 'No está al día con la institución' };
+  return { ok: true, motivo: 'Vigente' };
+}
+/* Regla de cobro de SkyNet Genesis: aviso desde el día 5 y bloqueo el día 10 */
+/* Regla de cobro de SkyNet Genesis (17 oct 2026): sin mora. Prueba gratis de 15 días; «Pagado hasta» = fin de mes; si no paga, el día 5 del mes siguiente se cierra; al pagar se abre de inmediato */
+function estadoCuenta(e) {
+  if (e.interna) return { txt: 'Interna (sin cobro)', clase: 'p-int', bloqueada: false };
+  const f = hoy();
+  if (!e.pagadoHasta) {
+    if (e.pruebaHasta && e.pruebaHasta >= f) { const d = diasEntre(f, e.pruebaHasta) + 1; return { txt: 'En prueba: ' + d + (d === 1 ? ' día' : ' días'), clase: 'p-esp', bloqueada: false, prueba: d }; }
+    return { txt: 'Cerrada (terminó la prueba)', clase: 'p-no', bloqueada: true, finPrueba: true };
+  }
+  if (e.pagadoHasta >= f) return { txt: 'Activa', clase: 'p-ok', bloqueada: false };
+  const cierre = sumDias(finMes(e.pagadoHasta), 5);
+  if (f < cierre) return { txt: 'Pago pendiente: se cierra el ' + fmtF(cierre), clase: 'p-esp', bloqueada: false, cierre };
+  return { txt: 'Cerrada por pago', clase: 'p-no', bloqueada: true };
+}
+/* Primer pago: resto del mes gratis. Cubre lo que queda del mes en que empieza a pagar más el mes siguiente (si empieza entre el 1 y el 5, solo ese mes). Si paga en la prueba, empieza el día siguiente al fin de la prueba. Si estaba cerrada, se reconecta pagando desde este mes */
+function phTrasPago(e, meses = 1) {
+  const f = hoy(); let base;
+  if (e && e.pagadoHasta && e.pagadoHasta >= f) base = finMes(sumDias(e.pagadoHasta, 1));
+  else if (e && e.pagadoHasta) base = finMes(f);
+  else { let ini = f; if (e && e.pruebaHasta && e.pruebaHasta >= f) ini = sumDias(e.pruebaHasta, 1); base = +ini.slice(8, 10) <= 5 ? finMes(ini) : finMes(sumDias(finMes(ini), 1)); }
+  return meses > 1 ? finMesMas(base, meses - 1) : base;
+}
+/* el módulo funciona en la prueba, en las internas y cuando está pagado (mismo plazo hasta el día 5 que la cuenta) */
+function asisOn(e) {
+  if (!e) return false; if (REAL() && typeof e.asisOn === 'boolean') return e.asisOn;
+  if (e.interna) return true; const c = estadoCuenta(e); if (c.bloqueada) return false; if (c.prueba) return true;
+  const a = e.asistencia || {}; return !!(a.activa && a.hasta && !estadoCuenta({ pagadoHasta: a.hasta }).bloqueada);
+}
+const pruebaRest = e => estadoCuenta(e).prueba ? Math.max(0, 10 - (e.usadosPrueba || 0)) : 0;
+const disponibles = e => e.interna ? Infinity : (e.cupoCarnes || 0) + pruebaRest(e);
+const dispTxt = e => e.interna ? 'sin límite' : String(disponibles(e));
+function usarCupo(e, n) { if (e.interna) return true; if (n > disponibles(e)) return false; const pr = Math.min(n, pruebaRest(e)); e.usadosPrueba = (e.usadosPrueba || 0) + pr; e.cupoCarnes = (e.cupoCarnes || 0) - (n - pr); return true; }
+const planDe = e => PLANES.find(x => x.id === e.plan) || PLANES[0];
+const activosDe = e => typeof e.activos === 'number' ? e.activos : D.personas.filter(p => p.empresa === e.id && p.estado !== 'anulado').length;
+
+/* ================= perfiles (para probar) ================= */
+const PERFILES = [
+  { id: 'super', nombre: 'Superadministrador SkyNet', tipo: 'super' },
+  { id: 'adm-poli', nombre: 'Rectoría · POLIANDES', tipo: 'admin', empresa: 'e-poli' },
+  { id: 'adm-anglo', nombre: 'Rectoría · Anglocolombiano', tipo: 'admin', empresa: 'e-anglo' },
+  { id: 'adm-reina', nombre: 'Recepción · Reina Elizabeth', tipo: 'admin', empresa: 'e-reina' },
+  { id: 'adm-gym', nombre: 'Administrador · Gimnasio (cliente que paga)', tipo: 'admin', empresa: 'e-gym' },
+  { id: 'adm-conj', nombre: 'Administrador · Conjunto (en prueba)', tipo: 'admin', empresa: 'e-conj' },
+  { id: 'port-poli', nombre: 'Portería · POLIANDES', tipo: 'porteria', empresa: 'e-poli' },
+  { id: 'pers', nombre: 'Estudiante (ver mi carné)', tipo: 'persona' }
+];
+let PERFIL = PERFILES[1];
+let VISTA = 'inicio';
+const MENU = {
+  super: [['Plataforma'], ['inicio', '🏠', 'Resumen'], ['empresas', '🏢', 'Instituciones'], ['cuentas', '🔐', 'Cuentas y accesos'], ['planes', '💳', 'Planes y precios'], ['pedidos', '📦', 'Pedidos de impresión'], ['bitacora', '📜', 'Bitácora']],
+  admin: [['Carnés'], ['inicio', '🏠', 'Inicio'], ['personas', '🪪', 'Personas y carnés'], ['autorizar', '✍', 'Por autorizar'], ['imprimir', '🖨', 'Imprimir en PVC'], ['pedido', '📦', 'Pedir carnés impresos'], ['Control de acceso'], ['porteria', '📷', 'Portería'], ['accesos', '🕒', 'Registro de entradas'], ['asistencia', '📊', 'Asistencia y reportes'], ['Institución'], ['diseno', '🎨', 'Diseño del carné'], ['conexion', '🔗', 'Conexión con su app'], ['usuarios', '👥', 'Usuarios'], ['pago', '💳', 'Mi plan']],
+  porteria: [['Portería'], ['porteria', '📷', 'Escanear carné'], ['accesos', '🕒', 'Entradas de hoy']],
+  persona: [['Mi carné'], ['micarne', '🪪', 'Mi carné']]
+};
+
+
+function pintarMenu() {
+  $('#menu').innerHTML = MENU[PERFIL.tipo].map(x => x.length === 1 ? `<div class="grupo">${x[0]}</div>` : `<button data-v="${x[0]}" class="${VISTA === x[0] ? 'on' : ''}"><span aria-hidden="true">${x[1]}</span>${x[2]}</button>`).join('');
+  $('#menu').querySelectorAll('button').forEach(b => b.onclick = () => { VISTA = b.dataset.v; pintar(); });
+}
+
+/* ================= el carné ================= */
+function qrSvg(texto) {
+  try { const q = qrcode(0, 'M'); q.addData(texto); q.make(); return q.createSvgTag({ cellSize: 4, margin: 0, scalable: true }); } catch (e) { return '<svg viewBox="0 0 10 10"><rect width="10" height="10" fill="#eee"/></svg>'; }
+}
+function carneFrente(p) {
+  const e = emp(p.empresa); const st = estadoCarne(p);
+  const foto = imgOk(p.foto) ? p.foto : avatar(p.nombre, e.c1);
+  const lg = imgOk(e.logo) ? `<img src="${e.logo}" alt="">` : esc(e.nombre.split(/\s+/).map(x => x[0]).join('').slice(0, 3));
+  return `<div class="carne ${st.ok ? '' : 'no'}" style="--c1:${e.c1};--c2:${e.c2}" role="img" aria-label="Carné de ${esc(p.nombre)}">
+    <div class="fondo"></div>
+    <div class="cab"><div class="lg">${lg}</div><div><b>${esc(e.nombre)}</b><span>${esc(e.tipo)}${e.nit ? ' · NIT ' + esc(e.nit) : ''}</span></div></div>
+    <img class="foto" src="${foto}" alt="">
+    <div class="datos"><span class="rol">${esc(p.rol)}</span><span class="nom">${esc(p.nombre)}</span><span class="det">${esc(p.detalle)}</span><span class="vence">Vence: ${fmtF(p.vence)} · RH ${esc(p.rh || '—')}</span></div>
+    <div class="qr">${qrSvg('https://' + URL_VERIF + p.token)}</div>
+    <div class="pie"><span class="est">${st.ok ? '● VIGENTE' : '● ' + esc(st.motivo.toUpperCase())}</span><span>Verifique escaneando el QR</span></div>
+    ${st.ok ? '' : `<div class="sello">${st.espera ? esc(st.motivo.toUpperCase()) : 'NO VIGENTE'}</div>`}
+  </div>`;
+}
+function carneReverso(p) {
+  const e = emp(p.empresa);
+  return `<div class="carne reverso" style="--c1:${e.c1};--c2:${e.c2}" role="img" aria-label="Reverso del carné">
+    <div class="fondo"></div><div class="franja"></div>
+    <div class="txt"><b>${esc(e.largo || e.nombre)}</b><span>${esc(e.reverso)}</span><span>Emergencia: ${esc(p.emergencia || '—')}</span><span>Código: ${esc(p.token.toUpperCase())}</span></div>
+    <div class="firma">${esc(e.firma || 'Firma autorizada')}</div>
+    <div class="sg"><span>Identidad IA · SkyNet Genesis</span><span>contacto@skynetgenesis.com · 304 437 5758</span></div>
+  </div>`;
+}
+
+/* ================= vistas ================= */
+const V = {};
+const cab = (t, s, extra = '') => `<div class="tit-p"><div><h1>${t}</h1>${s ? `<p>${s}</p>` : ''}</div><div class="espacio"></div>${extra}</div>`;
+const pillEstado = p => { const s = estadoCarne(p); return `<span class="pill ${s.ok ? 'p-ok' : (s.espera ? 'p-esp' : 'p-no')}">${esc(s.motivo)}</span>`; };
+const misPersonas = () => D.personas.filter(p => p.empresa === PERFIL.empresa);
+
+function avisoCobro(e) {
+  if (!e || e.interna) return '';
+  const c = estadoCuenta(e); const admin = PERFIL.tipo === 'admin';
+  if (c.prueba) return `<div class="aviso azul"><b>Está en prueba gratis: ${c.prueba === 1 ? 'hoy es el último día' : 'le quedan ' + c.prueba + ' días'}.</b> Tiene ${pruebaRest(e)} carnés de prueba. Cuando quiera, arme su plan y pague para no perder el servicio.<span class="espacio"></span>${admin ? '<button class="btn chico v" data-ir="pago">Arme su plan</button>' : ''}</div>`;
+  if (c.cierre) return `<div class="aviso rojo"><b>Su pago está pendiente.</b> El acceso se cierra el ${fmtF(c.cierre)} y los carnés aparecerán NO VIGENTE.<span class="espacio"></span>${admin ? '<button class="btn chico" data-ir="pago">Pagar ahora</button>' : 'Avísele al administrador.'}<a class="btn wa chico" href="${WA}" target="_blank" rel="noopener">WhatsApp soporte</a></div>`;
+  return '';
+}
+
+V.inicio = () => {
+  if (PERFIL.tipo === 'super') {
+    const tot = REAL() ? D.empresas.reduce((s, e) => s + (e.activos || 0), 0) : D.personas.length, ok = REAL() ? '—' : D.personas.filter(p => estadoCarne(p).ok).length;
+    const clientes = D.empresas.filter(e => !e.interna);
+    const conAsis = e => !!((e.asistencia || {}).activa && ((e.asistencia || {}).hasta || '') >= hoy());
+    const ingreso = clientes.filter(e => (e.pagadoHasta || '') >= hoy()).reduce((s, e) => s + planDe(e).precio + (conAsis(e) ? ASIS[planDe(e).id] : 0), 0);
+    return cab('Resumen de la plataforma', 'Todas las instituciones que usan Identidad IA') + `
+    <div class="cifras"><div class="cifra"><b>${D.empresas.length}</b><span>Instituciones (${D.empresas.filter(e => e.interna).length} internas)</span></div><div class="cifra"><b>${tot}</b><span>Carnés registrados</span></div><div class="cifra"><b>${ok}</b><span>Vigentes hoy</span></div><div class="cifra"><b>${peso(ingreso)}</b><span>Mensualidades de clientes al día</span></div></div>
+    <div class="caja"><h2 style="font-size:22px;color:var(--azul);margin-bottom:10px">Instituciones</h2>${tablaEmpresas()}</div>`;
+  }
+  const e = emp(PERFIL.empresa); const ps = misPersonas();
+  const ok = ps.filter(p => estadoCarne(p).ok).length, esp = ps.filter(p => estadoCarne(p).espera).length;
+  const hoyA = D.accesos.filter(a => a.empresa === e.id && a.t.slice(0, 10) === hoy()).length;
+  return avisoCobro(e) + cab(esc(e.nombre), `${esc(e.tipo)} · ${e.interna ? 'Institución interna de SkyNet Genesis, sin cobro' : planDe(e).nombre + ' · ' + dispTxt(e) + ' carnés disponibles'}`, `<button class="btn v" data-ir="personas">＋ Nuevo carné</button>`) + `
+  <div class="cifras"><div class="cifra"><b>${ps.length}</b><span>Personas con carné</span></div><div class="cifra"><b>${ok}</b><span>Vigentes</span></div><div class="cifra"><b>${esp}</b><span>Por pagar o por autorizar</span></div><div class="cifra"><b>${hoyA}</b><span>Entradas registradas hoy</span></div></div>
+  <div class="grid2">
+    <div class="caja" style="display:flex;flex-direction:column;gap:12px"><h2 style="font-size:22px;color:var(--azul)">Así se ve un carné de ${esc(e.nombre)}</h2>${ps[0] ? carneFrente(ps[0]) : '<p class="nota">Aún no hay personas.</p>'}<p class="nota">Cada persona recibe un enlace para abrir su carné en el celular. El QR lo puede escanear cualquiera: muestra foto, nombre y si está vigente, nunca el número de documento.</p></div>
+    <div class="caja" style="display:flex;flex-direction:column;gap:10px"><h2 style="font-size:22px;color:var(--azul)">Qué hacer hoy</h2>
+      ${esp ? `<div class="aviso azul">Hay ${esp} carné(s) esperando pago o autorización.<span class="espacio"></span><button class="btn chico" data-ir="autorizar">Revisar</button></div>` : '<div class="aviso verde">No hay carnés esperando autorización.</div>'}
+      <div class="aviso azul">Datos que llegan solos desde <b>${esc(e.origen === 'manual' ? 'su archivo de Excel' : e.origen)}</b>.<span class="espacio"></span><button class="btn chico l" data-ir="conexion">Ver conexión</button></div>
+      <div class="aviso azul">Imprima carnés en PVC por lote o uno por uno.<span class="espacio"></span><button class="btn chico l" data-ir="imprimir">Imprimir</button></div>
+      <div class="aviso azul">${asisOn(e) ? 'Vea quién está adentro, quién llegó tarde y quién no ha llegado.' : 'Controle la asistencia con el mismo carné: retardos, faltas e informes para Excel.'}<span class="espacio"></span><button class="btn chico l" data-ir="asistencia">Asistencia</button></div>
+    </div>
+  </div>`;
+};
+
+function tablaEmpresas() {
+  return `<div class="tabla"><table><thead><tr><th>Institución</th><th>Tipo</th><th>Origen de datos</th><th>Carnés</th><th>Plan</th><th>Pagado hasta</th><th>Estado</th><th></th></tr></thead><tbody>${D.empresas.map(e => { const c = estadoCuenta(e); return `<tr><td><b>${esc(e.nombre)}</b></td><td>${esc(e.tipo)}</td><td>${esc(e.origen === 'manual' ? 'Excel / a mano' : e.origen)}</td><td style="font-variant-numeric:tabular-nums">${activosDe(e)}</td><td>${e.interna ? '—' : esc(planDe(e).nombre) + ' · ' + peso(planDe(e).precio) + ((e.asistencia || {}).activa ? ' + asistencia ' + peso(ASIS[planDe(e).id]) : '')}</td><td>${e.interna ? '—' : `<input type="date" value="${esc(e.pagadoHasta)}" data-ph="${e.id}" aria-label="Pagado hasta" style="max-width:150px">`}</td><td><span class="pill ${c.clase}">${c.txt}</span></td><td><button class="btn chico l" data-interna="${e.id}">${e.interna ? 'Quitar interna' : 'Hacer interna'}</button></td></tr>`; }).join('')}</tbody></table></div>`;
+}
+V.empresas = () => cab('Instituciones', 'Clientes que pagan y empresas internas de SkyNet Genesis (POLIANDES, Anglocolombiano, Reina Elizabeth)', '<button class="btn v" data-nuevaemp>＋ Nueva institución</button>') + tablaEmpresas() + `<p class="nota">Al cambiar «Pagado hasta», el acceso se restablece de inmediato. Desde el día 5 sin pago el cliente ve un aviso rojo con cuenta regresiva y el día 10 se suspende; las empresas internas nunca se cobran.</p>`;
+
+V.cuentas = () => cab('Cuentas y accesos', 'Las contraseñas se guardan cifradas: nadie puede verlas (Ley 1581 de 2012). Desde aquí se envía el enlace para crearlas o cambiarlas.', '<input type="text" id="busCta" placeholder="Buscar correo o institución" style="max-width:260px">') + `<div class="tabla"><table><thead><tr><th>Correo</th><th>Persona</th><th>Institución</th><th>Perfil</th><th>Contraseña</th><th>Último ingreso</th><th></th></tr></thead><tbody id="tCtas">${filasCuentas('')}</tbody></table></div>`;
+function filasCuentas(q) {
+  q = q.toLowerCase();
+  return D.cuentas.filter(c => !q || (c.correo + ' ' + (emp(c.empresa)?.nombre || '')).toLowerCase().includes(q)).map((c, i) => `<tr><td>${esc(c.correo)}</td><td>${esc(c.nombre)}</td><td>${esc(emp(c.empresa)?.nombre || 'SkyNet Genesis')}</td><td>${esc({ superadmin: 'Superadministrador', admin: 'Administrador', porteria: 'Portería' }[c.perfil])}</td><td>${c.clave ? '<span class="pill p-ok">Creada</span>' : '<span class="pill p-esp">Sin crear</span>'}</td><td>${c.ultimo ? fmtH(c.ultimo) : '—'}</td><td class="fila"><button class="btn chico l" data-enlace="${esc(c.correo)}">Enviar enlace</button>${c.perfil !== 'superadmin' ? `<button class="btn chico r" data-bloq="${esc(c.correo)}">${c.bloqueada ? 'Desbloquear' : 'Bloquear'}</button>` : ''}</td></tr>`).join('');
+}
+
+V.planes = () => cab('Planes y precios', 'Se cobra por hacer cada carné y por mantener la comprobación mensual del QR. Se paga solo con Bold de SkyNet Genesis.') + `<div class="aviso azul"><b>Por hacer cada carné: ${peso(PRECIO_CARNE)}</b> (una sola vez; también duplicados o cambio de foto). Más la mensualidad de comprobación según los carnés activos. Solo pago mes a mes, sin descuentos.</div><div class="planes">${PLANES.map((p, i) => `<div class="plan ${i === 1 ? 'dest' : ''}"><span class="nota">${i === 1 ? 'El más elegido' : 'Plan'}</span><h3 style="font-size:22px">${p.nombre}</h3><b>${peso(p.precio)}</b><span class="nota">comprobación al mes</span></div>`).join('')}</div>
+  <div class="aviso azul"><b>Adicional: control de acceso y asistencia</b>&nbsp;(entradas, salidas, retardos, faltas, horas e informes para Excel): ${PLANES.map(p => esc(p.nombre) + ' ' + peso(ASIS[p.id])).join(' · ')} al mes. Gratis en la prueba y en las internas.</div>
+<div class="caja"><h2 style="font-size:22px;color:var(--azul);margin-bottom:8px">Incluido en todos los planes</h2><ul style="margin:0;padding-left:20px;display:grid;gap:4px"><li>Carné digital en el celular con QR verificable (sin mostrar el documento).</li><li>Diseño listo para imprimir en PVC por lote (PDF tamaño tarjeta, frente y reverso). La tarjeta plástica y la impresión no van incluidas: el cliente las imprime por su cuenta o las pide impresas a SkyNet Genesis (${peso(PRECIO_IMPRESO)} cada una, por las dos caras, con envío por Interrapidísimo aparte).</li><li>Si el cliente no paga la mensualidad, todos sus carnés aparecen NO VIGENTE al escanear el QR.</li><li>Portería: entradas y salidas con el QR desde cualquier celular.</li><li>Carné NO VIGENTE automático si la persona no está al día o venció.</li><li>Carga desde Excel o conexión con AcademIA, Colegio-IA y Clínica-IA.</li></ul></div>`;
+
+V.bitacora = () => cab('Bitácora', 'Quién hizo qué y cuándo. No se puede borrar.') + `<div class="tabla"><table><thead><tr><th>Fecha</th><th>Quién</th><th>Qué</th></tr></thead><tbody>${D.bitacora.map(b => `<tr><td style="white-space:nowrap">${fmtH(b.t)}</td><td>${esc(b.quien)}</td><td>${esc(b.que)}</td></tr>`).join('')}</tbody></table></div>`;
+
+let FILTRO = 'todos', BUS = '';
+V.personas = () => {
+  const e = emp(PERFIL.empresa);
+  const ps = misPersonas().filter(p => (FILTRO === 'todos' || (FILTRO === 'ok' ? estadoCarne(p).ok : !estadoCarne(p).ok)) && (!BUS || p.nombre.toLowerCase().includes(BUS.toLowerCase())));
+  return avisoCobro(e) + cab('Personas y carnés', `${misPersonas().length} personas · ${e.origen === 'manual' ? 'cargadas a mano o desde Excel' : 'llegan solas desde ' + esc(e.origen)}`, `<button class="btn l" data-csv>⬆ Cargar desde Excel (CSV)</button><button class="btn v" data-nueva>＋ Nueva persona</button>`) + `
+  <div class="fila"><div class="chips">${[['todos', 'Todos'], ['ok', 'Vigentes'], ['no', 'No vigentes o en espera']].map(([k, t]) => `<button class="chip ${FILTRO === k ? 'on' : ''}" data-filtro="${k}">${t}</button>`).join('')}</div><span class="espacio"></span><input type="text" id="busP" placeholder="Buscar por nombre" value="${esc(BUS)}" style="max-width:240px"></div>
+  <div class="tabla"><table><thead><tr><th>Persona</th><th>Tipo</th><th>Detalle</th><th>Vence</th><th>Al día</th><th>Estado del carné</th><th></th></tr></thead><tbody>${ps.map(p => `<tr><td><div class="persona-cel"><img class="mini" src="${p.foto || avatar(p.nombre, e.c1)}" alt=""><b>${esc(p.nombre)}</b></div></td><td>${esc(p.rol)}</td><td>${esc(p.detalle)}</td><td style="white-space:nowrap">${fmtF(p.vence)}</td><td>${e.alDiaDesdeApp ? (p.alDia ? '<span class="pill p-ok">Sí</span>' : '<span class="pill p-no">No</span>') : '<span class="nota">No aplica</span>'}</td><td>${pillEstado(p)}</td><td class="fila" style="flex-wrap:nowrap"><button class="btn chico" data-ver="${p.id}">Ver carné</button><button class="btn chico l" data-editar="${p.id}">Editar</button></td></tr>`).join('') || '<tr><td colspan="7" class="nota">No hay personas con ese filtro.</td></tr>'}</tbody></table></div>`;
+};
+
+V.autorizar = () => {
+  const e = emp(PERFIL.empresa);
+  const ps = misPersonas().filter(p => p.estado === 'activo' && (!p.autorizado || (e.requierePago && !p.pagado)));
+  return cab('Por autorizar', 'Ningún carné sale solo: primero el pago (si su institución lo cobra) y luego la autorización de una persona de la institución.') + (e.requierePago ? `<div class="aviso azul">El carné cuesta ${peso(e.valor)} y lo paga la persona en el portal de ${esc(e.origen)}. Cuando el pago se confirma, aparece aquí listo para autorizar.</div>` : '') + `
+  <div class="tabla"><table><thead><tr><th>Persona</th><th>Tipo</th><th>Pago</th><th>Estado</th><th></th></tr></thead><tbody>${ps.map(p => `<tr><td><b>${esc(p.nombre)}</b><br><span class="nota">${esc(p.detalle)}</span></td><td>${esc(p.rol)}</td><td>${e.requierePago ? (p.pagado ? '<span class="pill p-ok">Pagado</span>' : '<span class="pill p-esp">Sin pagar</span>') : '<span class="nota">No se cobra</span>'}</td><td>${pillEstado(p)}</td><td class="fila"><button class="btn chico" data-ver="${p.id}">Revisar</button><button class="btn chico v" data-autorizar="${p.id}" ${e.requierePago && !p.pagado ? 'disabled title="Primero debe estar pagado"' : ''}>✍ Autorizar</button></td></tr>`).join('') || '<tr><td colspan="5" class="nota">No hay carnés esperando. Todo está al día.</td></tr>'}</tbody></table></div>`;
+};
+
+let SEL_IMP = null, SEL_EMP = '';
+V.imprimir = () => {
+  const ps = misPersonas().filter(p => estadoCarne(p).ok);
+  if (!SEL_IMP || SEL_EMP !== PERFIL.empresa) { SEL_IMP = new Set(ps.map(p => p.id)); SEL_EMP = PERFIL.empresa; }
+  const sel = ps.filter(p => SEL_IMP.has(p.id));
+  return cab('Imprimir en PVC', 'Tamaño tarjeta de crédito (CR80, 85,6 × 54 mm), frente y reverso. Solo se imprimen carnés vigentes. La tarjeta plástica y la impresión las pone la institución, o pídalos ya impresos en «Pedir carnés impresos».', `<button class="btn" data-pdf>🖨 Imprimir (${sel.length})</button>`) + `
+  <div class="caja"><div class="fila" style="margin-bottom:10px"><b>Elija quiénes</b><span class="espacio"></span><button class="btn chico l" data-todos>Todos</button><button class="btn chico l" data-ninguno>Ninguno</button></div><div class="chips">${ps.map(p => `<button class="chip ${SEL_IMP.has(p.id) ? 'on' : ''}" data-sel="${p.id}">${esc(p.nombre)}</button>`).join('') || '<span class="nota">No hay carnés vigentes.</span>'}</div></div>
+  <div><h2 style="font-size:20px;color:var(--azul);margin:4px 0 8px">Vista previa · frente</h2><div class="hoja">${sel.map(carneFrente).join('')}</div></div>
+  <div><h2 style="font-size:20px;color:var(--azul);margin:4px 0 8px">Vista previa · reverso</h2><div class="hoja">${sel.map(carneReverso).join('')}</div></div>`;
+};
+
+let PED = { sel: null, entrega: 'recoger', ciudad: '', dir: '' };
+const sigPed = x => x.estado === 'Pagado' ? 'Impreso' : x.estado === 'Impreso' ? (x.entrega === 'envio' ? 'Enviado' : 'Entregado') : 'Entregado';
+function tablaPedidos(lst, admin) {
+  return `<div class="tabla"><table><thead><tr><th>Fecha</th>${admin ? '<th>Institución</th>' : ''}<th>Carnés</th><th>Entrega</th><th>Total</th><th>Estado</th>${admin ? '<th></th>' : ''}</tr></thead><tbody>${lst.map(x => `<tr><td style="white-space:nowrap">${fmtH(x.t)}</td>${admin ? `<td>${esc(emp(x.empresa)?.nombre || '')}</td>` : ''}<td style="font-variant-numeric:tabular-nums">${x.cantidad}</td><td>${x.entrega === 'envio' ? 'Interrapidísimo · ' + esc(x.ciudad) + (x.guia ? ' · guía ' + esc(x.guia) : '') + (admin ? '<br><span class="nota">' + esc(x.dir) + '</span>' : '') : 'Recoge en Santa Marta'}</td><td style="font-variant-numeric:tabular-nums">${peso(x.total)}</td><td><span class="pill ${x.estado === 'Entregado' ? 'p-ok' : 'p-esp'}">${esc(x.estado)}</span></td>${admin ? `<td>${x.estado !== 'Entregado' ? `<button class="btn chico v" data-pedavanza="${x.id}">Marcar ${esc(sigPed(x).toLowerCase())}</button>` : ''}</td>` : ''}</tr>`).join('') || `<tr><td colspan="${admin ? 7 : 5}" class="nota">Todavía no hay pedidos.</td></tr>`}</tbody></table></div>`;
+}
+V.pedido = () => {
+  const e = emp(PERFIL.empresa);
+  const ps = misPersonas().filter(p => estadoCarne(p).ok);
+  if (!PED.sel || PED.emp !== e.id) { PED.sel = new Set(ps.map(p => p.id)); PED.emp = e.id; }
+  const n = ps.filter(p => PED.sel.has(p.id)).length;
+  const valor = e.interna ? 0 : n * PRECIO_IMPRESO;
+  const envio = PED.entrega === 'recoger' || !n ? 0 : envioAprox(n);
+  return avisoCobro(e) + cab('Pedir carnés impresos', `SkyNet Genesis los imprime en tarjeta plástica por las dos caras y se los envía por Interrapidísimo. ${e.interna ? 'Institución interna: la impresión no se cobra.' : peso(PRECIO_IMPRESO) + ' por carné impreso.'}`) + `
+  <div class="grid2">
+    <div class="caja" style="display:flex;flex-direction:column;gap:10px"><div class="fila"><b>Carnés a imprimir (${n})</b><span class="espacio"></span><button class="btn chico l" data-pedtodos="1">Todos</button><button class="btn chico l" data-pedtodos="0">Ninguno</button></div>
+      <div class="chips">${ps.map(p => `<button class="chip ${PED.sel.has(p.id) ? 'on' : ''}" data-pedsel="${p.id}">${esc(p.nombre)}</button>`).join('') || '<span class="nota">No hay carnés vigentes para imprimir.</span>'}</div>
+      <p class="nota">Solo se imprimen carnés vigentes y autorizados.</p></div>
+    <div class="caja" style="display:flex;flex-direction:column;gap:12px">
+      <label class="c" for="pEntrega">Entrega<select id="pEntrega"><option value="recoger" ${PED.entrega === 'recoger' ? 'selected' : ''}>Recoger en la sede de Santa Marta (sin costo)</option><option value="envio" ${PED.entrega === 'envio' ? 'selected' : ''}>Envío por Interrapidísimo</option></select></label>
+      ${PED.entrega === 'envio' ? `<label class="c" for="pCiudad">Ciudad<input type="text" id="pCiudad" value="${esc(PED.ciudad)}" placeholder="Ejemplo: Barranquilla"></label><label class="c" for="pDir">Dirección y quién recibe<input type="text" id="pDir" value="${esc(PED.dir)}" placeholder="Calle, número, barrio · nombre y celular"></label>` : ''}
+      <div class="tabla"><table><tbody><tr><td>${n} carnés impresos × ${e.interna ? '$0' : peso(PRECIO_IMPRESO)}</td><td style="text-align:right;font-variant-numeric:tabular-nums">${peso(valor)}</td></tr><tr><td>Envío${PED.entrega === 'envio' ? ' <span class="nota">(aproximado: el valor exacto sale de la cotización de Interrapidísimo al pagar)</span>' : ''}</td><td style="text-align:right;font-variant-numeric:tabular-nums">${peso(envio)}</td></tr><tr><td><b>Total</b></td><td style="text-align:right;font-variant-numeric:tabular-nums"><b>${peso(valor + envio)}</b></td></tr></tbody></table></div>
+      <button class="btn v" data-pedir ${n ? '' : 'disabled'}>${valor + envio ? 'Pagar con Bold y pedir' : 'Hacer el pedido'}</button>
+    </div>
+  </div>
+  <div class="caja"><h2 style="font-size:22px;color:var(--azul);margin-bottom:10px">Mis pedidos</h2>${tablaPedidos(D.pedidos.filter(x => x.empresa === e.id), false)}</div>`;
+};
+V.pedidos = () => cab('Pedidos de impresión', `Carnés que SkyNet Genesis imprime por las dos caras (Zebra ZC32) y despacha por Interrapidísimo · ${D.pedidos.filter(x => x.estado !== 'Entregado').length} pendientes`) + tablaPedidos(D.pedidos, true) + `<p class="nota">Orden de trabajo: Pagado → Impreso → Enviado (con número de guía) → Entregado. Al marcar «Enviado», al cliente le llega un correo (Brevo) con la guía.</p>`;
+
+V.porteria = () => {
+  const e = emp(PERFIL.empresa);
+  return cab('Portería', 'Lea el QR con la cámara, con un lector de mesa (USB) o escribiendo el código. Cada lectura queda registrada como entrada o salida.') + `
+  <div class="grid2">
+    <div class="caja" style="display:flex;flex-direction:column;gap:12px">
+      <h2 style="font-size:22px;color:var(--azul)">Leer un carné</h2>
+      <label class="c" for="modoLect">Movimiento<select id="modoLect"><option value="auto" ${MODO_LECT === 'auto' ? 'selected' : ''}>Automático (1.ª lectura del día = entrada; la siguiente = salida)</option><option value="entrada" ${MODO_LECT === 'entrada' ? 'selected' : ''}>Solo entradas</option><option value="salida" ${MODO_LECT === 'salida' ? 'selected' : ''}>Solo salidas</option></select></label>
+      <label class="c" for="codQR">Lector de mesa (USB) o código del reverso<input type="text" id="codQR" placeholder="Pase el carné por el lector o escriba el código" autocomplete="off" autocapitalize="off" spellcheck="false"></label>
+      <div class="fila"><button class="btn v" data-leer>Verificar</button><button class="btn l" data-camara>📷 Abrir cámara</button></div>
+      <video id="cam" playsinline muted hidden style="width:100%;max-height:320px;border-radius:12px;background:#000;object-fit:cover"></video>
+      <label class="c" for="fotoQR">Si la cámara no abre: tome una foto del QR<input type="file" id="fotoQR" accept="image/*" capture="environment"></label>
+      <p class="nota" style="margin:0">Con un lector USB no hay que tocar nada: deje el cursor en la casilla y pase los carnés uno tras otro. Si el mismo carné se lee dos veces en menos de un minuto, no se registra repetido.</p>
+      ${REAL() ? '' : `<p class="nota" style="margin:0">Para probar: elija una persona de ${esc(e.nombre)}.</p><div class="chips">${misPersonas().slice(0, 6).map(p => `<button class="chip" data-sim="${p.token}">${esc(p.nombre.split(' ')[0])}</button>`).join('')}</div>`}
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px"><div id="resLectura" class="caja"><p class="nota">Aquí aparece el resultado de la lectura: foto, nombre y si puede entrar.</p></div>
+    <div class="caja"><h2 style="font-size:20px;color:var(--azul);margin-bottom:8px">Últimas lecturas de hoy</h2><div id="ultLect">${ultimasHTML()}</div></div></div>
+  </div>`;
+};
+const ptrFino = () => !!(window.matchMedia && window.matchMedia('(pointer:fine)').matches);
+let MODO_LECT = (() => { try { return localStorage.getItem('identidadia_modo') || 'auto'; } catch (e) { return 'auto'; } })();
+function ultimasHTML() {
+  const t0 = hoy() + 'T05:00:00'; const ls = D.accesos.filter(a => a.empresa === PERFIL.empresa && a.t >= t0).slice(0, 8);
+  if (!ls.length) return '<p class="nota" style="margin:0">Todavía no hay lecturas hoy.</p>';
+  return `<div class="tabla"><table><tbody>${ls.map(a => { const p = D.personas.find(x => x.id === a.persona); return `<tr><td style="white-space:nowrap">${new Date(a.t).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' })}</td><td>${esc(p ? p.nombre : a.nombre || 'Carné no encontrado')}</td><td>${a.salida ? 'Salida' : 'Entrada'}</td><td>${a.ok ? '<span class="pill p-ok">Permitido</span>' : '<span class="pill p-no">' + esc(a.motivo) + '</span>'}</td></tr>`; }).join('')}</tbody></table></div>`;
+}
+function resLecturaHTML(j) {
+  const e = emp(PERFIL.empresa);
+  if (!j.encontrado) return `<div class="verif"><div class="estado no"><b>NO ENCONTRADO</b>Este carné no es de ${esc(e.nombre)}.</div></div>`;
+  const p = j.persona;
+  const tit = !j.ok ? 'NO VIGENTE' : j.repetido ? (j.salida ? 'SALIDA YA REGISTRADA' : 'ENTRADA YA REGISTRADA') : (j.salida ? 'SALIDA REGISTRADA' : 'PUEDE ENTRAR');
+  const sub = !j.ok ? esc(j.motivo) : j.repetido ? 'Se leyó hace menos de un minuto: no se registró dos veces' : fmtH(Date.now());
+  return `<div class="verif"><div class="estado ${j.ok ? 'ok' : 'no'}"><b>${tit}</b>${sub}</div><div class="ficha"><img src="${imgOk(p.foto) ? p.foto : avatar(p.nombre, e.c1)}" alt=""><div><h2 style="font-size:22px">${esc(p.nombre)}</h2><div>${esc(p.rol)}${p.detalle ? ' · ' + esc(p.detalle) : ''}</div></div></div></div>`;
+}
+let AUDIO = null;
+function avisoLectura(ok) {
+  try { if (navigator.vibrate) navigator.vibrate(ok ? 80 : [90, 60, 90]); } catch (e) { }
+  try { AUDIO = AUDIO || new (window.AudioContext || window.webkitAudioContext)(); const o = AUDIO.createOscillator(), g = AUDIO.createGain(); o.frequency.value = ok ? 880 : 220; g.gain.value = 0.08; o.connect(g); g.connect(AUDIO.destination); o.start(); o.stop(AUDIO.currentTime + (ok ? 0.12 : 0.35)); } catch (e) { }
+}
+function mostrarLectura(j) {
+  const r = $('#resLectura'); if (r) r.innerHTML = resLecturaHTML(j);
+  const u = $('#ultLect'); if (u) u.innerHTML = ultimasHTML();
+  avisoLectura(!!(j.encontrado && j.ok));
+  const c = $('#codQR'); if (c && ptrFino()) c.focus();
+}
+const modoLectura = () => { const m = $('#modoLect'); return m ? m.value : MODO_LECT; };
+function leerDesdeCampo() { const c = $('#codQR'); if (!c) return; const v = c.value.trim(); if (!v) return toast('Pase el carné por el lector o escriba el código'); c.value = ''; leerCodigo(v); }
+/* cámara en vivo: lee el QR sin tomar foto */
+let CAM = null;
+async function abrirCamara() {
+  if (CAM) return cerrarCamara();
+  const v = $('#cam'); if (!v) return;
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return toast('Este navegador no deja abrir la cámara: use la foto del QR o el lector');
+  try {
+    const st = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
+    if (!$('#cam')) { st.getTracks().forEach(t => t.stop()); return; }
+    CAM = { st, ult: '', hasta: 0 }; v.srcObject = st; v.hidden = false; await v.play();
+    const b = $('[data-camara]'); if (b) b.textContent = '■ Cerrar cámara'; escanear();
+  } catch (e) { cerrarCamara(); toast('No se pudo abrir la cámara. Revise el permiso del navegador o use la foto del QR'); }
+}
+function cerrarCamara() {
+  if (CAM) { CAM.st.getTracks().forEach(t => t.stop()); CAM = null; }
+  const v = $('#cam'); if (v) { v.hidden = true; v.srcObject = null; }
+  const b = $('[data-camara]'); if (b) b.textContent = '📷 Abrir cámara';
+}
+function escanear() {
+  if (!CAM) return; const v = $('#cam'); if (!v || v.srcObject !== CAM.st) return cerrarCamara();
+  if (v.readyState >= 2 && window.jsQR && v.videoWidth) {
+    const c = CAM.c || (CAM.c = document.createElement('canvas')); const w = 480, h = Math.round(480 * v.videoHeight / v.videoWidth);
+    c.width = w; c.height = h; const g = c.getContext('2d', { willReadFrequently: true }); g.drawImage(v, 0, 0, w, h);
+    const q = jsQR(g.getImageData(0, 0, w, h).data, w, h, { inversionAttempts: 'dontInvert' });
+    if (q && q.data && !(q.data === CAM.ult && Date.now() < CAM.hasta)) { CAM.ult = q.data; CAM.hasta = Date.now() + 4000; leerCodigo(q.data); }
+  }
+  setTimeout(() => requestAnimationFrame(escanear), 200);
+}
+
+V.accesos = () => {
+  const t0 = hoy() + 'T05:00:00'; const soloHoy = PERFIL.tipo === 'porteria';
+  const lst = D.accesos.filter(a => a.empresa === PERFIL.empresa && (!soloHoy || a.t >= t0));
+  return cab(soloHoy ? 'Entradas de hoy' : 'Registro de entradas', 'Entradas y salidas leídas en portería' + (soloHoy ? '' : ' (las más recientes). Para retardos, faltas y horas, vea «Asistencia y reportes».')) + `<div class="tabla"><table><thead><tr><th>Fecha y hora</th><th>Persona</th><th>Movimiento</th><th>Resultado</th><th>Leído por</th></tr></thead><tbody>${lst.slice(0, 500).map(a => { const p = D.personas.find(x => x.id === a.persona); return `<tr><td style="white-space:nowrap">${fmtH(a.t)}</td><td>${esc(p ? p.nombre : a.nombre || 'Carné no encontrado')}</td><td>${a.salida ? 'Salida' : 'Entrada'}</td><td>${a.ok ? '<span class="pill p-ok">Permitido</span>' : '<span class="pill p-no">' + esc(a.motivo) + '</span>'}</td><td>${esc(a.quien)}</td></tr>`; }).join('') || '<tr><td colspan="5" class="nota">Todavía no hay lecturas. Pruebe en Portería.</td></tr>'}</tbody></table></div>`;
+};
+
+/* ================= control de asistencia ================= */
+let ASIS_F = null, ASIS_R = null;
+const DIAS_N = [[1, 'Lunes'], [2, 'Martes'], [3, 'Miércoles'], [4, 'Jueves'], [5, 'Viernes'], [6, 'Sábado'], [0, 'Domingo']];
+function asisActivarHTML(e) {
+  const c = estadoCuenta(e); const precio = ASIS[planDe(e).id];
+  const pagado = !!e.pagadoHasta && e.pagadoHasta >= hoy();
+  const lista = `<ul style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px"><li>Entrada y salida de cada persona con la hora exacta, leídas con el celular, una tableta o un lector QR de mesa (USB).</li><li>Horario de su institución (y uno distinto por tipo de persona, si lo necesita): quién llegó tarde, cuántos minutos, quién faltó y cuántas horas estuvo cada uno.</li><li>Quién está adentro ahora mismo y quién no ha llegado.</li><li>Informes por día, semana o mes que se descargan para abrir en Excel. Ya no tiene que llevar la planilla a mano.</li></ul>`;
+  return avisoCobro(e) + cab('Asistencia y reportes', 'Control de acceso y asistencia con el mismo carné QR') + `<div class="caja" style="display:flex;flex-direction:column;gap:12px">
+    <h2 style="font-size:22px;color:var(--azul)">Active el control de asistencia</h2>${lista}
+    <div class="aviso azul"><b>${peso(precio)} al mes</b>&nbsp;adicionales a su plan ${esc(planDe(e).nombre)}. Se paga con Bold junto con la mensualidad.</div>
+    ${pagado ? `<div class="fila"><button class="btn v" data-asispagar>Activar y pagar ${peso(precio)}</button><span class="nota">Queda activo hasta el ${fmtF(e.pagadoHasta)}, igual que su plan. Después va incluido en cada mensualidad.</span></div>` : `<div class="fila"><button class="btn v" data-ir="pago">Ir a «Mi plan»</button><span class="nota">Al pagar su mensualidad, marque «Control de acceso y asistencia».</span></div>`}
+    <p class="nota" style="margin:0">No necesita comprar nada: funciona con el celular de la portería. Si prefiere, use un lector QR de mesa (USB), de los que venden en tiendas de tecnología: se conecta al computador y lee los carnés uno tras otro.</p></div>`;
+}
+const rangoAsis = k => { const f = hoy(); if (k === 'semana') { const d = new Date(f + 'T12:00:00Z').getUTCDay(); return { desde: sumDias(f, -((d + 6) % 7)), hasta: f }; } if (k === 'mes') return { desde: f.slice(0, 8) + '01', hasta: f }; if (k === 'ayer') { const y = sumDias(f, -1); return { desde: y, hasta: y }; } return { desde: f, hasta: f }; };
+async function cargarAsis(f) {
+  const k = f.desde + '|' + f.hasta; ASIS_R = { k, cargando: true };
+  try { const r = await api('GET', '/api/asistencia?desde=' + f.desde + '&hasta=' + f.hasta); ASIS_R = { k, r }; }
+  catch (e) { ASIS_R = { k, err: e.message }; }
+  if (VISTA === 'asistencia') pintar();
+}
+function datosAsis(e, f) {
+  let r;
+  if (REAL()) { if (!ASIS_R || ASIS_R.k !== f.desde + '|' + f.hasta) { cargarAsis(f); return null; } if (ASIS_R.cargando || ASIS_R.err) return ASIS_R; r = ASIS_R.r; }
+  else r = calcAsistencia({ personas: misPersonas(), accesos: D.accesos.filter(a => a.empresa === e.id), cfg: e.asistencia, desde: f.desde, hasta: f.hasta, hoy: hoy(), ahoraMin: minCO() });
+  const fr = x => !f.rol || x.rol === f.rol;
+  return { r: { ...r, detalle: r.detalle.filter(fr), resumen: r.resumen.filter(fr), hoy: { presentes: r.hoy.presentes.filter(fr), salieron: r.hoy.salieron.filter(fr), sinLlegar: r.hoy.sinLlegar.filter(fr), retardos: r.hoy.retardos.filter(fr) } } };
+}
+V.asistencia = () => {
+  const e = emp(PERFIL.empresa);
+  if (!asisOn(e)) return asisActivarHTML(e);
+  const f = ASIS_F || (ASIS_F = { ...rangoAsis('hoy'), rol: '', tab: 'hoy' });
+  const cfg = asisCfg(e.asistencia); const roles = [...new Set(misPersonas().map(p => p.rol))].sort();
+  const dias = DIAS_N.filter(([d]) => cfg.dias.includes(d)).map(x => x[1].slice(0, 3)).join(', ') || 'ningún día';
+  const top = avisoCobro(e) + cab('Asistencia y reportes', `Horario: ${cfg.entrada} a ${cfg.salida} · ${cfg.tolerancia} min de tolerancia · ${esc(dias)}`, `<button class="btn l" data-asiscfg>⚙ Horarios</button><button class="btn v" data-asiscsv>⬇ Descargar para Excel</button>`) + `
+  <div class="caja" style="display:flex;flex-direction:column;gap:10px"><div class="form"><label class="c" for="asD">Desde<input type="date" id="asD" value="${f.desde}" max="${hoy()}"></label><label class="c" for="asH">Hasta<input type="date" id="asH" value="${f.hasta}" max="${hoy()}"></label><label class="c" for="asR">Tipo de persona<select id="asR"><option value="">Todos</option>${roles.map(r => `<option ${f.rol === r ? 'selected' : ''}>${esc(r)}</option>`).join('')}</select></label></div>
+  <div class="fila">${[['hoy', 'Hoy'], ['ayer', 'Ayer'], ['semana', 'Esta semana'], ['mes', 'Este mes']].map(([k, t]) => `<button class="btn chico l" data-asisrango="${k}">${t}</button>`).join('')}${REAL() ? '<button class="btn chico l" data-asisact>⟳ Actualizar</button>' : ''}</div></div>
+  <div class="fila" role="tablist">${[['hoy', 'Quién está hoy'], ['resumen', 'Resumen por persona'], ['detalle', 'Detalle por día']].map(([k, t]) => `<button class="btn chico ${f.tab === k ? 'v' : 'l'}" role="tab" aria-selected="${f.tab === k}" data-asistab="${k}">${t}</button>`).join('')}</div>`;
+  const x = datosAsis(e, f);
+  if (!x || x.cargando) return top + '<p class="nota">Calculando…</p>';
+  if (x.err) return top + `<div class="aviso rojo">${esc(x.err)}</div><button class="btn l" data-asisact>Intentar de nuevo</button>`;
+  const r = x.r;
+  if (f.tab === 'hoy') {
+    if (r.hasta !== hoy()) return top + '<div class="aviso azul">Para ver quién está adentro ahora, toque «Hoy».<span class="espacio"></span><button class="btn chico" data-asisrango="hoy">Hoy</button></div>';
+    const h = r.hoy; const t = (ls, cols, fila) => ls.length ? `<div class="tabla"><table><thead><tr>${cols.map(c => `<th>${c}</th>`).join('')}</tr></thead><tbody>${ls.map(fila).join('')}</tbody></table></div>` : '<p class="nota">Nadie.</p>';
+    return top + `<div class="cifras"><div class="cifra"><b>${h.presentes.length}</b><span>Adentro ahora</span></div><div class="cifra"><b>${h.salieron.length}</b><span>Ya salieron</span></div><div class="cifra"><b>${h.sinLlegar.length}</b><span>No han llegado</span></div><div class="cifra"><b>${h.retardos.length}</b><span>Llegaron tarde</span></div></div>
+    <div class="grid2"><div class="caja"><h2 style="font-size:20px;color:var(--azul);margin-bottom:8px">Adentro ahora</h2>${t(h.presentes, ['Persona', 'Tipo', 'Entró'], p => `<tr><td>${esc(p.nombre)}</td><td>${esc(p.rol)}</td><td>${p.entrada}${p.retardo ? ' <span class="pill p-esp">' + p.retardo + ' min tarde</span>' : ''}</td></tr>`)}</div>
+    <div class="caja"><h2 style="font-size:20px;color:var(--azul);margin-bottom:8px">No han llegado</h2>${t(h.sinLlegar, ['Persona', 'Tipo', 'Debía entrar'], p => `<tr><td>${esc(p.nombre)}</td><td>${esc(p.rol)}</td><td>${p.hora}</td></tr>`)}</div></div>
+    <div class="caja"><h2 style="font-size:20px;color:var(--azul);margin-bottom:8px">Ya salieron</h2>${t(h.salieron, ['Persona', 'Tipo', 'Entró', 'Salió'], p => `<tr><td>${esc(p.nombre)}</td><td>${esc(p.rol)}</td><td>${p.entrada}</td><td>${p.salida || '—'}</td></tr>`)}</div>`;
+  }
+  if (f.tab === 'resumen') return top + `<div class="tabla"><table><thead><tr><th>Persona</th><th>Tipo</th><th>Días que asistió</th><th>Retardos</th><th>Faltas</th><th>Horas</th><th>Sin salida</th></tr></thead><tbody>${r.resumen.map(p => `<tr><td>${esc(p.nombre)}</td><td>${esc(p.rol)}</td><td class="num">${p.asistidos}</td><td class="num">${p.retardos}${p.minRetardo ? ' (' + p.minRetardo + ' min)' : ''}</td><td class="num">${p.faltas ? '<span class="pill p-no">' + p.faltas + '</span>' : '0'}</td><td class="num">${horasTxt(p.minutos)}</td><td class="num">${p.sinSalida}</td></tr>`).join('') || '<tr><td colspan="7" class="nota">No hay personas con carné autorizado.</td></tr>'}</tbody></table></div><p class="nota">Del ${fmtF(r.desde)} al ${fmtF(r.hasta)}. Las faltas cuentan solo los días de trabajo del horario y desde que se autorizó el carné. «Sin salida»: entró y no se leyó su salida, así que esas horas no se suman.</p>`;
+  const MAX = 1500;
+  return top + `<div class="tabla"><table><thead><tr><th>Fecha</th><th>Persona</th><th>Tipo</th><th>Entrada</th><th>Salida</th><th>Horas</th><th>Estado</th></tr></thead><tbody>${r.detalle.slice(0, MAX).map(d => `<tr><td style="white-space:nowrap">${fmtF(d.fecha)}</td><td>${esc(d.nombre)}</td><td>${esc(d.rol)}</td><td>${d.entrada || '—'}</td><td>${d.salida || '—'}</td><td class="num">${horasTxt(d.minutos)}</td><td><span class="pill ${/Falta/.test(d.estado) ? 'p-no' : /Retardo|sin|Sin/.test(d.estado) ? 'p-esp' : 'p-ok'}">${esc(d.estado)}${d.retardo ? ' · ' + d.retardo + ' min' : ''}</span></td></tr>`).join('') || '<tr><td colspan="7" class="nota">No hay registros en estas fechas.</td></tr>'}</tbody></table></div>${r.detalle.length > MAX ? `<p class="nota">Se muestran ${MAX} de ${r.detalle.length} filas: descargue el archivo para verlas todas.</p>` : ''}`;
+};
+function csvAsis() {
+  const e = emp(PERFIL.empresa); const f = ASIS_F; const x = datosAsis(e, f); if (!x || !x.r) return toast('Espere a que termine de calcular');
+  const r = x.r; const cel = v => { let t = String(v ?? ''); if (/^[=+\-@]/.test(t)) t = "'" + t; return /[";\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t; };
+  let filas;
+  if (f.tab === 'resumen') filas = [['Persona', 'Tipo', 'Días que asistió', 'Retardos', 'Minutos de retardo', 'Faltas', 'Horas', 'Días sin salida']].concat(r.resumen.map(p => [p.nombre, p.rol, p.asistidos, p.retardos, p.minRetardo, p.faltas, (p.minutos / 60).toFixed(2).replace('.', ','), p.sinSalida]));
+  else filas = [['Fecha', 'Persona', 'Tipo', 'Entrada', 'Salida', 'Horas', 'Minutos de retardo', 'Estado']].concat((f.tab === 'hoy' ? r.detalle.filter(d => d.fecha === hoy()) : r.detalle).map(d => [d.fecha, d.nombre, d.rol, d.entrada, d.salida, (d.minutos / 60).toFixed(2).replace('.', ','), d.retardo, d.estado]));
+  const cab0 = [[e.largo || e.nombre], ['Control de asistencia ' + (f.tab === 'resumen' ? '(resumen por persona)' : '(detalle por día)') + ' del ' + r.desde + ' al ' + r.hasta + (f.rol ? ' · ' + f.rol : '')], ['Horario: ' + r.cfg.entrada + ' a ' + r.cfg.salida + ' · tolerancia ' + r.cfg.tolerancia + ' min'], []];
+  const pie = [[], ['Generado por Identidad IA, una aplicación de SkyNet Genesis · contacto@skynetgenesis.com · WhatsApp 304 437 5758']];
+  const txt = '﻿' + cab0.concat(filas, pie).map(l => l.map(cel).join(';')).join('\r\n');
+  bajarArchivo('asistencia-' + f.tab + '-' + r.desde + (r.hasta !== r.desde ? '-al-' + r.hasta : '') + '.csv', txt, 'text/csv;charset=utf-8');
+}
+/* Descarga: dentro de Claude pasa por el permiso de descargas; en identidad-ia.skynetgenesis.com es una descarga normal */
+async function bajarArchivo(nombre, txt, tipo) {
+  let dl = null; try { if (window.claude && typeof window.claude.use === 'function') dl = await window.claude.use('downloads'); } catch (e) { dl = null; }
+  if (dl) { try { await dl.save({ filename: nombre, data: txt }); toast('Archivo listo: ábralo con Excel'); } catch (e) { if (e && e.code !== 'declined') toast('No se pudo descargar aquí. Use la versión publicada.'); } return; }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([txt], { type: tipo })); a.download = nombre; document.body.appendChild(a); a.click(); a.remove();
+  toast('Archivo descargado: ábralo con Excel');
+}
+function asisConfig() {
+  const e = emp(PERFIL.empresa); const cfg = asisCfg(e.asistencia); const roles = [...new Set(misPersonas().map(p => p.rol))].sort(); const c = estadoCuenta(e);
+  const puedeQuitar = !e.interna && !c.prueba && (e.asistencia || {}).activa;
+  ventana(`<h2>Horarios de asistencia</h2><div class="form"><label class="c" for="hE">Hora de entrada<input type="time" id="hE" value="${cfg.entrada}"></label><label class="c" for="hS">Hora de salida<input type="time" id="hS" value="${cfg.salida}"></label><label class="c" for="hT">Minutos de tolerancia<input type="number" id="hT" min="0" max="120" value="${cfg.tolerancia}"></label></div>
+  <fieldset style="border:1px solid var(--borde);border-radius:10px;padding:10px"><legend class="nota">Días de trabajo o de clase</legend><div class="fila">${DIAS_N.map(([d, n]) => `<label class="c" style="flex-direction:row;align-items:center;gap:6px"><input type="checkbox" data-hdia="${d}" ${cfg.dias.includes(d) ? 'checked' : ''}> ${n}</label>`).join('')}</div></fieldset>
+  ${roles.length > 1 ? `<details><summary>Horario distinto por tipo de persona (opcional)</summary><div class="tabla"><table><thead><tr><th>Tipo</th><th>Entrada</th><th>Salida</th></tr></thead><tbody>${roles.map((r, i) => `<tr><td>${esc(r)}</td><td><input type="time" data-hrol="${i}" data-k="entrada" value="${(cfg.porRol[r] || {}).entrada || ''}" aria-label="Entrada de ${esc(r)}"></td><td><input type="time" data-hrol="${i}" data-k="salida" value="${(cfg.porRol[r] || {}).salida || ''}" aria-label="Salida de ${esc(r)}"></td></tr>`).join('')}</tbody></table></div><p class="nota">Déjelo vacío para usar el horario general.</p></details>` : ''}
+  <div class="fila"><button class="btn v" id="hG">Guardar</button><button class="btn l" data-cerrar>Cancelar</button>${puedeQuitar ? '<span class="espacio"></span><button class="btn chico r" id="hQ">Desactivar el módulo</button>' : ''}</div>`, w => {
+    const leer = () => { const porRol = {}; w.querySelectorAll('[data-hrol]').forEach(i => { const r = roles[+i.dataset.hrol]; if (i.value) { porRol[r] = porRol[r] || {}; porRol[r][i.dataset.k] = i.value; } });
+      return { entrada: w.querySelector('#hE').value, salida: w.querySelector('#hS').value, tolerancia: w.querySelector('#hT').value, dias: [...w.querySelectorAll('[data-hdia]')].filter(i => i.checked).map(i => +i.dataset.hdia), porRol }; };
+    const guardarA = (datos, b, msg) => {
+      if (REAL()) return ocupado(b, async () => { await api('PUT', '/api/asistencia', datos); cerrar(); ASIS_R = null; await recargar(); toast(msg); });
+      e.asistencia = { ...e.asistencia, ...asisCfg({ ...e.asistencia, ...datos }), activa: 'activa' in datos ? datos.activa : !!(e.asistencia || {}).activa }; bit(msg); guardar(); cerrar(); pintar(); toast(msg);
+    };
+    w.querySelector('#hG').onclick = ev => { const d = leer(); if (!d.dias.length) return toast('Marque al menos un día'); if (d.salida <= d.entrada) return toast('La hora de salida debe ser después de la de entrada'); guardarA(d, ev.target, 'Horarios de asistencia guardados'); };
+    const q = w.querySelector('#hQ'); if (q) q.onclick = ev => guardarA({ activa: false }, ev.target, 'Control de asistencia desactivado: ya no se cobra desde el próximo pago');
+  });
+}
+
+V.diseno = () => {
+  const e = emp(PERFIL.empresa); const ej = misPersonas()[0];
+  return cab('Diseño del carné', 'Colores, logo y texto del reverso de su institución') + `
+  <div class="grid2"><div class="caja" style="display:flex;flex-direction:column;gap:12px">
+    <div class="form"><label class="c" for="dC1">Color principal<input type="color" id="dC1" value="${e.c1}"></label><label class="c" for="dC2">Color secundario<input type="color" id="dC2" value="${e.c2}"></label></div>
+    <label class="c" for="dLogo">Logo (PNG o JPG)<input type="file" id="dLogo" accept="image/png,image/jpeg"></label>
+    <label class="c" for="dLargo">Nombre completo de la institución<input type="text" id="dLargo" value="${esc(e.largo)}"></label>
+    <label class="c" for="dRev">Texto del reverso<textarea id="dRev">${esc(e.reverso)}</textarea></label>
+    <div class="form"><label class="c" for="dFirma">Quién firma<input type="text" id="dFirma" value="${esc(e.firma)}"></label><label class="c" for="dVig">Vigencia (meses)<input type="number" id="dVig" min="1" max="60" value="${e.vigencia}"></label></div>
+    <div class="form"><label class="c" for="dPago">¿El carné se cobra?<select id="dPago"><option value="0" ${!e.requierePago ? 'selected' : ''}>No se cobra</option><option value="1" ${e.requierePago ? 'selected' : ''}>Sí se cobra</option></select></label><label class="c" for="dValor">Valor del carné<input type="number" id="dValor" min="0" step="1000" value="${e.valor}"></label></div>
+    <label class="c" for="dAldia">¿Mostrar NO VIGENTE si la persona no está al día?<select id="dAldia"><option value="1" ${e.alDiaDesdeApp ? 'selected' : ''}>Sí, según los pagos de ${esc(e.origen === 'manual' ? 'la institución' : e.origen)}</option><option value="0" ${!e.alDiaDesdeApp ? 'selected' : ''}>No</option></select></label>
+    <label class="c" for="dVerif">Lo que muestra el QR a cualquier persona<select id="dVerif"><option value="completa" ${e.verif !== 'reducida' ? 'selected' : ''}>Completo: foto, nombre, tipo y detalle</option><option value="reducida" ${e.verif === 'reducida' ? 'selected' : ''}>Reducido: nombre corto y vigencia, sin foto (recomendado para menores de edad y pacientes)</option></select></label>
+    <button class="btn v" data-gdiseno>Guardar diseño</button>
+  </div><div style="display:flex;flex-direction:column;gap:14px">${ej ? carneFrente(ej) + carneReverso(ej) : ''}</div></div>`;
+};
+
+V.conexion = () => {
+  const e = emp(PERFIL.empresa);
+  const apps = { 'AcademIA': 'estudiantes, docentes, programa, semestre, foto y si está al día con la cartera', 'Colegio-IA': 'alumnos, docentes, grado, acudiente y si la familia está al día', 'Clínica-IA': 'pacientes que aceptaron el carné: nombre, documento y foto (nunca diagnósticos, programas ni ningún dato de salud)', 'manual': 'un archivo de Excel (CSV) con nombre, documento, tipo y detalle' };
+  return cab('Conexión con su app', 'Los datos llegan solos: no hay que volver a digitar a nadie') + `
+  <div class="caja" style="display:flex;flex-direction:column;gap:12px">
+    <div class="fila"><span class="pill ${e.origen === 'manual' ? 'p-esp' : 'p-ok'}">${e.origen === 'manual' ? 'Sin conexión' : 'Conectado con ' + esc(e.origen)}</span><span class="nota">Trae: ${esc(apps[e.origen])}.</span></div>
+    <label class="c" for="cOrigen">Origen de los datos<select id="cOrigen">${Object.keys(apps).map(k => `<option value="${k}" ${e.origen === k ? 'selected' : ''}>${k === 'manual' ? 'Excel o a mano' : k}</option>`).join('')}</select></label>
+    <p class="nota">La conexión es de solo lectura: ${esc(e.origen === 'manual' ? 'la app' : e.origen)} entrega una llave para su institución; Identidad IA la guarda cifrada y solo lee lo necesario para el carné. Las altas, retiros y pagos se actualizan cada noche y con el botón «Sincronizar ahora».</p>
+    <div class="fila"><button class="btn" data-gcon>Guardar</button><button class="btn l" data-sync ${e.origen === 'manual' ? 'disabled' : ''}>⟳ Sincronizar ahora</button></div>
+  </div>`;
+};
+
+V.pago = () => {
+  const e = emp(PERFIL.empresa); const c = estadoCuenta(e);
+  if (e.interna) return cab('Mi plan', 'Institución interna de SkyNet Genesis') + `<div class="aviso verde"><b>Sin cobro.</b> ${esc(e.nombre)} es una empresa interna: tiene Identidad IA activa sin límite y sin pagos.</div>`;
+  return avisoCobro(e) + cab('Mi plan', `${planDe(e).nombre} · ${activosDe(e)} carnés activos · ${dispTxt(e)} carnés disponibles para hacer`) + `<div class="caja fila"><span class="pill ${c.clase}">${c.txt}</span><span>Pagado hasta: <b>${e.pagadoHasta ? fmtF(e.pagadoHasta) : 'aún no ha pagado'}</b></span>${e.pruebaHasta && !e.pagadoHasta ? `<span>Prueba gratis hasta: <b>${fmtF(e.pruebaHasta)}</b></span>` : ''}</div>
+  <h2 class="sub">Arme su plan</h2>${armePlanHTML(e)}<p class="nota">Todo va en un solo pago, con todos los medios (tarjeta débito o crédito, PSE, Nequi, llave Bre-B). El servicio se activa cuando el pago queda confirmado.</p>`;
+};
+function planPorCantidad(n) { return PLANES.find(p => n <= p.max) || PLANES[PLANES.length - 1]; }
+function leerArme(e) {
+  if (!$('#mCant')) return { n: e ? Math.max(1, activosDe(e), e.cantidad || 0) : 100, nu: e ? 0 : 100, asis: !!(e && e.asistencia && e.asistencia.activa && !e.interna) };
+  return { n: Math.max(1, parseInt($('#mCant').value, 10) || 1), nu: Math.max(0, parseInt($('#mNuevos').value, 10) || 0), asis: !!($('#mAsis') && $('#mAsis').checked) };
+}
+function armePlanHTML(e) {
+  const a = leerArme(e);
+  return `<div class="caja arme" style="display:flex;flex-direction:column;gap:12px">
+    <div class="form"><label class="c" for="mCant">¿Cuántas personas tendrán carné activo?<input type="number" id="mCant" min="1" step="1" value="${a.n}"></label>
+    <label class="c" for="mNuevos">Carnés por hacer ahora (${peso(PRECIO_CARNE)} cada uno)<input type="number" id="mNuevos" min="0" step="1" value="${a.nu}"></label></div>
+    <label class="c" for="mAsis" style="flex-direction:row;align-items:center;gap:8px"><input type="checkbox" id="mAsis" ${a.asis ? 'checked' : ''}> Incluir control de acceso y asistencia (entradas, salidas, retardos, faltas e informes para Excel)</label>
+    <div id="mRes">${resumenPlanHTML(e)}</div></div>`;
+}
+function resumenPlanHTML(e) {
+  const { n, nu, asis } = leerArme(e);
+  const p = planPorCantidad(n); const meses = 1;
+  const mens = p.precio; const vAsis = asis ? ASIS[p.id] : 0;
+  const total = nu * PRECIO_CARNE + mens + vAsis;
+  const hasta = phTrasPago(e || { pruebaHasta: sumDias(hoy(), 14) }, meses);
+  return `<div class="tabla"><table><tbody>
+    <tr><td>Plan <b>${p.nombre}</b> · comprobación del QR (primer mes)</td><td class="num">${peso(mens)}</td></tr>
+    ${asis ? `<tr><td>Control de acceso y asistencia (primer mes)</td><td class="num">${peso(vAsis)}</td></tr>` : ''}
+    <tr><td>${nu} carnés por hacer × ${peso(PRECIO_CARNE)}</td><td class="num">${peso(nu * PRECIO_CARNE)}</td></tr>
+    <tr><td><b>Total en un solo pago</b></td><td class="num"><b>${peso(total)}</b></td></tr></tbody></table></div>
+    <p class="nota">${e ? 'Con este pago queda al día hasta el <b>' + fmtF(hasta) + '</b>.' : 'Si paga al terminar la prueba, queda al día hasta el <b>' + fmtF(hasta) + '</b> (el resto del primer mes no se cobra).'} Después paga solo la mensualidad de ${peso(p.precio + vAsis)}${asis ? ' (plan + asistencia)' : ''} y ${peso(PRECIO_CARNE)} por cada carné nuevo. Carnés impresos en tarjeta plástica: ${peso(PRECIO_IMPRESO)} cada uno, aparte.</p>
+    ${e ? `<button class="btn v" data-pagarplan="${p.id}" data-meses="${meses}" data-nuevos="${nu}" data-asis="${asis ? 1 : 0}" data-total="${total}">Pagar ${peso(total)}</button>` : `<div class="fila"><button class="btn v" data-pub="registro">¡Quiero Identidad IA ya para mi institución!</button><span class="nota">Primero 15 días gratis, sin tarjeta.</span></div>`}`;
+}
+V.cerrada = e => {
+  const c = estadoCuenta(e);
+  return cab('Acceso cerrado', esc(e.nombre)) + `<div class="caja" style="display:flex;flex-direction:column;gap:12px"><p style="margin:0">${c.finPrueba ? 'Terminaron los 15 días de prueba gratis.' : 'No se recibió el pago de la mensualidad y el acceso se cerró el día 5.'} Mientras tanto, los carnés de su institución aparecen <b>NO VIGENTE</b> al escanear el QR. No hay multas: al pagar, todo vuelve a funcionar de inmediato y no se cobran los meses que estuvo cerrado.</p>${PERFIL.tipo === 'admin' ? `<div class="fila"><button class="btn v" data-ir="pago">Arme su plan y pague</button><a class="btn wa" href="${WA}" target="_blank" rel="noopener">WhatsApp soporte</a></div>` : '<p class="nota">Avísele al administrador de su institución para que haga el pago.</p>'}</div>`;
+};
+
+V.micarne = () => {
+  const p = D.personas.find(x => x.empresa === 'e-poli' && estadoCarne(x).ok) || D.personas[0];
+  return `<div class="verif">${cab('Mi carné', esc(emp(p.empresa).nombre))}<p class="nota">Esto es lo que ve ${esc(p.nombre.split(' ')[0])} al abrir el enlace de su carné. Puede agregarlo a la pantalla de inicio del celular para tenerlo siempre a mano.</p>${carneFrente(p)}${carneReverso(p)}<div class="fila"><button class="btn l" data-verif="${p.token}">Ver lo que muestra el QR</button></div></div>`;
+};
+
+V.verificar = (tk) => {
+  const p = D.personas.find(x => x.token === tk);
+  if (!p) return `<div class="verif"><div class="estado no"><b>NO ENCONTRADO</b>Este código no corresponde a ningún carné.</div><button class="btn l" data-volver>Volver</button></div>`;
+  const e = emp(p.empresa); const st = estadoCarne(p);
+  return `<div class="verif"><p class="nota" style="text-align:center">${URL_VERIF}${esc(p.token)}</p>
+    <div class="estado ${st.ok ? 'ok' : 'no'}"><b>${st.ok ? 'VIGENTE' : 'NO VIGENTE'}</b>${st.ok ? 'Carné válido de ' + esc(e.nombre) : esc(st.motivo)}</div>
+    ${e.verif === 'reducida' ? `<div class="caja ficha"><div><h2 style="font-size:24px">${esc(nomCorto(p.nombre))}</h2><div>${esc(p.rol)}</div><div class="nota">${esc(e.largo || e.nombre)}</div><div class="nota">Vence: ${fmtF(p.vence)}</div><div class="nota">Esta institución protege más los datos: la verificación pública no muestra foto ni detalles.</div></div></div>` : `<div class="caja ficha"><img src="${imgOk(p.foto) ? p.foto : avatar(p.nombre, e.c1)}" alt="Foto de ${esc(p.nombre)}"><div><h2 style="font-size:24px">${esc(p.nombre)}</h2><div>${esc(p.rol)} · ${esc(p.detalle)}</div><div class="nota">${esc(e.largo || e.nombre)}</div><div class="nota">Vence: ${fmtF(p.vence)}</div></div></div>`}
+    <p class="nota">Por su seguridad, la verificación nunca muestra el número de documento. Consultado ${fmtH(Date.now())}.</p>
+    <p class="nota">Verificación de Identidad IA · SkyNet Genesis · contacto@skynetgenesis.com</p>
+    <button class="btn l" data-volver>Volver</button></div>`;
+};
+
+/* ================= portada, demostración, ingreso y registro ================= */
+let SESION = null, PUB = 'portada', REC_CORREO = '', CLAVE_PARA = '';
+const bitQ = (quien, que) => { D.bitacora.unshift({ t: Date.now(), quien, que }); D.bitacora = D.bitacora.slice(0, 300); };
+const campoClave = (id, etq, ac) => `<label class="c" for="${id}">${etq}<span class="clave-caja"><input type="password" id="${id}" autocomplete="${ac}"><button type="button" class="ojo" data-ojo="${id}">Mostrar</button></span></label>`;
+const FOTOS = {
+  hero: 'Estudiante en la entrada de su institución mostrando el carné en el celular',
+  porteria: 'Vigilante en la portería escaneando el QR de un carné con el celular',
+  impresion: 'Persona recibiendo su carné impreso en tarjeta plástica',
+  equipo: 'Secretaria de una institución revisando la lista de carnés en el computador'
+};
+const FOTO_URL = { hero: 'photo-1758270704689-2850704b7338', porteria: 'photo-1485230405346-71acb9518d9c', equipo: 'photo-1713946598544-c3d106930f72' };
+const fotoSec = k => `<figure class="foto-sec">${FOTO_URL[k] ? `<img src="https://images.unsplash.com/${FOTO_URL[k]}?w=900&q=70&auto=format&fit=crop" alt="${FOTOS[k]}" loading="lazy" onerror="this.remove()">` : ''}<figcaption>${FOTOS[k]}</figcaption></figure>`;
+V.portada = () => {
+  const ej = D.personas.find(p => p.empresa === 'e-poli' && estadoCarne(p).ok) || D.personas[0];
+  return `<section class="hero">
+    <div><span class="pill p-ok">15 días gratis · sin tarjeta</span>
+      <h1>Carnés con QR que cualquiera verifica en segundos</h1>
+      <p>Entregue a su gente el carné en el celular y, si quiere, en tarjeta plástica. Al escanear el QR se ve al instante si la persona sigue activa, sin mostrar nunca su número de documento.</p>
+      <div class="fila"><button class="btn v grande" data-pub="registro">¡Quiero Identidad IA ya para mi institución!</button><button class="btn l" data-pub="demo">Probar la demostración</button></div>
+      <p class="nota" style="margin-top:10px">¿Dudas? <a href="${WA}" target="_blank" rel="noopener">Hablar con un asesor</a></p></div>
+    <div class="lado">${carneFrente(ej)}${fotoSec('hero')}</div>
+  </section>
+  <section class="sec"><h2>¿Le pasa esto con los carnés?</h2><div class="tarjetas">
+    <div class="tarjeta"><span class="ic">🪪</span><b>Se copian y se prestan</b><span class="nota">Un carné de papel o una foto en el celular se falsifica en minutos.</span></div>
+    <div class="tarjeta"><span class="ic">❓</span><b>Nadie sabe si sigue activo</b><span class="nota">La persona se retiró o dejó de pagar, y el carné sigue abriendo puertas.</span></div>
+    <div class="tarjeta"><span class="ic">⏳</span><b>Imprimir cuesta y demora</b><span class="nota">Cada año hay que volver a tomar fotos, diseñar e imprimir todo.</span></div>
+  </div></section>
+  <section class="sec"><h2>Así funciona</h2><div class="dos"><div class="tarjetas" style="grid-template-columns:1fr">
+    <div class="tarjeta"><span class="paso-n">1</span><b>Cargue a su gente</b><span class="nota">Desde un Excel o, si ya usa AcademIA, Colegio-IA o Clínica-IA, los datos llegan solos.</span></div>
+    <div class="tarjeta"><span class="paso-n">2</span><b>Autorice y entregue</b><span class="nota">Cada persona recibe su carné en el celular. Si quiere, lo imprime en tarjeta plástica o nos lo pide impreso.</span></div>
+    <div class="tarjeta"><span class="paso-n">3</span><b>Verifique en la puerta</b><span class="nota">Cualquier celular escanea el QR: VIGENTE o NO VIGENTE, con foto y nombre. Cada entrada queda registrada.</span></div>
+  </div>${fotoSec('porteria')}</div></section>
+  <section class="sec"><h2>Lo que nos hace diferentes</h2><div class="tarjetas">
+    <div class="tarjeta"><b>NO VIGENTE automático</b><span class="nota">Si la persona no está al día o se retiró, el carné deja de valer solo, al instante.</span></div>
+    <div class="tarjeta"><b>Nunca muestra el documento</b><span class="nota">El QR no revela la cédula. Para menores de edad y pacientes hay un modo reducido, sin foto.</span></div>
+    <div class="tarjeta"><b>Portería con cualquier celular</b><span class="nota">Sin lectores costosos: registra entradas y salidas desde el celular del vigilante, o con un lector QR de mesa.</span></div>
+    <div class="tarjeta"><b>Control de asistencia</b><span class="nota">Retardos, faltas, horas y quién está adentro ahora. Informes listos para Excel: adiós a la planilla a mano.</span></div>
+    <div class="tarjeta"><b>Impresos a todo el país</b><span class="nota">Pídalos impresos por las dos caras a ${peso(PRECIO_IMPRESO)} cada uno y se los enviamos.</span></div>
+    <div class="tarjeta"><b>Usuarios ilimitados</b><span class="nota">Administradores y porteros sin costo por usuario: paga por carnés activos.</span></div>
+  </div></section>
+  <section class="sec"><h2>Arme su plan</h2>${armePlanHTML(null)}</section>
+  <section class="sec"><h2>Cómo empezar</h2><div class="dos">${fotoSec('equipo')}<div class="tarjetas" style="grid-template-columns:1fr">
+    <div class="tarjeta"><b>1. Cree su cuenta gratis</b><span class="nota">En dos minutos, sin tarjeta. Tiene 15 días y hasta 10 carnés de prueba.</span></div>
+    <div class="tarjeta"><b>2. Arme su plan y pague</b><span class="nota">Un solo pago con tarjeta débito o crédito, PSE, Nequi o llave Bre-B. El resto del primer mes no se cobra.</span></div>
+    <div class="tarjeta"><b>3. Siga pagando mes a mes</b><span class="nota">Sin permanencia: si deja de pagar, el servicio se cierra el día 5 y ya, sin multas.</span></div>
+  </div></div></section>
+  <section class="sec"><h2>Garantías</h2><div class="tarjetas">
+    <div class="tarjeta"><b>Sin contratos ni multas</b><span class="nota">Usted decide cada mes si sigue. Al volver, paga desde ese mes, sin acumular deuda.</span></div>
+    <div class="tarjeta"><b>Sus datos son suyos</b><span class="nota">Cumplimos la Ley 1581 de 2012: descárguelos cuando quiera y nunca se entregan a terceros.</span></div>
+  </div></section>
+  <section class="sec"><h2>Preguntas frecuentes</h2>
+    <details class="faq"><summary>¿El QR muestra la cédula de la persona?</summary><p>No. Muestra foto, nombre, tipo y vigencia. Su institución puede escoger el modo reducido: solo nombre corto y vigencia, sin foto.</p></details>
+    <details class="faq"><summary>¿Qué pasa si una persona se retira o deja de pagar?</summary><p>El carné pasa a NO VIGENTE al instante: lo suspende la institución o llega solo desde su app (AcademIA, Colegio-IA, Clínica-IA).</p></details>
+    <details class="faq"><summary>¿Puedo imprimirlos en tarjeta plástica?</summary><p>Sí. La app le entrega el diseño listo para imprimir por las dos caras, o nos los pide impresos a ${peso(PRECIO_IMPRESO)} cada uno con envío a todo el país.</p></details>
+    <details class="faq"><summary>¿Necesito comprar un lector para la portería?</summary><p>No. Basta un celular con cámara e internet. Si prefiere, funciona también con un lector QR de mesa (USB) conectado al computador de la portería.</p></details>
+    <details class="faq"><summary>¿Sirve para controlar la asistencia de empleados o estudiantes?</summary><p>Sí, con el módulo de control de acceso y asistencia (desde ${peso(ASIS.p100)} al mes adicionales): usted pone el horario y la app le dice quién llegó tarde, quién faltó y cuántas horas estuvo cada uno, con informes que se descargan para Excel. No necesita tener Colegio-IA ni ninguna otra app nuestra.</p></details>
+  </section>
+  <section class="final"><h2>Empiece hoy: 15 días gratis</h2><p style="margin:0">Cree su cuenta en dos minutos y entregue los primeros carnés esta misma semana.</p><button class="btn v grande" data-pub="registro">¡Quiero Identidad IA ya para mi institución!</button></section>
+  <div class="barra-fija"><span><b>Desde ${peso(PLANES[0].precio)}</b> <span class="nota">al mes</span></span><button class="btn v" data-pub="registro">¡La quiero!</button></div>`;
+};
+const DESC_PERFIL = { super: 'Ve todas las instituciones, los cobros, las cuentas y los pedidos de impresión.', 'adm-poli': 'Institución interna conectada con AcademIA: el carné sale NO VIGENTE si el estudiante no está al día.', 'adm-anglo': 'Colegio con verificación reducida para proteger a los menores de edad.', 'adm-reina': 'IPS: carnés de pacientes sin ningún dato de salud.', 'adm-gym': 'Cliente que ya paga: carnés de afiliados, su plan y pedidos impresos.', 'adm-conj': 'Cliente en prueba gratis de 15 días.', 'port-poli': 'El celular de la portería: escanea carnés y registra entradas.', pers: 'Lo que ve una persona al abrir su carné.' };
+V.demo = () => cab('Probar la demostración', 'Escoja con qué perfil quiere entrar. Los datos son de ejemplo.') + `<div class="tarjetas">${PERFILES.map(p => `<div class="tarjeta"><b>${esc(p.nombre)}</b><span class="nota">${DESC_PERFIL[p.id] || ''}</span><button class="btn v chico" data-demo="${p.id}" style="align-self:flex-start">Entrar así</button></div>`).join('')}</div><div class="fila"><button class="btn l" data-pub="portada">← Volver</button><span class="espacio"></span><button class="btn v" data-pub="registro">¡Quiero Identidad IA ya para mi institución!</button></div>`;
+V.ingresar = () => `<div class="ingreso" style="display:flex;flex-direction:column;gap:14px">${cab('Ingresar', 'Administradores, portería y Superadministrador')}<div class="caja" style="display:flex;flex-direction:column;gap:12px">
+  <label class="c" for="lgCor">Correo<input type="email" id="lgCor" autocomplete="username" inputmode="email"></label>
+  ${campoClave('lgCla', 'Contraseña', 'current-password')}
+  <button class="btn v" data-ingresar>Ingresar</button>
+  <button class="btn l chico" data-pub="recuperar" style="align-self:flex-start">¿Olvidó su contraseña o es su primera vez?</button>
+  <p class="nota" style="margin:0">${PROD ? '' : 'Versión de prueba: las cuentas de ejemplo que ya tienen contraseña entran con <b>Identidad2026</b>. '}Después de 5 intentos fallidos, la cuenta se bloquea 15 minutos.</p></div>
+  <button class="btn l" data-pub="portada" style="align-self:flex-start">← Volver al inicio</button></div>`;
+V.recuperar = () => `<div class="ingreso" style="display:flex;flex-direction:column;gap:14px">${cab('Crear o recuperar la contraseña', 'Le enviamos un enlace a su correo')}<div class="caja" style="display:flex;flex-direction:column;gap:12px">
+  <label class="c" for="rcCor">Correo<input type="email" id="rcCor" autocomplete="username" inputmode="email" value="${esc(REC_CORREO)}"></label>
+  <button class="btn v" data-recuperar>Enviarme el enlace</button></div>
+  <button class="btn l" data-pub="ingresar" style="align-self:flex-start">← Volver a ingresar</button></div>`;
+V.enviado = () => `<div class="ingreso" style="display:flex;flex-direction:column;gap:14px">${cab('Revise su correo', '')}<div class="caja" style="display:flex;flex-direction:column;gap:12px">
+  <p style="margin:0">Si <b>${esc(mask(REC_CORREO))}</b> está registrado, le enviamos un enlace para crear o cambiar su contraseña. El enlace vence en 1 hora y sirve una sola vez.</p>
+  ${PROD ? '<p class="nota" style="margin:0">Revise también la carpeta de spam o correo no deseado.</p>' : CLAVE_PARA ? '<button class="btn v" data-abrirenlace>Abrir el enlace del correo (simulado en la versión de prueba)</button>' : '<p class="nota" style="margin:0">Versión de prueba: ese correo no está registrado, así que no se envía nada. En la versión publicada el mensaje es el mismo, para no revelar qué correos existen.</p>'}</div>
+  <button class="btn l" data-pub="ingresar" style="align-self:flex-start">← Volver a ingresar</button></div>`;
+V.clave = () => `<div class="ingreso" style="display:flex;flex-direction:column;gap:14px">${cab('Cree su contraseña', !PROD && CLAVE_PARA ? esc(mask(CLAVE_PARA)) : '')}<div class="caja" style="display:flex;flex-direction:column;gap:12px">
+  ${(PROD ? CLAVE_TOKEN : CLAVE_PARA) ? campoClave('nc1', 'Contraseña nueva (mínimo 10 caracteres)', 'new-password') + campoClave('nc2', 'Escríbala otra vez', 'new-password') + '<button class="btn v" data-gclave>Guardar y entrar</button>' : '<p style="margin:0">Este enlace ya no sirve: se usó o venció. Pida uno nuevo.</p><button class="btn v" data-pub="recuperar">Pedir un enlace nuevo</button>'}</div></div>`;
+const TIPOS = ['Institución educativa', 'Colegio', 'IPS', 'Empresa', 'Gimnasio', 'Conjunto residencial', 'Iglesia', 'Evento'];
+V.registro = () => cab('Cree la cuenta de su institución', '15 días gratis, sin tarjeta. Después arma su plan y paga solo si le sirve.') + `<div class="caja" style="display:flex;flex-direction:column;gap:14px">
+  <div class="form">
+    <label class="c" for="rNom">Nombre de la institución o empresa<input type="text" id="rNom" autocomplete="organization"></label>
+    <label class="c" for="rTipo">Tipo<select id="rTipo">${TIPOS.map(t => `<option>${t}</option>`).join('')}</select></label>
+    <label class="c" for="rNit">NIT (opcional)<input type="text" id="rNit" inputmode="numeric"></label>
+    <label class="c" for="rCiu">Ciudad<input type="text" id="rCiu" autocomplete="address-level2"></label>
+    <label class="c" for="rAdm">Nombre de quien administra<input type="text" id="rAdm" autocomplete="name"></label>
+    <label class="c" for="rCor">Correo de quien administra<input type="email" id="rCor" autocomplete="email" inputmode="email"></label>
+    <label class="c" for="rCel">Celular<input type="text" id="rCel" inputmode="tel" autocomplete="tel"></label>
+    <label class="c" for="rCant">¿Cuántas personas tendrán carné, más o menos?<input type="number" id="rCant" min="1" value="100"></label>
+  </div>
+  <label class="c chk" for="rAcepto"><input type="checkbox" id="rAcepto"><span>Acepto los términos de uso y el encargo de tratamiento de datos personales (Ley 1581 de 2012). <button type="button" class="enlace" data-terminos>Leerlos</button></span></label>
+  <div class="aviso azul"><div><b>¿Qué pasa después?</b><ol style="margin:6px 0 0;padding-left:18px"><li>Le llega un correo para crear su contraseña.</li><li>Usa todo gratis por 15 días, con hasta 10 carnés de prueba.</li><li>Cuando quiera, arma su plan y paga en un solo pago.</li><li>Después solo paga la mensualidad y los carnés nuevos.</li></ol></div></div>
+  <div class="fila"><button class="btn v" data-registrar>Crear la cuenta gratis</button><button class="btn l" data-pub="portada">← Volver</button></div></div>`;
+V.registrado = () => `<div class="ingreso" style="display:flex;flex-direction:column;gap:14px">${cab('¡Listo! Su cuenta quedó creada', '')}<div class="caja" style="display:flex;flex-direction:column;gap:12px">
+  <p style="margin:0">Le enviamos a <b>${esc(PROD ? REG_PARA : mask(CLAVE_PARA))}</b> un enlace para crear su contraseña. Vence en 1 hora y sirve una sola vez.</p>
+  <p class="nota" style="margin:0">Tiene 15 días gratis y hasta 10 carnés de prueba. Para seguir después, entre a «Mi plan», arme su plan y pague.</p>
+  ${PROD ? '<p class="nota" style="margin:0">Revise también la carpeta de spam o correo no deseado.</p>' : '<button class="btn v" data-abrirenlace>Abrir el enlace del correo (simulado en la versión de prueba)</button>'}</div></div>`;
+V.cuenta = () => SESION && SESION.demo ? cab('Mi cuenta', '') + '<div class="aviso azul">En la demostración no se cambian contraseñas. Cree su cuenta para tener la suya.</div>' : cab('Mi cuenta', esc(SESION.correo)) + `<div class="caja ingreso" style="display:flex;flex-direction:column;gap:12px;margin:0"><b>Cambiar contraseña</b>
+  ${campoClave('cc0', 'Contraseña actual', 'current-password')}${campoClave('cc1', 'Contraseña nueva (mínimo 10 caracteres)', 'new-password')}${campoClave('cc2', 'Escríbala otra vez', 'new-password')}
+  <button class="btn v" data-cambiarclave>Guardar contraseña</button></div><button class="btn l" data-salir style="align-self:flex-start">Cerrar sesión</button>`;
+function perfilDeCuenta(c) {
+  if (c.perfil === 'superadmin') return PERFILES[0];
+  const e = emp(c.empresa);
+  return { id: 'c-' + c.correo, nombre: c.nombre + ' · ' + (e ? e.nombre : ''), tipo: c.perfil === 'porteria' ? 'porteria' : 'admin', empresa: c.empresa };
+}
+function entrarComo(c) {
+  c.ultimo = Date.now(); SESION = { correo: c.correo }; PERFIL = perfilDeCuenta(c);
+  VISTA = MENU[PERFIL.tipo].find(x => x.length === 3)[0]; bitQ(c.correo, 'Ingresó'); guardar(); pintar(); window.scrollTo(0, 0);
+}
+function ingresar() {
+  if (PROD) return p_ingresar();
+  const correo = ($('#lgCor').value || '').trim().toLowerCase(), clave = $('#lgCla').value;
+  if (!correo || !clave) return toast('Escriba su correo y su contraseña');
+  const it = D.intentos[correo] || { n: 0, hasta: 0 };
+  if (it.hasta > Date.now()) return toast('Por seguridad, espere ' + Math.ceil((it.hasta - Date.now()) / 6e4) + ' minutos e intente de nuevo');
+  const c = D.cuentas.find(x => x.correo === correo);
+  if (!c || c.bloqueada || !c.clave || D.claves[correo] !== hashS(clave)) {
+    it.n++; if (it.n >= 5) { it.hasta = Date.now() + 15 * 6e4; it.n = 0; } D.intentos[correo] = it; guardar();
+    return toast(it.hasta > Date.now() ? 'Demasiados intentos: la cuenta queda bloqueada 15 minutos' : 'Correo o contraseña incorrectos. Si es su primera vez, use «¿Olvidó su contraseña o es su primera vez?»');
+  }
+  delete D.intentos[correo]; entrarComo(c);
+}
+function recuperar() {
+  if (PROD) return p_recuperar();
+  const c = ($('#rcCor').value || '').trim().toLowerCase();
+  if (!/^\S+@\S+\.\S+$/.test(c)) return toast('Escriba un correo válido');
+  REC_CORREO = c; CLAVE_PARA = D.cuentas.some(x => x.correo === c && !x.bloqueada) ? c : ''; PUB = 'enviado'; pintar();
+}
+function guardarClave() {
+  if (PROD) return p_guardarClave();
+  const a = $('#nc1').value, b2 = $('#nc2').value;
+  if (a.length < 10) return toast('La contraseña debe tener mínimo 10 caracteres');
+  if (a !== b2) return toast('Las dos contraseñas no coinciden');
+  const c = D.cuentas.find(x => x.correo === CLAVE_PARA); if (!c) return toast('El enlace ya no sirve. Pida uno nuevo');
+  D.claves[c.correo] = hashS(a); c.clave = true; CLAVE_PARA = ''; bitQ(c.correo, 'Creó o cambió su contraseña'); entrarComo(c); toast('Contraseña guardada. ¡Bienvenido!');
+}
+function cambiarClave() {
+  const c = D.cuentas.find(x => x.correo === SESION.correo);
+  if (!c || D.claves[c.correo] !== hashS($('#cc0').value)) return toast('La contraseña actual no es correcta');
+  const a = $('#cc1').value; if (a.length < 10) return toast('La contraseña nueva debe tener mínimo 10 caracteres');
+  if (a !== $('#cc2').value) return toast('Las dos contraseñas no coinciden');
+  D.claves[c.correo] = hashS(a); bitQ(c.correo, 'Cambió su contraseña'); guardar(); ['cc0', 'cc1', 'cc2'].forEach(i => { $('#' + i).value = ''; }); toast('Contraseña cambiada');
+}
+function registrar() {
+  if (PROD) return p_registrar();
+  const v = id => ($('#' + id).value || '').trim();
+  const nom = v('rNom'), tipo = v('rTipo'), nit = v('rNit').replace(/[^0-9-]/g, ''), ciu = v('rCiu'), adm = v('rAdm'), cor = v('rCor').toLowerCase(), cel = v('rCel').replace(/\D/g, ''), cant = Math.max(1, parseInt(v('rCant'), 10) || 1);
+  if (nom.length < 3) return toast('Escriba el nombre de la institución');
+  if (ciu.length < 3) return toast('Escriba la ciudad');
+  if (adm.length < 5) return toast('Escriba el nombre completo de quien administra');
+  if (!/^\S+@\S+\.\S+$/.test(cor)) return toast('Escriba un correo válido');
+  if (cel.length < 10) return toast('Escriba un celular de 10 dígitos');
+  if (!$('#rAcepto').checked) return toast('Para crear la cuenta debe aceptar los términos y el tratamiento de datos');
+  const norm = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  const llave = norm(nom) + '|' + norm(ciu);
+  if (D.cuentas.some(c => c.correo === cor) || D.empresas.some(e => norm(e.nombre) === norm(nom)) || D.registros.some(r => r.correo === cor || r.cel === cel || r.llave === llave || (nit && r.nit === nit))) return toast('Ya existe una cuenta o una prueba con esos datos. Ingrese con su correo o escríbanos por WhatsApp');
+  const id = uid('e');
+  D.empresas.push({ id, nombre: nom, largo: nom, nit, tipo, ciudad: ciu, c1: '#0B4F8A', c2: '#14A38B', interna: false, plan: planPorCantidad(cant).id, pagadoHasta: '', pruebaHasta: sumDias(hoy(), 14), origen: 'manual', vigencia: 12, requierePago: false, valor: 0, reverso: 'Documento de identificación personal e intransferible.', firma: 'Administración', alDiaDesdeApp: false, verif: /Colegio|IPS/.test(tipo) ? 'reducida' : 'completa', cupoCarnes: 0, usadosPrueba: 0, cantidad: cant });
+  D.cuentas.push({ correo: cor, nombre: adm, empresa: id, perfil: 'admin', clave: false, ultimo: 0, celular: cel });
+  D.registros.push({ correo: cor, cel, llave, nit, t: Date.now(), terminos: { version: '1', fecha: new Date().toISOString() } });
+  bitQ(cor, 'Creó la cuenta de ' + nom + ' (prueba de 15 días)'); guardar(); CLAVE_PARA = cor; PUB = 'registrado'; pintar(); window.scrollTo(0, 0);
+}
+function verTerminos() {
+  ventana(`<h2>Términos de uso (resumen)</h2><p>Identidad IA es un servicio de SkyNet Genesis. Su institución es la responsable de los datos de las personas a las que les da carné; SkyNet Genesis los trata solo por encargo suyo, para hacer y verificar los carnés (Ley 1581 de 2012).</p><ul><li>La verificación pública nunca muestra el número de documento.</li><li>No entregamos datos a terceros, salvo orden escrita de autoridad.</li><li>Prueba gratis de 15 días, una sola vez. Después, pago mes a mes por adelantado; si no paga, el servicio se cierra el día 5, sin multas.</li><li>Al terminar el servicio, sus datos quedan 90 días para descargarlos y luego se eliminan.</li></ul><p class="nota">En la versión publicada, el texto completo se descarga en PDF y la aceptación queda guardada con fecha.</p><div class="fila"><button class="btn v" data-cerrar>Entendido</button></div>`);
+}
+function salir(pub) { if (REAL()) return salirReal(); cerrar(); SESION = null; PERFIL = PERFILES[1]; VISTA = 'inicio'; PUB = pub || 'portada'; history.replaceState(null, '', location.pathname); pintar(); window.scrollTo(0, 0); }
+function pagarPlan(d) {
+  const e = emp(PERFIL.empresa); const meses = +d.meses || 1, nu = +d.nuevos || 0, total = +d.total || 0;
+  const hasta = phTrasPago(e, meses);
+  e.plan = d.pagarplan; e.pagadoHasta = hasta; e.cupoCarnes = (e.cupoCarnes || 0) + nu; e.ultimoPago = { t: Date.now(), valor: total, meses, carnes: nu };
+  if (d.asis === '1') e.asistencia = { ...(e.asistencia || ASIS_DEF), activa: true, hasta };
+  bit('Pagó ' + peso(total) + ' (simulado): al día hasta ' + hasta + (nu ? ' y ' + nu + ' carnés' : '')); guardar(); pintar();
+  toast('Pago aprobado (simulado en la versión de prueba). Queda al día hasta el ' + fmtF(hasta) + '. Carnés disponibles: ' + dispTxt(e));
+}
+function pintarBarra() {
+  const b = $('#barraDer');
+  if (!SESION) { b.innerHTML = `<button class="btn l chico" data-pub="ingresar">Ingresar</button><button class="btn v chico" data-pub="demo">Probar la demostración</button>`; return; }
+  if (SESION.demo) {
+    b.innerHTML = `<label for="selPerfil">Probar como</label><select id="selPerfil">${PERFILES.map(p => `<option value="${p.id}" ${p.id === PERFIL.id ? 'selected' : ''}>${esc(p.nombre)}</option>`).join('')}</select><button class="btn v chico" data-salir data-pub="registro">¡La quiero!</button><button class="btn l chico" data-salir>Salir</button>`;
+    const s = $('#selPerfil'); s.onchange = () => { PERFIL = PERFILES.find(p => p.id === s.value); VISTA = MENU[PERFIL.tipo].find(x => x.length === 3)[0]; history.replaceState(null, '', location.pathname); pintar(); };
+    return;
+  }
+  b.innerHTML = `<button class="btn l chico" data-ir="cuenta">👤 ${esc(PERFIL.nombre)}</button><button class="btn l chico" data-salir>Salir</button>`;
+}
+
+/* ================= ventanas ================= */
+function ventana(html, alAbrir) {
+  $('#capa').innerHTML = `<div class="velo" id="velo"><div class="ventana" role="dialog" aria-modal="true">${html}</div></div>`;
+  $('#velo').addEventListener('click', ev => { if (ev.target.id === 'velo' || ev.target.closest('[data-cerrar]')) cerrar(); });
+  alAbrir && alAbrir($('#velo .ventana'));
+}
+const cerrar = () => { $('#capa').innerHTML = ''; };
+
+const enlaceCarne = p => p.secreto ? 'https://identidad-ia.skynetgenesis.com/?c=' + p.secreto : 'https://' + URL_VERIF + p.token;
+function verCarne(id) {
+  const p = D.personas.find(x => x.id === id); const st = estadoCarne(p); const e = emp(p.empresa);
+  ventana(`<h2>${esc(p.nombre)}</h2><div class="fila">${pillEstado(p)}<span class="nota">Emitido: ${fmtF(p.emitido)} · Documento ${esc(p.documento)} (solo lo ve la institución)</span></div><div class="dos-caras">${carneFrente(p)}${carneReverso(p)}</div>
+  <div class="caja" style="padding:12px"><b>Enlace del carné</b><div class="fila"><code style="word-break:break-all;flex:1">${esc(enlaceCarne(p))}</code><button class="btn chico l" id="copiar">Copiar</button></div><p class="nota" style="margin:6px 0 0">Cópielo y envíeselo a la persona por WhatsApp o correo: con este enlace ve su carné en el celular. Es personal; el QR del carné es el que se escanea en la entrada.</p></div>
+  <div class="fila"><button class="btn l" data-verif="${p.token}">Ver lo que muestra el QR</button>${p.estado === 'activo' ? `<button class="btn r" data-suspender="${p.id}">Suspender</button>` : `<button class="btn v" data-reactivar="${p.id}">Reactivar</button>`}<button class="btn r" data-anular="${p.id}">Anular y dar uno nuevo</button><span class="espacio"></span><button class="btn l" data-cerrar>Cerrar</button></div>
+  ${!st.ok ? `<p class="nota">Motivo: ${esc(st.motivo)}.</p>` : ''}`, w => {
+    w.querySelector('#copiar').onclick = () => { const t = enlaceCarne(p); navigator.clipboard.writeText(t).then(() => toast('Enlace copiado')).catch(() => { const r = document.createRange(); r.selectNodeContents(w.querySelector('code')); getSelection().removeAllRanges(); getSelection().addRange(r); toast('Enlace seleccionado: cópielo con Ctrl+C'); }); };
+  });
+}
+
+function editarPersona(id) {
+  const e = emp(PERFIL.empresa);
+  const rolDef = { 'Colegio': 'Alumno', 'IPS': 'Paciente', 'Gimnasio': 'Afiliado', 'Conjunto residencial': 'Residente', 'Empresa': 'Empleado', 'Institución ETDH': 'Estudiante', 'Institución educativa': 'Estudiante' }[e.tipo] || 'Empleado';
+  const p = id ? D.personas.find(x => x.id === id) : { id: '', nombre: '', documento: '', rol: rolDef, detalle: '', rh: '', emergencia: '', foto: '', alDia: true, vence: sumMeses(hoy(), e.vigencia) };
+  let foto = p.foto;
+  ventana(`<h2>${id ? 'Editar persona' : 'Nueva persona'}</h2>
+  <div class="form"><label class="c" for="fN">Nombre completo<input type="text" id="fN" value="${esc(p.nombre)}"></label><label class="c" for="fD">Documento (solo lo ve la institución)<input type="text" id="fD" inputmode="numeric" value="${esc(p.documento)}"></label>
+  <label class="c" for="fR">Tipo<select id="fR">${ROLES.map(r => `<option ${r === p.rol ? 'selected' : ''}>${r}</option>`).join('')}</select></label><label class="c" for="fDet">Detalle (programa, grado, cargo…)<input type="text" id="fDet" value="${esc(p.detalle)}"></label>
+  <label class="c" for="fRh">RH<input type="text" id="fRh" value="${esc(p.rh)}"></label><label class="c" for="fV">Vence<input type="date" id="fV" value="${esc(p.vence)}"></label></div>
+  <label class="c" for="fE">Contacto de emergencia<input type="text" id="fE" value="${esc(p.emergencia)}"></label>
+  <div class="fila"><img id="fPrev" class="mini" style="width:64px;height:84px;border-radius:10px" src="${foto || avatar(p.nombre || 'N N', e.c1)}" alt=""><label class="c" for="fF" style="flex:1">Foto (de frente, fondo claro)<input type="file" id="fF" accept="image/*"></label></div>
+  ${e.alDiaDesdeApp ? `<label class="c" style="flex-direction:row;gap:8px;align-items:center" for="fAl"><input type="checkbox" id="fAl" ${p.alDia ? 'checked' : ''}> Está al día con la institución</label>` : ''}
+  <p class="nota">${e.origen !== 'manual' ? 'En su institución estos datos llegan solos desde ' + esc(e.origen) + '; aquí puede completar la foto o el contacto de emergencia.' : ''}</p>
+  <div class="fila"><button class="btn v" id="fG">Guardar</button><button class="btn l" data-cerrar>Cancelar</button></div>`, w => {
+    w.querySelector('#fF').onchange = ev => { const f = ev.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => { const im = new Image(); im.onload = () => { const c = document.createElement('canvas'); const W = 300, H = 400; c.width = W; c.height = H; const g = c.getContext('2d'); const s = Math.max(W / im.width, H / im.height); g.drawImage(im, (W - im.width * s) / 2, (H - im.height * s) / 2, im.width * s, im.height * s); foto = c.toDataURL('image/jpeg', .82); w.querySelector('#fPrev').src = foto; }; im.src = r.result; }; r.readAsDataURL(f); };
+    w.querySelector('#fG').onclick = () => {
+      const n = w.querySelector('#fN').value.trim(); if (n.length < 5) return toast('Escriba el nombre completo');
+      const datos = { nombre: n, documento: w.querySelector('#fD').value.replace(/[^0-9A-Za-z]/g, ''), rol: w.querySelector('#fR').value, detalle: w.querySelector('#fDet').value.trim(), rh: w.querySelector('#fRh').value.trim(), vence: w.querySelector('#fV').value, emergencia: w.querySelector('#fE').value.trim(), foto, alDia: e.alDiaDesdeApp ? w.querySelector('#fAl').checked : true };
+      if (REAL()) return p_editarPersona(id, datos, w);
+      if (!id && !usarCupo(e, 1)) return toast('No tiene carnés disponibles. Compre más en «Mi plan»');
+      if (id) { Object.assign(p, datos); bit('Editó a ' + n); }
+      else { D.personas.push({ id: uid('p'), empresa: e.id, estado: 'activo', token: token(), pagado: !e.requierePago, autorizado: false, emitido: '', origen: 'manual', ...datos }); bit('Creó el carné de ' + n + ' (queda por autorizar)'); }
+      guardar(); cerrar(); pintar(); toast(id ? 'Datos guardados' : 'Persona creada: queda por autorizar' + (e.interna ? '' : ' · le quedan ' + dispTxt(e) + ' carnés disponibles'));
+    };
+  });
+}
+
+function cargarCSV() {
+  ventana(`<h2>Cargar desde Excel</h2><p>Guarde su Excel como CSV con estas columnas: <b>nombre; documento; tipo; detalle; rh; emergencia</b>. Las personas nuevas quedan por autorizar.</p>
+  <label class="c" for="csvF">Archivo CSV<input type="file" id="csvF" accept=".csv,text/csv"></label>
+  <label class="c" for="csvT">O pegue aquí las filas<textarea id="csvT" placeholder="Carlos Pérez Díaz;1012345678;Empleado;Bodega;O+;Esposa 300 111 2222"></textarea></label>
+  <div class="fila"><button class="btn v" id="csvG">Cargar</button><button class="btn l" data-cerrar>Cancelar</button></div>`, w => {
+    w.querySelector('#csvF').onchange = ev => { const f = ev.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => { w.querySelector('#csvT').value = r.result; }; r.readAsText(f); };
+    w.querySelector('#csvG').onclick = () => {
+      if (REAL()) return p_csv(w.querySelector('#csvT').value, w);
+      const e = emp(PERFIL.empresa); let n = 0; const filas = [];
+      w.querySelector('#csvT').value.split(/\r?\n/).forEach((l, i) => { const c = l.split(/[;,\t]/).map(x => x.trim()); if (!c[0] || c[0].toLowerCase() === 'nombre' || c[0].length < 5) return; filas.push({ id: uid('p'), empresa: e.id, nombre: c[0], documento: (c[1] || '').replace(/[^0-9A-Za-z]/g, ''), rol: ROLES.find(r => r.toLowerCase() === (c[2] || '').toLowerCase()) || 'Empleado', detalle: c[3] || '', rh: c[4] || '', emergencia: c[5] || '', foto: '', alDia: true, estado: 'activo', token: token(), pagado: !e.requierePago, autorizado: false, emitido: '', vence: sumMeses(hoy(), e.vigencia), origen: 'csv' }); n++; });
+      if (!n) return toast('No se encontró ninguna fila válida');
+      if (!usarCupo(e, n)) return toast('Va a cargar ' + n + ' personas y solo tiene ' + dispTxt(e) + ' carnés disponibles. Compre más en «Mi plan»');
+      D.personas.push(...filas);
+      bit('Cargó ' + n + ' personas desde CSV'); guardar(); cerrar(); pintar(); toast(n + ' personas cargadas: quedan por autorizar' + (e.interna ? '' : ' · le quedan ' + dispTxt(e) + ' carnés disponibles'));
+    };
+  });
+}
+
+function nuevaEmpresa() {
+  ventana(`<h2>Nueva institución</h2><div class="form"><label class="c" for="nN">Nombre<input type="text" id="nN"></label><label class="c" for="nT">Tipo<select id="nT">${['Institución educativa', 'Colegio', 'IPS', 'Empresa', 'Gimnasio', 'Conjunto residencial', 'Iglesia', 'Evento'].map(x => `<option>${x}</option>`).join('')}</select></label><label class="c" for="nNit">NIT<input type="text" id="nNit"></label><label class="c" for="nP">Plan<select id="nP">${PLANES.map(p => `<option value="${p.id}">${p.nombre} · ${peso(p.precio)}</option>`).join('')}</select></label></div><label class="c" for="nC">Correo del administrador<input type="email" id="nC"></label><p class="nota">Arranca con 15 días de prueba gratis y hasta 10 carnés de prueba. Al administrador le llega el enlace para crear su contraseña.</p><div class="fila"><button class="btn v" id="nG">Crear</button><button class="btn l" data-cerrar>Cancelar</button></div>`, w => {
+    w.querySelector('#nG').onclick = () => { const n = w.querySelector('#nN').value.trim(), c = w.querySelector('#nC').value.trim(); if (n.length < 3 || !/^\S+@\S+\.\S+$/.test(c)) return toast('Escriba el nombre y un correo válido'); if (REAL()) return p_nuevaEmpresa(w); const id = uid('e'); D.empresas.push({ id, nombre: n, largo: n, nit: w.querySelector('#nNit').value.trim(), tipo: w.querySelector('#nT').value, c1: '#0B4F8A', c2: '#14A38B', interna: false, plan: w.querySelector('#nP').value, pagadoHasta: '', pruebaHasta: sumDias(hoy(), 14), cupoCarnes: 0, usadosPrueba: 0, verif: 'completa', origen: 'manual', vigencia: 12, requierePago: false, valor: 0, reverso: 'Documento de identificación personal e intransferible.', firma: 'Administración', alDiaDesdeApp: false }); D.cuentas.push({ correo: c, nombre: 'Administrador', empresa: id, perfil: 'admin', clave: false, ultimo: 0 }); bit('Creó la institución ' + n); guardar(); cerrar(); pintar(); toast('Institución creada. Se envió el enlace a ' + c); };
+  });
+}
+
+function leerCodigo(raw, modo) {
+  modo = ['auto', 'entrada', 'salida'].includes(modo) ? modo : modoLectura();
+  if (REAL()) return p_leerCodigo(raw, modo);
+  const tk = String(raw || '').trim().toLowerCase().split(/[\/=]/).pop().replace(/[^a-z0-9]/g, '');
+  const p = D.personas.find(x => x.token === tk && x.empresa === PERFIL.empresa); const e = emp(PERFIL.empresa); let j;
+  if (!p) { D.accesos.unshift({ t: new Date().toISOString(), empresa: e.id, persona: '', ok: false, motivo: 'Carné no encontrado', salida: modo === 'salida', quien: PERFIL.nombre }); j = { encontrado: false }; }
+  else {
+    const st = estadoCarne(p); const t0 = hoy() + 'T05:00:00';
+    const ult = D.accesos.find(a => a.persona === p.id && a.ok && a.t >= t0);
+    const salida = modo === 'auto' ? !!(ult && !ult.salida) : modo === 'salida';
+    const persona = { id: p.id, nombre: p.nombre, rol: p.rol, detalle: p.detalle, foto: p.foto };
+    if (st.ok && ult && Date.now() - Date.parse(ult.t) < 60e3 && (modo === 'auto' || ult.salida === salida)) j = { encontrado: true, ok: true, persona, salida: ult.salida, repetido: true };
+    else { D.accesos.unshift({ t: new Date().toISOString(), empresa: e.id, persona: p.id, ok: st.ok, motivo: st.motivo, salida, quien: PERFIL.nombre }); j = { encontrado: true, ok: st.ok, motivo: st.motivo, persona, salida }; }
+  }
+  D.accesos = D.accesos.slice(0, 4000); guardar(); mostrarLectura(j);
+}
+
+/* ================= producción (identidad-ia.skynetgenesis.com) =================
+   La demostración sigue funcionando con datos de ejemplo en el navegador. Con una cuenta real todo pasa por el servidor. */
+const PROD = window.IDENTIDAD_PROD === true || /(^|\.)skynetgenesis\.com$/.test(location.hostname);
+const API = window.IDENTIDAD_API || 'https://identidad-ia.onrender.com';
+const REAL = () => !!(SESION && SESION.real);
+let DEMO_D = null, YO = null, CLAVE_TOKEN = '', REG_PARA = '';
+const ALM = { get: k => { try { return localStorage.getItem('identidadia_' + k) || ''; } catch (e) { return ''; } }, set: (k, v) => { try { v ? localStorage.setItem('identidadia_' + k, v) : localStorage.removeItem('identidadia_' + k); } catch (e) { } } };
+async function api(metodo, ruta, cuerpo) {
+  let r; const tk = ALM.get('tok');
+  try { r = await fetch(API + ruta, { method: metodo, headers: { 'content-type': 'application/json', ...(tk ? { authorization: 'Bearer ' + tk } : {}) }, body: cuerpo ? JSON.stringify(cuerpo) : undefined }); }
+  catch (e) { throw new Error('No hay conexión con el servidor. Revise su internet e intente de nuevo; si el servidor estaba dormido, tarda hasta un minuto en despertar.'); }
+  let j = {}; try { j = await r.json(); } catch (e) { }
+  if (r.status === 401 && REAL()) { salirReal('Su sesión terminó. Ingrese de nuevo.'); }
+  if (!r.ok) throw Object.assign(new Error(j.error || 'Ocurrió un error. Intente de nuevo.'), { status: r.status });
+  return j;
+}
+async function ocupado(b, fn) { if (b) { if (b.disabled) return; b.disabled = true; } try { return await fn(); } catch (e) { toast(e.message); } finally { if (b && b.isConnected) b.disabled = false; } }
+function aplicarEstado(st) {
+  const e = { ...st.empresa };
+  D = { empresas: [e], personas: (st.personas || []).map(p => ({ ...p, empresa: e.id })), accesos: st.accesos || [], pedidos: (st.impresos || []).map(x => ({ ...x, empresa: e.id })), bitacora: st.bitacora || [],
+    cuentas: (st.usuarios || []).map(u => ({ ...u, empresa: e.id, ultimo: u.ultimo ? Date.parse(u.ultimo) : 0, bloqueada: !!u.bloqueado })), claves: {}, registros: [], intentos: {} };
+}
+function aplicarResumen(r) {
+  D = { empresas: r.empresas, personas: [], accesos: [], pedidos: r.impresos || [], bitacora: r.bitacora || [], pagos: r.pagos || [],
+    cuentas: r.usuarios.map(u => ({ ...u, ultimo: u.ultimo ? Date.parse(u.ultimo) : 0, bloqueada: !!u.bloqueado })), claves: {}, registros: [], intentos: {} };
+}
+async function recargar() {
+  if (YO && YO.perfil === 'super') aplicarResumen(await api('GET', '/api/sa/resumen')); else aplicarEstado(await api('GET', '/api/estado'));
+  pintar();
+}
+function onSesion(j) {
+  ALM.set('tok', j.token); YO = j.yo; ALM.set('yo', JSON.stringify(j.yo));
+  if (!DEMO_D) DEMO_D = D;
+  SESION = { real: true, correo: j.yo.correo };
+  if (j.yo.perfil === 'super') PERFIL = PERFILES[0];
+  else { PERFIL = { id: 'r-' + j.yo.id, nombre: j.yo.nombre + ' · ' + (j.estado ? j.estado.empresa.nombre : ''), tipo: j.yo.perfil === 'porteria' ? 'porteria' : 'admin', empresa: j.yo.empresa }; if (j.estado) aplicarEstado(j.estado); }
+  VISTA = MENU[PERFIL.tipo].find(x => x.length === 3)[0]; history.replaceState(null, '', location.pathname);
+  if (j.yo.perfil === 'super') recargar().catch(e => toast(e.message)); else pintar();
+  window.scrollTo(0, 0);
+}
+function salirReal(msg) {
+  const tk = ALM.get('tok'); if (tk && !msg) fetch(API + '/api/salir', { method: 'POST', headers: { authorization: 'Bearer ' + tk } }).catch(() => { });
+  ALM.set('tok', ''); ALM.set('yo', ''); YO = null; cerrar();
+  if (DEMO_D) { D = DEMO_D; DEMO_D = null; }
+  SESION = null; PERFIL = PERFILES[1]; VISTA = 'inicio'; PUB = msg ? 'ingresar' : 'portada'; history.replaceState(null, '', location.pathname); pintar(); window.scrollTo(0, 0);
+  if (msg) toast(msg);
+}
+function abrirBold(f) {
+  const go = () => {
+    try {
+      const c = new window.BoldCheckout({ orderId: f.orderId || f.order_id, currency: f.currency || 'COP', amount: String(f.amount), apiKey: f.apiKey || f.api_key, integritySignature: f.integritySignature || f.signature || f.firma, description: f.description || 'Identidad IA', redirectionUrl: f.redirectionUrl || f.volver || (location.origin + '/') });
+      c.open();
+    } catch (e) { toast('No se pudo abrir la pasarela de pagos. Intente de nuevo o escríbanos por WhatsApp.'); }
+  };
+  if (window.BoldCheckout) return go();
+  const s = document.createElement('script'); s.src = 'https://checkout.bold.co/library/boldPaymentButton.js'; s.onload = go; s.onerror = () => toast('No se pudo cargar la pasarela de pagos. Revise su internet.'); document.head.appendChild(s);
+}
+/* acciones de una sesión real: devuelve true si la atendió (así la demostración no la ejecuta también) */
+function prodClick(d, b) {
+  const accP = ['autorizar', 'suspender', 'reactivar', 'anular'].find(k => d[k]);
+  if (accP) {
+    ocupado(b, async () => { await api('POST', '/api/personas/' + encodeURIComponent(d[accP]) + '/' + accP); cerrar(); await recargar();
+      toast({ autorizar: 'Carné autorizado. Abra el carné, copie el enlace «Mi carné» y envíeselo a la persona', suspender: 'Carné suspendido: el QR mostrará NO VIGENTE', reactivar: 'Carné reactivado', anular: 'El carné anterior ya no sirve. El nuevo queda por autorizar' }[accP]); });
+    return true;
+  }
+  if ('pedir' in d) {
+    const ci = $('#pCiudad'), di = $('#pDir'); if (ci) PED.ciudad = ci.value; if (di) PED.dir = di.value;
+    const ids = misPersonas().filter(p => estadoCarne(p).ok && PED.sel && PED.sel.has(p.id)).map(p => p.id);
+    if (!ids.length) { toast('Elija al menos un carné'); return true; }
+    ocupado(b, async () => { const j = await api('POST', '/api/impresos', { personas: ids, entrega: PED.entrega, ciudad: PED.ciudad, dir: PED.dir }); PED = { sel: null, entrega: 'recoger', ciudad: '', dir: '' }; await recargar();
+      if (j.pagar) { toast('Pedido creado. Se abre la pasarela de pagos'); abrirBold(j.firma); } else toast('Pedido recibido: pasa a impresión'); });
+    return true;
+  }
+  if (d.pedavanza) {
+    const x = D.pedidos.find(o => o.id === d.pedavanza); const s = sigPed(x);
+    const enviar = guia => ocupado(b, async () => { const j = await api('POST', '/api/sa/impreso', { id: x.id, guia }); cerrar(); await recargar(); toast('Pedido marcado como ' + j.estado.toLowerCase() + (j.estado === 'Enviado' ? ': se le avisó al cliente con la guía' : '')); });
+    if (x.estado === 'Por pagar') { toast('Ese pedido aún no está pagado'); return true; }
+    if (s === 'Enviado') ventana(`<h2>Guía de Interrapidísimo</h2><p>${x.cantidad} carnés para ${esc(x.ciudad)}.</p><label class="c" for="gNum">Número de guía<input type="text" id="gNum" inputmode="numeric" autocomplete="off"></label><div class="fila"><button class="btn v" id="gOk">Guardar y avisar al cliente</button><button class="btn l" data-cerrar>Cancelar</button></div>`, w => { w.querySelector('#gOk').onclick = () => { const g = w.querySelector('#gNum').value.trim(); if (g.length < 5) return toast('Escriba el número de guía'); enviar(g); }; });
+    else enviar('');
+    return true;
+  }
+  if (d.interna) {
+    const e = emp(d.interna);
+    if (e.interna) { ocupado(b, async () => { await api('POST', '/api/sa/interna', { id: e.id }); await recargar(); toast(e.nombre + ' vuelve a pagar'); }); return true; }
+    ventana(`<h2>Hacer interna a ${esc(e.nombre)}</h2><div class="aviso rojo">Solo para las empresas propias del dueño (POLIANDES, Colegio Anglocolombiano, Reina Elizabeth IPS, SkyNet Genesis). Una empresa interna no paga nada: nunca se usa para regalar el servicio a un cliente.</div><label class="c" for="iMot">Motivo (queda en la bitácora)<input type="text" id="iMot"></label><div class="fila"><button class="btn v" id="iOk">Hacer interna</button><button class="btn l" data-cerrar>Cancelar</button></div>`, w => {
+      w.querySelector('#iOk').onclick = () => { const m = w.querySelector('#iMot').value.trim(); if (m.length < 10) return toast('Escriba el motivo (mínimo 10 caracteres)'); ocupado(w.querySelector('#iOk'), async () => { await api('POST', '/api/sa/interna', { id: e.id, motivo: m }); cerrar(); await recargar(); toast(e.nombre + ' queda sin cobro'); }); };
+    });
+    return true;
+  }
+  if (d.enlace) {
+    const c = D.cuentas.find(x => x.correo === d.enlace); if (!c) return true;
+    ocupado(b, async () => { const j = YO.perfil === 'super' ? await api('POST', '/api/sa/enlace', { uid: c.id }) : await api('POST', '/api/usuarios/' + encodeURIComponent(c.id) + '/enlace'); toast('Enlace enviado' + (j.para ? ' a ' + j.para : ' al correo de la cuenta') + '. Vence en 1 hora'); });
+    return true;
+  }
+  if (d.bloq) {
+    const c = D.cuentas.find(x => x.correo === d.bloq); if (!c) return true;
+    if (c.bloqueada) { ocupado(b, async () => { await api('POST', '/api/sa/bloquear', { uid: c.id, bloquear: false }); await recargar(); toast('Cuenta desbloqueada'); }); return true; }
+    ventana(`<h2>Bloquear ${esc(c.correo)}</h2><label class="c" for="bMot">Motivo<input type="text" id="bMot"></label><div class="fila"><button class="btn r" id="bOk">Bloquear</button><button class="btn l" data-cerrar>Cancelar</button></div>`, w => {
+      w.querySelector('#bOk').onclick = () => { const m = w.querySelector('#bMot').value.trim(); if (m.length < 5) return toast('Escriba el motivo'); ocupado(w.querySelector('#bOk'), async () => { await api('POST', '/api/sa/bloquear', { uid: c.id, bloquear: true, motivo: m }); cerrar(); await recargar(); toast('Cuenta bloqueada'); }); };
+    });
+    return true;
+  }
+  if ('gcon' in d) { ocupado(b, async () => { await api('PUT', '/api/empresa', { origen: $('#cOrigen').value }); await recargar(); toast('Origen de los datos guardado'); }); return true; }
+  if ('sync' in d) { toast('La conexión automática con ' + emp(PERFIL.empresa).origen + ' la activa SkyNet Genesis: escríbanos por WhatsApp al 304 437 5758 para programarla'); return true; }
+  if (d.pagarplan) {
+    const cant = Math.max(1, parseInt(($('#mCant') || {}).value, 10) || 1);
+    ocupado(b, async () => { const j = await api('POST', '/api/bold/pedido', { cantidad: cant, nuevos: +d.nuevos || 0, asistencia: d.asis === '1' }); toast('Con este pago queda al día hasta el ' + fmtF(j.hasta) + '. Se abre la pasarela de pagos'); abrirBold(j.firma); });
+    return true;
+  }
+  if ('cambiarclave' in d) {
+    ocupado(b, async () => { const a = $('#cc1').value; if (a.length < 10) throw new Error('La contraseña nueva debe tener mínimo 10 caracteres'); if (a !== $('#cc2').value) throw new Error('Las dos contraseñas no coinciden');
+      await api('POST', '/api/cambiar-clave', { actual: $('#cc0').value, nueva: a }); ['cc0', 'cc1', 'cc2'].forEach(i => { $('#' + i).value = ''; }); toast('Contraseña cambiada'); });
+    return true;
+  }
+  if ('pruebabold' in d) { ocupado(b, async () => { const j = await api('POST', '/api/sa/prueba'); abrirBold(j.firma); }); return true; }
+  if ('respaldo' in d) {
+    ocupado(b, async () => { const j = await api('GET', '/api/sa/respaldo'); const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(j, null, 1)], { type: 'application/json' })); a.download = 'identidad-ia-respaldo-' + hoy() + '.json'; document.body.appendChild(a); a.click(); a.remove(); toast('Respaldo descargado'); });
+    return true;
+  }
+  if ('nuevousuario' in d) {
+    const nombre = $('#uNom').value.trim(), correo = $('#uCor').value.trim(), perfil = $('#uPer').value;
+    ocupado(b, async () => { await api('POST', '/api/usuarios', { nombre, correo, perfil }); await recargar(); toast('Cuenta creada. Se envió el enlace para crear la contraseña a ' + correo); });
+    return true;
+  }
+  if (d.retirar || d.reactivaru) { const id = d.retirar || d.reactivaru; ocupado(b, async () => { await api('POST', '/api/usuarios/' + encodeURIComponent(id) + '/' + (d.retirar ? 'retirar' : 'reactivar')); await recargar(); toast(d.retirar ? 'Cuenta retirada' : 'Cuenta reactivada'); }); return true; }
+  return false;
+}
+function p_ingresar() {
+  const correo = ($('#lgCor').value || '').trim(), clave = $('#lgCla').value;
+  if (!correo || !clave) return toast('Escriba su correo y su contraseña');
+  ocupado($('[data-ingresar]'), async () => onSesion(await api('POST', '/api/login', { correo, clave })));
+}
+function p_recuperar() {
+  const c = ($('#rcCor').value || '').trim().toLowerCase(); if (!/^\S+@\S+\.\S+$/.test(c)) return toast('Escriba un correo válido');
+  ocupado($('[data-recuperar]'), async () => { await api('POST', '/api/olvido', { correo: c }); REC_CORREO = c; CLAVE_PARA = ''; PUB = 'enviado'; pintar(); });
+}
+function p_guardarClave() {
+  const a = $('#nc1').value, b2 = $('#nc2').value;
+  if (a.length < 10) return toast('La contraseña debe tener mínimo 10 caracteres'); if (a !== b2) return toast('Las dos contraseñas no coinciden');
+  ocupado($('[data-gclave]'), async () => { const j = await api('POST', '/api/clave', { token: CLAVE_TOKEN, clave: a }); CLAVE_TOKEN = ''; toast('Contraseña guardada. ¡Bienvenido!'); onSesion(j); });
+}
+function p_registrar() {
+  const v = id => ($('#' + id).value || '').trim();
+  if (!$('#rAcepto').checked) return toast('Para crear la cuenta debe aceptar los términos y el tratamiento de datos');
+  ocupado($('[data-registrar]'), async () => { const j = await api('POST', '/api/registro', { nombre: v('rNom'), tipo: v('rTipo'), nit: v('rNit'), ciudad: v('rCiu'), admin: v('rAdm'), correo: v('rCor'), celular: v('rCel'), cantidad: v('rCant'), acepto: true });
+    REG_PARA = j.para; PUB = 'registrado'; pintar(); window.scrollTo(0, 0); });
+}
+function p_editarPersona(id, datos, w) {
+  ocupado(w.querySelector('#fG'), async () => { const j = id ? await api('PUT', '/api/personas/' + encodeURIComponent(id), datos) : await api('POST', '/api/personas', datos); cerrar(); await recargar();
+    toast(id ? 'Datos guardados' : 'Persona creada: queda por autorizar' + (j.disponibles != null ? ' · le quedan ' + j.disponibles + ' carnés disponibles' : '')); });
+}
+function p_csv(texto, w) {
+  const filas = texto.split(/\r?\n/).map(l => l.split(/[;,\t]/).map(x => x.trim())).filter(c => c[0] && c[0].toLowerCase() !== 'nombre' && c[0].length >= 5).map(c => ({ nombre: c[0], documento: c[1] || '', tipo: c[2] || '', detalle: c[3] || '', rh: c[4] || '', emergencia: c[5] || '' }));
+  if (!filas.length) return toast('No se encontró ninguna fila válida');
+  ocupado(w.querySelector('#csvG'), async () => { const j = await api('POST', '/api/personas/csv', { filas }); cerrar(); await recargar(); toast(j.cargadas + ' personas cargadas: quedan por autorizar' + (j.errores.length ? ' · ' + j.errores.length + ' filas con problemas: ' + j.errores.slice(0, 3).join('; ') : '')); });
+}
+function p_nuevaEmpresa(w) {
+  const n = w.querySelector('#nN').value.trim(), c = w.querySelector('#nC').value.trim();
+  ocupado(w.querySelector('#nG'), async () => { await api('POST', '/api/sa/empresa', { nombre: n, correo: c, tipo: w.querySelector('#nT').value, nit: w.querySelector('#nNit').value.trim(), plan: w.querySelector('#nP').value }); cerrar(); await recargar(); toast('Institución creada. Se envió el enlace al administrador'); });
+}
+function p_leerCodigo(raw, modo) {
+  ocupado(null, async () => {
+    const j = await api('POST', '/api/porteria/leer', { codigo: raw, modo });
+    if (!j.repetido) D.accesos.unshift({ t: j.t || new Date().toISOString(), empresa: PERFIL.empresa, persona: j.persona ? j.persona.id : '', nombre: j.persona ? j.persona.nombre : '', ok: !!(j.encontrado && j.ok), motivo: j.encontrado ? j.motivo : 'Carné no encontrado', salida: !!j.salida, quien: YO ? YO.nombre : '' });
+    mostrarLectura(j);
+  });
+}
+function p_guardarDiseno(datos) {
+  ocupado($('[data-gdiseno]'), async () => { await api('PUT', '/api/empresa', datos); await recargar(); toast('Diseño guardado'); });
+}
+/* verificación pública (?v=) y «Mi carné» (?c=) */
+async function pintarPublico(tipo, codigo) {
+  const app = document.querySelector('.app'); app.classList.add('sinmenu'); $('#menu').innerHTML = ''; pintarBarra();
+  $('#vista').innerHTML = '<div class="verif"><p class="nota" style="text-align:center">Consultando…</p></div>';
+  try {
+    if (tipo === 'v') {
+      const j = await api('GET', '/api/v/' + encodeURIComponent(codigo));
+      if (!j.encontrado) { $('#vista').innerHTML = `<div class="verif"><div class="estado no"><b>NO ENCONTRADO</b>Este código no corresponde a ningún carné.</div></div>`; return; }
+      $('#vista').innerHTML = `<div class="verif"><div class="estado ${j.ok ? 'ok' : 'no'}"><b>${j.ok ? 'VIGENTE' : 'NO VIGENTE'}</b>${j.ok ? 'Carné válido de ' + esc(j.institucion.nombre) : esc(j.motivo)}</div>
+        <div class="caja ficha">${j.reducida ? '' : `<img src="${imgOk(j.foto) ? j.foto : avatar(j.nombre, j.institucion.c1 || '#0B4F8A')}" alt="Foto de ${esc(j.nombre)}">`}<div><h2 style="font-size:24px">${esc(j.nombre)}</h2><div>${esc(j.rol)}${j.detalle ? ' · ' + esc(j.detalle) : ''}</div><div class="nota">${esc(j.institucion.largo)}</div><div class="nota">Vence: ${fmtF(j.vence)}</div>${j.reducida ? '<div class="nota">Esta institución protege más los datos: la verificación pública no muestra foto ni detalles.</div>' : ''}</div></div>
+        <p class="nota">Por su seguridad, la verificación nunca muestra el número de documento. Consultado ${fmtH(Date.now())}.</p><p class="nota">Verificación de Identidad IA · SkyNet Genesis · contacto@skynetgenesis.com</p></div>`;
+    } else {
+      const j = await api('GET', '/api/carne/' + encodeURIComponent(codigo));
+      if (!j.encontrado) { $('#vista').innerHTML = `<div class="verif"><div class="estado no"><b>ENLACE NO VÁLIDO</b>Pídale a su institución el enlace nuevo de su carné.</div></div>`; return; }
+      const viejo = D; D = { ...D, empresas: [j.empresa], personas: [j.persona] };
+      try { $('#vista').innerHTML = `<div class="verif">${cab('Mi carné', esc(j.empresa.nombre))}${carneFrente(j.persona)}${carneReverso(j.persona)}<p class="nota">Guarde este enlace o agréguelo a la pantalla de inicio del celular para tener su carné siempre a mano. Muéstrelo en la entrada: lo verifican escaneando el QR.</p></div>`; } finally { D = viejo; }
+    }
+  } catch (e) { $('#vista').innerHTML = `<div class="verif"><div class="estado no"><b>SIN CONEXIÓN</b>${esc(e.message)}</div></div>`; }
+}
+V.usuarios = () => {
+  const cs = D.cuentas.filter(c => c.empresa === PERFIL.empresa);
+  return cab('Usuarios', 'Personas de su institución que entran a Identidad IA. Portería solo escanea carnés; administración maneja todo.') + `<div class="caja" style="display:flex;flex-direction:column;gap:12px"><b>Nueva cuenta</b><div class="form"><label class="c" for="uNom">Nombre<input type="text" id="uNom"></label><label class="c" for="uCor">Correo<input type="email" id="uCor" inputmode="email"></label><label class="c" for="uPer">Perfil<select id="uPer"><option value="porteria">Portería</option><option value="admin">Administración</option></select></label></div><button class="btn v" data-nuevousuario style="align-self:flex-start">Crear y enviar enlace</button><p class="nota" style="margin:0">A la persona le llega un correo para crear su contraseña (vence en 1 hora).</p></div>
+  <div class="tabla"><table><thead><tr><th>Nombre</th><th>Correo</th><th>Perfil</th><th>Contraseña</th><th></th></tr></thead><tbody>${cs.map(c => `<tr><td>${esc(c.nombre)}</td><td>${esc(c.correo)}</td><td>${c.perfil === 'porteria' ? 'Portería' : 'Administración'}${c.activo === false ? ' <span class="pill p-no">Retirada</span>' : ''}</td><td>${c.clave ? '<span class="pill p-ok">Creada</span>' : '<span class="pill p-esp">Sin crear</span>'}</td><td class="fila"><button class="btn chico l" data-enlace="${esc(c.correo)}">Enviar enlace</button>${(SESION && SESION.correo === c.correo) ? '' : (c.activo === false ? `<button class="btn chico v" data-reactivaru="${esc(c.id || '')}">Reactivar</button>` : `<button class="btn chico r" data-retirar="${esc(c.id || '')}">Retirar</button>`)}</td></tr>`).join('') || '<tr><td colspan="5" class="nota">Aún no hay cuentas.</td></tr>'}</tbody></table></div>`;
+};
+/* imprimir en tarjeta plástica: una página CR80 por cara */
+function imprimirCarnes(ps) {
+  if (!ps.length) return toast('Elija al menos un carné vigente');
+  const css = [...document.querySelectorAll('style')].map(s => s.outerHTML).join('');
+  const html = `<!doctype html><html><head><meta charset="utf-8"><title>Carnés para imprimir</title>${css}<style>@page{size:85.6mm 54mm;margin:0}html,body{margin:0;background:#fff}.carne{width:85.6mm!important;border-radius:0!important;box-shadow:none!important;page-break-after:always;break-after:page}</style></head><body>${ps.map(p => carneFrente(p) + carneReverso(p)).join('')}</body></html>`;
+  const f = document.createElement('iframe'); f.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0'; document.body.appendChild(f);
+  f.contentDocument.open(); f.contentDocument.write(html); f.contentDocument.close();
+  setTimeout(() => { try { f.contentWindow.focus(); f.contentWindow.print(); } catch (e) { toast('Su navegador no dejó abrir la impresión. Intente desde Chrome en el computador.'); } setTimeout(() => f.remove(), 60000); }, 400);
+}
+
+const _planesBase = V.planes;
+V.planes = () => _planesBase() + `<div class="caja fila"><button class="btn v" data-pruebabold>Pago de prueba de $1.000 con Bold</button><button class="btn l" data-respaldo>Descargar respaldo completo</button></div>` +
+  (REAL() && D.pagos ? `<h2 class="sub">Pagos recibidos</h2><div class="tabla"><table><thead><tr><th>Fecha</th><th>Institución</th><th>Valor</th><th>Estado</th><th>Detalle</th></tr></thead><tbody>${D.pagos.map(x => `<tr><td style="white-space:nowrap">${fmtH(x.creado)}</td><td>${esc(x.emp === 'plataforma' ? 'Pago de prueba' : (emp(x.emp) || {}).nombre || x.emp)}</td><td class="num">${peso(x.valor)}</td><td><span class="pill ${x.estado === 'aplicado' || x.estado === 'prueba' ? 'p-ok' : 'p-esp'}">${esc(x.estado)}</span></td><td>${esc(x.detalle || '')}</td></tr>`).join('') || '<tr><td colspan="5" class="nota">Aún no hay pagos.</td></tr>'}</tbody></table></div>` : '');
+async function volverBold(ref) {
+  history.replaceState(null, '', location.pathname);
+  try { const j = await api('GET', '/api/bold/volver?ref=' + encodeURIComponent(ref));
+    toast({ aplicado: 'Pago aprobado: ya quedó aplicado', prueba: 'Pago de prueba recibido', revisar: 'Recibimos su pago y lo estamos revisando. Si algo falta, le escribimos', pendiente: 'Su pago se está confirmando: en unos minutos queda aplicado solo' }[j.estado] || 'Estamos confirmando su pago');
+    if (REAL()) await recargar();
+  } catch (e) { toast(e.message); }
+}
+/* ================= eventos ================= */
+document.addEventListener('click', ev => {
+  const b = ev.target.closest('button'); if (!b) return;
+  const d = b.dataset;
+  if (REAL() && prodClick(d, b)) return;
+  if (d.ir) { VISTA = d.ir; pintar(); }
+  else if (d.ver) verCarne(d.ver);
+  else if (d.editar) editarPersona(d.editar);
+  else if ('nueva' in d) editarPersona('');
+  else if ('csv' in d) cargarCSV();
+  else if ('nuevaemp' in d) nuevaEmpresa();
+  else if (d.filtro) { FILTRO = d.filtro; pintar(); }
+  else if (d.autorizar) { const p = D.personas.find(x => x.id === d.autorizar); p.autorizado = true; p.emitido = hoy(); bit('Autorizó el carné de ' + p.nombre); guardar(); pintar(); toast('Carné autorizado. Se le envió el enlace a ' + p.nombre.split(' ')[0]); }
+  else if (d.suspender) { const p = D.personas.find(x => x.id === d.suspender); p.estado = 'suspendido'; bit('Suspendió el carné de ' + p.nombre); guardar(); cerrar(); pintar(); toast('Carné suspendido: el QR mostrará NO VIGENTE'); }
+  else if (d.reactivar) { const p = D.personas.find(x => x.id === d.reactivar); p.estado = 'activo'; bit('Reactivó el carné de ' + p.nombre); guardar(); cerrar(); pintar(); toast('Carné reactivado'); }
+  else if (d.anular) { const p = D.personas.find(x => x.id === d.anular); if (!usarCupo(emp(p.empresa), 1)) return toast('No tiene carnés disponibles para el duplicado. Compre más en «Mi plan»'); const viejo = p.token; p.token = token(); p.autorizado = false; p.emitido = ''; bit('Anuló el código ' + viejo.toUpperCase() + ' de ' + p.nombre + ' y generó uno nuevo (por autorizar)'); guardar(); cerrar(); pintar(); toast('El carné anterior ya no sirve. El nuevo queda por autorizar' + (emp(p.empresa).interna ? '' : ' · se usó 1 carné de su saldo')); }
+  else if (d.verif) { cerrar(); location.hash = 'v-' + d.verif; }
+  else if ('volver' in d) { history.replaceState(null, '', location.pathname); pintar(); }
+  else if (d.sel) { SEL_IMP.has(d.sel) ? SEL_IMP.delete(d.sel) : SEL_IMP.add(d.sel); pintar(); }
+  else if ('todos' in d) { SEL_IMP = null; pintar(); }
+  else if ('ninguno' in d) { SEL_IMP = new Set(); SEL_EMP = PERFIL.empresa; pintar(); }
+  else if ('salir' in d) {
+    if (SESION && SESION.demo && !d.pub) { ventana(`<h2>¿Ya se va?</h2><p>Cree la cuenta de su institución y use Identidad IA gratis por 15 días, sin tarjeta.</p><div class="fila"><button class="btn v" data-salir data-pub="registro">Crear mi cuenta gratis</button><button class="btn l" data-salirya>Salir de la demostración</button></div>`); return; }
+    salir(d.pub || 'portada');
+  }
+  else if ('salirya' in d) salir('portada');
+  else if (d.pub) { PUB = d.pub; pintar(); window.scrollTo(0, 0); }
+  else if (d.demo) { SESION = { demo: true }; PERFIL = PERFILES.find(p => p.id === d.demo); VISTA = MENU[PERFIL.tipo].find(x => x.length === 3)[0]; pintar(); window.scrollTo(0, 0); toast('Está en la demostración: los datos son de ejemplo'); }
+  else if ('ingresar' in d) ingresar();
+  else if ('recuperar' in d) recuperar();
+  else if ('abrirenlace' in d) { PUB = 'clave'; pintar(); }
+  else if ('gclave' in d) guardarClave();
+  else if ('registrar' in d) registrar();
+  else if ('terminos' in d) verTerminos();
+  else if (d.ojo) { const i = $('#' + d.ojo); if (i) { const ver = i.type === 'password'; i.type = ver ? 'text' : 'password'; b.textContent = ver ? 'Ocultar' : 'Mostrar'; } }
+  else if (d.pagarplan) pagarPlan(d);
+  else if ('cambiarclave' in d) cambiarClave();
+  else if (d.pedsel) { PED.sel.has(d.pedsel) ? PED.sel.delete(d.pedsel) : PED.sel.add(d.pedsel); pintar(); }
+  else if (d.pedtodos) { PED.sel = d.pedtodos === '1' ? null : new Set(); PED.emp = PERFIL.empresa; pintar(); }
+  else if ('pedir' in d) {
+    const e = emp(PERFIL.empresa); const ci = $('#pCiudad'), di = $('#pDir'); if (ci) PED.ciudad = ci.value; if (di) PED.dir = di.value;
+    const ids = misPersonas().filter(p => estadoCarne(p).ok && PED.sel && PED.sel.has(p.id)).map(p => p.id);
+    if (!ids.length) return toast('Elija al menos un carné');
+    if (PED.entrega === 'envio' && (PED.ciudad.trim().length < 3 || PED.dir.trim().length < 8)) return toast('Escriba la ciudad y la dirección de entrega');
+    const valor = e.interna ? 0 : ids.length * PRECIO_IMPRESO; const envio = PED.entrega === 'recoger' ? 0 : envioAprox(ids.length);
+    D.pedidos.unshift({ id: uid('o'), t: Date.now(), empresa: e.id, personas: ids, cantidad: ids.length, entrega: PED.entrega, ciudad: PED.ciudad.trim(), dir: PED.dir.trim(), total: valor + envio, estado: 'Pagado', guia: '' });
+    bit('Pidió ' + ids.length + ' carnés impresos (' + peso(valor + envio) + ')'); guardar(); PED = { sel: null, entrega: 'recoger', ciudad: '', dir: '' }; pintar();
+    toast(valor + envio ? 'En la versión publicada se abre Bold; cuando Bold confirma, el pedido pasa a impresión' : 'Pedido recibido: pasa a impresión');
+  }
+  else if (d.pedavanza) {
+    const x = D.pedidos.find(o => o.id === d.pedavanza); const s = sigPed(x);
+    if (s === 'Enviado') ventana(`<h2>Guía de Interrapidísimo</h2><p>Pedido de ${esc(emp(x.empresa).nombre)}: ${x.cantidad} carnés para ${esc(x.ciudad)}.</p><label class="c" for="gNum">Número de guía<input type="text" id="gNum" inputmode="numeric" autocomplete="off"></label><div class="fila"><button class="btn v" id="gOk">Guardar y avisar al cliente</button><button class="btn l" data-cerrar>Cancelar</button></div>`, w => { w.querySelector('#gOk').onclick = () => { const g = w.querySelector('#gNum').value.trim(); if (g.length < 5) return toast('Escriba el número de guía'); x.guia = g; x.estado = 'Enviado'; bit('Envió el pedido de ' + emp(x.empresa).nombre + ' (guía ' + g + ')'); guardar(); cerrar(); pintar(); toast('Pedido enviado: se le avisó al cliente con la guía'); }; });
+    else { x.estado = s; bit('Pedido de ' + emp(x.empresa).nombre + ': ' + s); guardar(); pintar(); toast('Pedido marcado como ' + s.toLowerCase()); }
+  }
+  else if ('pdf' in d) imprimirCarnes(misPersonas().filter(p => estadoCarne(p).ok && SEL_IMP && SEL_IMP.has(p.id)));
+  else if ('pruebabold' in d || 'respaldo' in d) toast('Esto funciona con la cuenta real del Superadministrador, no en la demostración');
+  else if ('nuevousuario' in d) { const nombre = $('#uNom').value.trim(), correo = $('#uCor').value.trim().toLowerCase(); if (nombre.length < 3 || !/^\S+@\S+\.\S+$/.test(correo)) return toast('Escriba el nombre y un correo válido'); if (D.cuentas.some(c => c.correo === correo)) return toast('Ese correo ya tiene cuenta'); D.cuentas.push({ id: uid('u'), correo, nombre, empresa: PERFIL.empresa, perfil: $('#uPer').value === 'admin' ? 'admin' : 'porteria', clave: false, ultimo: 0 }); bit('Creó la cuenta de ' + correo); guardar(); pintar(); toast('Cuenta creada. Se envió el enlace para crear la contraseña a ' + correo); }
+  else if (d.retirar || d.reactivaru) { const c = D.cuentas.find(x => x.id === (d.retirar || d.reactivaru)); if (c) { c.activo = !!d.reactivaru; guardar(); pintar(); toast(d.retirar ? 'Cuenta retirada' : 'Cuenta reactivada'); } }
+  else if ('pagar' in d) toast('En la versión publicada se abre el pago con Bold de SkyNet Genesis');
+  else if ('wa' in d) toast('Soporte por WhatsApp: 304 437 5758');
+  else if (d.interna) {
+    const e = emp(d.interna);
+    if (e.interna) { e.interna = false; bit('Quitó interna a ' + e.nombre); guardar(); pintar(); toast(e.nombre + ' vuelve a pagar'); return; }
+    ventana(`<h2>Hacer interna a ${esc(e.nombre)}</h2><div class="aviso rojo">Solo para las empresas propias del dueño (POLIANDES, Colegio Anglocolombiano, Reina Elizabeth IPS, SkyNet Genesis). Una empresa interna no paga nada: nunca se usa para regalar el servicio a un cliente.</div><label class="c" for="iMot">Motivo (queda en la bitácora)<input type="text" id="iMot" placeholder="Ejemplo: empresa propia del dueño"></label><div class="fila"><button class="btn v" id="iOk">Hacer interna</button><button class="btn l" data-cerrar>Cancelar</button></div>`, w => {
+      w.querySelector('#iOk').onclick = () => { const m = w.querySelector('#iMot').value.trim(); if (m.length < 10) return toast('Escriba el motivo (mínimo 10 caracteres)'); e.interna = true; bit('Hizo interna a ' + e.nombre + '. Motivo: ' + m); guardar(); cerrar(); pintar(); toast(e.nombre + ' queda sin cobro'); };
+    });
+  }
+  else if (d.enlace) toast('Se envió el enlace para crear la contraseña a ' + d.enlace);
+  else if (d.bloq) { const c = D.cuentas.find(x => x.correo === d.bloq); c.bloqueada = !c.bloqueada; bit((c.bloqueada ? 'Bloqueó ' : 'Desbloqueó ') + c.correo); guardar(); pintar(); }
+  else if ('leer' in d) { const f = $('#fotoQR').files[0]; if (f) { leerFoto(f, modoLectura()); $('#fotoQR').value = ''; } else if ($('#codQR').value.trim()) leerDesdeCampo(); else toast('Pase el carné por el lector, abra la cámara o escriba el código'); }
+  else if ('camara' in d) abrirCamara();
+  else if (d.sim) leerCodigo(d.sim);
+  else if (d.asistab) { ASIS_F.tab = d.asistab; pintar(); }
+  else if (d.asisrango) { ASIS_F = { ...ASIS_F, ...rangoAsis(d.asisrango) }; if (d.asisrango !== 'hoy' && ASIS_F.tab === 'hoy') ASIS_F.tab = 'resumen'; pintar(); }
+  else if ('asisact' in d) { ASIS_R = null; pintar(); }
+  else if ('asiscfg' in d) asisConfig();
+  else if ('asiscsv' in d) csvAsis();
+  else if ('asispagar' in d) {
+    const e = emp(PERFIL.empresa);
+    if (REAL()) ocupado(b, async () => { const j = await api('POST', '/api/bold/asistencia'); toast('Se abre la pasarela de pagos'); abrirBold(j.firma); });
+    else { e.asistencia = { ...(e.asistencia || ASIS_DEF), activa: true, hasta: e.pagadoHasta }; bit('Activó el control de asistencia y pagó ' + peso(ASIS[planDe(e).id]) + ' (simulado)'); guardar(); pintar(); toast('Pago aprobado (simulado). Control de asistencia activo hasta el ' + fmtF(e.pagadoHasta)); }
+  }
+  else if ('gdiseno' in d) guardarDiseno();
+  else if ('gcon' in d) { const e = emp(PERFIL.empresa); e.origen = $('#cOrigen').value; bit('Cambió el origen de datos a ' + e.origen); guardar(); pintar(); toast('Conexión guardada'); }
+  else if ('sync' in d) { const e = emp(PERFIL.empresa); bit('Sincronizó con ' + e.origen); guardar(); toast('Sincronizado con ' + e.origen + ': altas, retiros y pagos al día'); }
+});
+document.addEventListener('change', ev => {
+  if (ev.target.id === 'modoLect') { MODO_LECT = ev.target.value; try { localStorage.setItem('identidadia_modo', MODO_LECT); } catch (e) { } const c = $('#codQR'); if (c && ptrFino()) c.focus(); }
+  if (['asD', 'asH', 'asR'].includes(ev.target.id) && ASIS_F) { let de = $('#asD').value || hoy(), ha = $('#asH').value || hoy(); if (ha > hoy()) ha = hoy(); if (de > ha) de = ha; if (diasEntre(de, ha) > 92) { de = sumDias(ha, -92); toast('Máximo tres meses por consulta'); } ASIS_F = { ...ASIS_F, desde: de, hasta: ha, rol: $('#asR').value }; pintar(); }
+  if (ev.target.id === 'pEntrega') { const ci = $('#pCiudad'), di = $('#pDir'); if (ci) PED.ciudad = ci.value; if (di) PED.dir = di.value; PED.entrega = ev.target.value; pintar(); }
+  if (ev.target.id === 'pCiudad') PED.ciudad = ev.target.value;
+  if (ev.target.id === 'pDir') PED.dir = ev.target.value;
+  if (ev.target.dataset.ph && REAL()) {
+    const e = emp(ev.target.dataset.ph); const fecha = ev.target.value; ev.target.value = e.pagadoHasta || '';
+    ventana(`<h2>Cambiar «Pagado hasta» de ${esc(e.nombre)}</h2><p>Nueva fecha: <b>${fecha ? fmtF(fecha) : 'sin pago'}</b>. Úselo solo para corregir un pago que Bold aprobó y no se aplicó.</p><label class="c" for="phMot">Motivo (queda en la bitácora)<input type="text" id="phMot"></label><div class="fila"><button class="btn v" id="phOk">Guardar</button><button class="btn l" data-cerrar>Cancelar</button></div>`, w => {
+      w.querySelector('#phOk').onclick = () => { const m = w.querySelector('#phMot').value.trim(); if (m.length < 10) return toast('Escriba el motivo (mínimo 10 caracteres)'); ocupado(w.querySelector('#phOk'), async () => { await api('POST', '/api/sa/pagado', { id: e.id, fecha, motivo: m }); cerrar(); await recargar(); toast('Listo: el estado de ' + e.nombre + ' se actualizó'); }); };
+    });
+    return;
+  }
+  if (ev.target.dataset.ph) { const e = emp(ev.target.dataset.ph); e.pagadoHasta = ev.target.value; bit('Cambió «Pagado hasta» de ' + e.nombre + ' a ' + ev.target.value); guardar(); pintar(); toast('Listo: el estado de ' + e.nombre + ' se actualizó'); }
+});
+document.addEventListener('input', ev => {
+  if (ev.target.id === 'busP') { BUS = ev.target.value; const pos = ev.target.selectionStart; pintar(); const i = $('#busP'); i.focus(); i.setSelectionRange(pos, pos); }
+  if (ev.target.id === 'busCta') $('#tCtas').innerHTML = filasCuentas(ev.target.value);
+  if (ev.target.closest && ev.target.closest('.arme')) { const r = $('#mRes'); if (r) r.innerHTML = resumenPlanHTML(SESION && PERFIL.empresa ? emp(PERFIL.empresa) : null); }
+});
+
+function leerFoto(f, sal) {
+  const r = new FileReader();
+  r.onload = () => { const im = new Image(); im.onload = () => { const c = document.createElement('canvas'); const s = Math.min(1, 1000 / Math.max(im.width, im.height)); c.width = im.width * s; c.height = im.height * s; const g = c.getContext('2d'); g.drawImage(im, 0, 0, c.width, c.height); const dat = g.getImageData(0, 0, c.width, c.height); const q = window.jsQR ? jsQR(dat.data, c.width, c.height) : null; if (q && q.data) leerCodigo(q.data, sal); else toast('No se encontró un QR en la foto. Acérquese más o escriba el código'); }; im.src = r.result; };
+  r.readAsDataURL(f);
+}
+function guardarDiseno() {
+  const e = emp(PERFIL.empresa);
+  const datos = { c1: $('#dC1').value, c2: $('#dC2').value, largo: $('#dLargo').value.trim(), reverso: $('#dRev').value.trim(), firma: $('#dFirma').value.trim(), vigencia: Math.max(1, Math.min(60, +$('#dVig').value || 12)), requierePago: $('#dPago').value === '1', valor: Math.max(0, +$('#dValor').value || 0), alDiaDesdeApp: $('#dAldia').value === '1', verif: $('#dVerif').value === 'reducida' ? 'reducida' : 'completa' };
+  if (REAL()) { const f = $('#dLogo').files[0]; if (!f) return p_guardarDiseno(datos); const r = new FileReader(); r.onload = () => { const im = new Image(); im.onload = () => { const c = document.createElement('canvas'); const s = Math.min(1, 200 / Math.max(im.width, im.height)); c.width = im.width * s; c.height = im.height * s; c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); p_guardarDiseno({ ...datos, logo: c.toDataURL('image/png') }); }; im.src = r.result; }; r.readAsDataURL(f); return; }
+  Object.assign(e, { c1: $('#dC1').value, c2: $('#dC2').value, largo: $('#dLargo').value.trim(), reverso: $('#dRev').value.trim(), firma: $('#dFirma').value.trim(), vigencia: Math.max(1, Math.min(60, +$('#dVig').value || 12)), requierePago: $('#dPago').value === '1', valor: Math.max(0, +$('#dValor').value || 0), alDiaDesdeApp: $('#dAldia').value === '1', verif: $('#dVerif').value === 'reducida' ? 'reducida' : 'completa' });
+  const f = $('#dLogo').files[0];
+  const fin = () => { bit('Cambió el diseño del carné'); guardar(); pintar(); toast('Diseño guardado'); };
+  if (f) { const r = new FileReader(); r.onload = () => { const im = new Image(); im.onload = () => { const c = document.createElement('canvas'); const s = Math.min(1, 200 / Math.max(im.width, im.height)); c.width = im.width * s; c.height = im.height * s; c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); e.logo = c.toDataURL('image/png'); fin(); }; im.src = r.result; }; r.readAsDataURL(f); } else fin();
+}
+
+/* ================= pintar ================= */
+function pintar() {
+  const h = location.hash.slice(1);
+  const app = document.querySelector('.app');
+  document.body.classList.remove('con-fija');
+  if (CAM) cerrarCamara();
+  pintarBarra();
+  if (h.startsWith('v-')) { app.classList.add('sinmenu'); $('#menu').innerHTML = ''; $('#vista').innerHTML = V.verificar(h.slice(2)); window.scrollTo(0, 0); return; }
+  if (!SESION) { app.classList.add('sinmenu'); $('#menu').innerHTML = ''; $('#vista').innerHTML = (V[PUB] || V.portada)(); if (PUB === 'portada') document.body.classList.add('con-fija'); return; }
+  app.classList.remove('sinmenu');
+  pintarMenu();
+  const e = PERFIL.empresa && emp(PERFIL.empresa);
+  if (e && !e.interna && (PERFIL.tipo === 'admin' || PERFIL.tipo === 'porteria') && estadoCuenta(e).bloqueada && VISTA !== 'pago' && VISTA !== 'cuenta') { $('#vista').innerHTML = V.cerrada(e); return; }
+  const f = V[VISTA] || V.inicio; $('#vista').innerHTML = f();
+  if (VISTA === 'porteria') { const c = $('#codQR'); if (c && ptrFino()) c.focus(); }
+}
+window.addEventListener('hashchange', () => { const h = location.hash.slice(1); if (h.startsWith('clave-') && !REAL()) { CLAVE_TOKEN = h.slice(6); PUB = 'clave'; history.replaceState(null, '', location.pathname); } pintar(); });
+document.addEventListener('keydown', ev => {
+  if (ev.key !== 'Enter') return; const id = ev.target.id;
+  if (id === 'lgCor' || id === 'lgCla') { ev.preventDefault(); ingresar(); }
+  else if (id === 'rcCor') { ev.preventDefault(); recuperar(); }
+  else if (id === 'nc1' || id === 'nc2') { ev.preventDefault(); guardarClave(); }
+  else if (id === 'codQR') { ev.preventDefault(); leerDesdeCampo(); }
+});
+(() => {
+  const qs = new URLSearchParams(location.search); const h = location.hash.slice(1);
+  if (PROD) { const pie = document.querySelector('.pieapp'); if (pie) pie.textContent = 'Identidad IA es una aplicación de SkyNet Genesis · contacto@skynetgenesis.com · WhatsApp 304 437 5758 · La demostración usa datos de ejemplo que se guardan solo en este navegador.'; }
+  if (PROD && qs.get('v')) return pintarPublico('v', qs.get('v'));
+  if (PROD && qs.get('c')) return pintarPublico('c', qs.get('c'));
+  if (h.startsWith('clave-')) { CLAVE_TOKEN = h.slice(6); PUB = 'clave'; history.replaceState(null, '', location.pathname + location.search); }
+  else if (h === 'demo') { PUB = 'demo'; history.replaceState(null, '', location.pathname); }
+  else if (h.startsWith('registro')) { PUB = 'registro'; history.replaceState(null, '', location.pathname); }
+  const boldRef = PROD ? qs.get('bold-order-id') : '';
+  let yo = null; try { yo = JSON.parse(ALM.get('yo') || 'null'); } catch (e) { }
+  if (PROD && ALM.get('tok') && yo && PUB !== 'clave') {
+    YO = yo; DEMO_D = D; SESION = { real: true, correo: yo.correo };
+    PERFIL = yo.perfil === 'super' ? PERFILES[0] : { id: 'r-' + yo.id, nombre: yo.nombre, tipo: yo.perfil === 'porteria' ? 'porteria' : 'admin', empresa: yo.empresa };
+    VISTA = MENU[PERFIL.tipo].find(x => x.length === 3)[0];
+    pintarBarra(); $('#vista').innerHTML = '<p class="nota">Cargando su información…</p>';
+    recargar().then(() => { if (PERFIL.tipo !== 'super' && D.empresas[0]) { PERFIL.nombre = yo.nombre + ' · ' + D.empresas[0].nombre; pintar(); } if (boldRef) volverBold(boldRef); }).catch(e => { if (e.status !== 401) { $('#vista').innerHTML = '<div class="aviso rojo">' + esc(e.message) + '</div><button class="btn l" onclick="location.reload()">Intentar de nuevo</button>'; } });
+    return;
+  }
+  pintar();
+  if (boldRef) volverBold(boldRef);
+})();
+})();
+</script>
