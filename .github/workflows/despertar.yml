@@ -1,0 +1,16 @@
+name: Despertar Identidad IA
+# De día (6 a. m. a 10 p. m. hora de Colombia) mantiene despierto el servidor para que la portería lea los carnés al instante.
+# La llamada de las 8:05 a. m. también revisa pagos pendientes de Bold y manda los correos de días de prueba.
+on:
+  schedule:
+    - cron: '*/14 11-23 * * *'
+    - cron: '*/14 0-2 * * *'
+  workflow_dispatch:
+jobs:
+  despertar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Despertar
+        run: |
+          for i in 1 2 3; do curl -fsS --max-time 90 https://identidad-ia.onrender.com/api/ping && break; sleep 20; done
+          if [ "$(date -u +%H%M)" -ge 1300 ] && [ "$(date -u +%H%M)" -lt 1315 ]; then curl -fsS --max-time 120 https://identidad-ia.onrender.com/api/cron || true; fi
