@@ -251,7 +251,7 @@ function asisCfg(c) {
   const porRol = {};
   Object.keys(c.porRol || {}).slice(0, 20).forEach(r => { if (/^(__proto__|constructor|prototype)$/.test(r)) return; const x = c.porRol[r] || {}; const en = hh(x.entrada), sa = hh(x.salida); if (en || sa) porRol[String(r).slice(0, 30)] = { entrada: en || '', salida: sa || '' }; });
   const dias = Array.isArray(c.dias) ? [...new Set(c.dias.map(Number).filter(d => d >= 0 && d <= 6))].sort() : ASIS_DEF.dias;
-  return { entrada: hh(c.entrada) || ASIS_DEF.entrada, salida: hh(c.salida) || ASIS_DEF.salida, tolerancia: Math.max(0, Math.min(120, parseInt(c.tolerancia, 10) || 0)), dias, porRol };
+  return { entrada: hh(c.entrada) || ASIS_DEF.entrada, salida: hh(c.salida) || ASIS_DEF.salida, tolerancia: c.tolerancia === undefined || c.tolerancia === null || c.tolerancia === '' ? ASIS_DEF.tolerancia : Math.max(0, Math.min(120, parseInt(c.tolerancia, 10) || 0)), dias, porRol };
 }
 const aMin = v => +v.slice(0, 2) * 60 + +v.slice(3, 5);
 const aHora = m => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
