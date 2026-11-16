@@ -539,7 +539,8 @@ V.autorizar = () => {
   const e = emp(PERFIL.empresa);
   const ps = misPersonas().filter(p => p.estado === 'activo' && (!p.autorizado || (e.requierePago && !p.pagado)));
   return cab('Por autorizar', 'Ningún carné sale solo: primero el pago (si su institución lo cobra) y luego la autorización de una persona de la institución.') + (e.requierePago ? `<div class="aviso azul">El carné cuesta ${peso(e.valor)} y lo paga la persona en el portal de ${esc(e.origen)}. Cuando el pago se confirma, aparece aquí listo para autorizar.</div>` : '') + `
-  <div class="tabla"><table><thead><tr><th>Persona</th><th>Tipo</th><th>Pago</th><th>Estado</th><th></th></tr></thead><tbody>${ps.map(p => `<tr><td><b>${esc(p.nombre)}</b><br><span class="nota">${esc(p.detalle)}</span></td><td>${esc(p.rol)}</td><td>${e.requierePago ? (p.pagado ? '<span class="pill p-ok">Pagado</span>' : '<span class="pill p-esp">Sin pagar</span>') : '<span class="nota">No se cobra</span>'}</td><td>${pillEstado(p)}</td><td class="fila"><button class="btn chico" data-ver="${p.id}">Revisar</button><button class="btn chico v" data-autorizar="${p.id}" ${e.requierePago && !p.pagado ? 'disabled title="Primero debe estar pagado"' : ''}>✍ Autorizar</button></td></tr>`).join('') || '<tr><td colspan="5" class="nota">No hay carnés esperando. Todo está al día.</td></tr>'}</tbody></table></div>`;
+  ${(() => { const listos = ps.filter(p => !(e.requierePago && !p.pagado)); return listos.length > 1 ? `<div class="fila" style="margin-bottom:10px"><button class="btn v" data-autall="${listos.map(p => p.id).join(',')}">✍ Autorizar los ${listos.length} listos</button><span class="nota">Revise antes las fotos con «Revisar». Los que llegan desde su app tienen la etiqueta «Llegó de ${esc(e.origen === 'manual' ? 'su app' : e.origen)}».</span></div>` : ''; })()}
+  <div class="tabla"><table><thead><tr><th>Persona</th><th>Tipo</th><th>Pago</th><th>Estado</th><th></th></tr></thead><tbody>${ps.map(p => `<tr><td><b>${esc(p.nombre)}</b>${p.llego ? ` <span class="pill p-esp">Llegó de ${esc(e.origen === 'manual' ? 'su app' : e.origen)}</span>` : ''}<br><span class="nota">${esc(p.detalle)}</span></td><td>${esc(p.rol)}</td><td>${e.requierePago ? (p.pagado ? '<span class="pill p-ok">Pagado</span>' : '<span class="pill p-esp">Sin pagar</span>') : '<span class="nota">No se cobra</span>'}</td><td>${pillEstado(p)}</td><td class="fila"><button class="btn chico" data-ver="${p.id}">Revisar</button><button class="btn chico v" data-autorizar="${p.id}" ${e.requierePago && !p.pagado ? 'disabled title="Primero debe estar pagado"' : ''}>✍ Autorizar</button></td></tr>`).join('') || '<tr><td colspan="5" class="nota">No hay carnés esperando. Todo está al día.</td></tr>'}</tbody></table></div>`;
 };
 
 let SEL_IMP = null, SEL_EMP = '';
@@ -769,13 +770,17 @@ V.diseno = () => {
 
 V.conexion = () => {
   const e = emp(PERFIL.empresa);
-  const apps = { 'AcademIA': 'estudiantes, docentes, programa, semestre, foto y si está al día con la cartera', 'Colegio-IA': 'alumnos, docentes, grado, acudiente y si la familia está al día', 'Clínica-IA': 'pacientes que aceptaron el carné: nombre, documento y foto (nunca diagnósticos, programas ni ningún dato de salud)', 'manual': 'un archivo de Excel (CSV) con nombre, documento, tipo y detalle' };
-  return cab('Conexión con su app', 'Los datos llegan solos: no hay que volver a digitar a nadie') + `
-  <div class="caja" style="display:flex;flex-direction:column;gap:12px">
-    <div class="fila"><span class="pill ${e.origen === 'manual' ? 'p-esp' : 'p-ok'}">${e.origen === 'manual' ? 'Sin conexión' : 'Conectado con ' + esc(e.origen)}</span><span class="nota">Trae: ${esc(apps[e.origen])}.</span></div>
-    <label class="c" for="cOrigen">Origen de los datos<select id="cOrigen">${Object.keys(apps).map(k => `<option value="${k}" ${e.origen === k ? 'selected' : ''}>${k === 'manual' ? 'Excel o a mano' : k}</option>`).join('')}</select></label>
-    <p class="nota">La conexión es de solo lectura: ${esc(e.origen === 'manual' ? 'la app' : e.origen)} entrega una llave para su institución; Identidad IA la guarda cifrada y solo lee lo necesario para el carné. Las altas, retiros y pagos se actualizan cada noche y con el botón «Sincronizar ahora».</p>
-    <div class="fila"><button class="btn" data-gcon>Guardar</button><button class="btn l" data-sync ${e.origen === 'manual' ? 'disabled' : ''}>⟳ Sincronizar ahora</button></div>
+  const apps = { 'AcademIA': 'estudiantes matriculados con su foto, programa, semestre y si están al día con la cartera', 'Colegio-IA': 'alumnos matriculados con su foto, grado y si la familia está al día', 'Clínica-IA': 'solo pacientes y funcionarios que aceptaron el carné: nombre, documento y foto (nunca diagnósticos ni ningún dato de salud)', 'manual': 'un archivo de Excel (CSV) con nombre, documento, tipo y detalle' };
+  const ll = e.llave; const LLAVE_NUEVA = window.__llaveNueva || '';
+  return cab('Conexión con su app', 'Los matriculados llegan solos: no hay que volver a digitar a nadie') + `
+  <div class="caja" style="display:flex;flex-direction:column;gap:12px;min-width:0;overflow-wrap:anywhere">
+    <div class="fila"><span class="pill ${ll ? 'p-ok' : 'p-esp'}">${ll ? 'Conectado' + (e.origen !== 'manual' ? ' con ' + esc(e.origen) : '') : 'Sin conexión'}</span><span class="nota">${ll ? 'Llave creada el ' + fmtF((ll.creada || '').slice(0, 10)) + ' (termina en …' + esc(ll.pista) + ')' + (ll.ultimo ? ' · último envío ' + fmtF(ll.ultimo.slice(0, 10)) : ' · aún no ha llegado ningún envío') : 'Genere una llave y péguela en su app.'}</span></div>
+    <label class="c" for="cOrigen">Su app<select id="cOrigen">${Object.keys(apps).map(k => `<option value="${k}" ${e.origen === k ? 'selected' : ''}>${k === 'manual' ? 'Otra app o Excel' : k}</option>`).join('')}</select></label>
+    <p class="nota">Trae: ${esc(apps[e.origen] || apps.manual)}.</p>
+    ${LLAVE_NUEVA ? `<div class="aviso verde"><b>Su llave nueva (cópiela ahora: no se vuelve a mostrar):</b><br><code style="word-break:break-all;user-select:all">${esc(LLAVE_NUEVA)}</code><div class="fila" style="margin-top:8px"><button class="btn chico" data-copllave>Copiar llave</button></div></div>` : ''}
+    <div class="aviso azul"><b>Cómo funciona:</b> 1) Genere la llave y péguela en ${esc(e.origen === 'manual' ? 'su app' : e.origen)} (Parametrización › Identidad IA). 2) Al confirmar una matrícula, la app envía nombre, documento, programa o grado y la foto (obligatoria). 3) El carné aparece en «Por autorizar»: ninguno sale solo. 4) Si la persona se retira o deja de estar al día, su carné pasa solo a NO VIGENTE.</div>
+    <div class="fila"><button class="btn" data-gcon>Guardar</button><button class="btn v" data-genllave>${ll ? '⟳ Cambiar la llave' : '🔑 Generar llave'}</button>${ll ? '<button class="btn l" data-quitllave>Desconectar</button>' : ''}</div>
+    <p class="nota" style="overflow-wrap:anywhere">Para técnicos: POST ${esc(API)}/api/integracion/personas con encabezado <code>x-llave</code> y cuerpo {"personas":[{"ref","nombre","documento","rol","detalle","foto","alDia","estado":"activo|retirado","pagadoCarne"}]} (máximo 30 por envío; foto JPG/PNG/WEBP en base64 de menos de 300 KB).</p>
   </div>`;
 };
 
@@ -1210,7 +1215,9 @@ function prodClick(d, b) {
     return true;
   }
   if ('gcon' in d) { ocupado(b, async () => { await api('PUT', '/api/empresa', { origen: $('#cOrigen').value }); await recargar(); toast('Origen de los datos guardado'); }); return true; }
-  if ('sync' in d) { toast('La conexión automática con ' + emp(PERFIL.empresa).origen + ' la activa SkyNet Genesis: escríbanos por WhatsApp al 304 437 5758 para programarla'); return true; }
+  if ('genllave' in d) { const e = emp(PERFIL.empresa); if (e.llave && !d.seguro) { d.seguro = '1'; b.textContent = 'La llave actual dejará de servir. Pulse otra vez para confirmar'; return true; } ocupado(b, async () => { const j = await api('POST', '/api/integracion/llave'); window.__llaveNueva = j.llave; await recargar(); toast('Llave generada: cópiela y péguela en su app'); }); return true; }
+  if ('quitllave' in d) { if (!d.seguro) { d.seguro = '1'; b.textContent = 'Su app dejará de enviar personas. Pulse otra vez'; return true; } ocupado(b, async () => { await api('POST', '/api/integracion/quitar'); window.__llaveNueva = ''; await recargar(); toast('App desconectada'); }); return true; }
+  if (d.autall) { ocupado(b, async () => { const j = await api('POST', '/api/personas-autorizar-todos', { ids: d.autall.split(',') }); await recargar(); toast(j.autorizados + ' carnés autorizados'); }); return true; }
   if (d.pagarplan) {
     const cant = Math.max(1, parseInt(($('#mCant') || {}).value, 10) || 1);
     ocupado(b, async () => { const j = await api('POST', '/api/bold/pedido', { cantidad: cant, nuevos: +d.nuevos || 0, asistencia: d.asis === '1' }); toast('Con este pago queda al día hasta el ' + fmtF(j.hasta) + '. Se abre la pasarela de pagos'); abrirBold(j.firma); });
@@ -1405,7 +1412,10 @@ document.addEventListener('click', ev => {
   }
   else if ('gdiseno' in d) guardarDiseno();
   else if ('gcon' in d) { const e = emp(PERFIL.empresa); e.origen = $('#cOrigen').value; bit('Cambió el origen de datos a ' + e.origen); guardar(); pintar(); toast('Conexión guardada'); }
-  else if ('sync' in d) { const e = emp(PERFIL.empresa); bit('Sincronizó con ' + e.origen); guardar(); toast('Sincronizado con ' + e.origen + ': altas, retiros y pagos al día'); }
+  else if ('genllave' in d) { const e = emp(PERFIL.empresa); window.__llaveNueva = 'iia_' + e.id + '_' + 'DEMO' + Math.random().toString(36).slice(2, 14).padEnd(28, 'x'); e.llave = { creada: new Date().toISOString(), ultimo: '', pista: window.__llaveNueva.slice(-4) }; bit('Generó una llave de conexión (demostración)'); guardar(); pintar(); toast('Llave de demostración generada'); }
+  else if ('quitllave' in d) { const e = emp(PERFIL.empresa); delete e.llave; window.__llaveNueva = ''; guardar(); pintar(); toast('App desconectada'); }
+  else if (d.autall) { const ids = d.autall.split(','); D.personas.filter(p => ids.includes(p.id)).forEach(p => { p.autorizado = true; p.emitido = hoy(); }); bit('Autorizó ' + ids.length + ' carnés de una vez'); guardar(); pintar(); toast(ids.length + ' carnés autorizados'); }
+  else if ('copllave' in d) { navigator.clipboard.writeText(window.__llaveNueva || '').then(() => toast('Llave copiada')).catch(() => toast('Seleccione la llave y cópiela con Ctrl+C')); }
 });
 document.addEventListener('change', ev => {
   if (ev.target.id === 'modoLect') { MODO_LECT = ev.target.value; try { localStorage.setItem('identidadia_modo', MODO_LECT); } catch (e) { } const c = $('#codQR'); if (c && ptrFino()) c.focus(); }
