@@ -768,13 +768,14 @@ V.diseno = () => {
   </div><div style="display:flex;flex-direction:column;gap:14px">${ej ? carneFrente(ej) + carneReverso(ej) : ''}</div></div>`;
 };
 
+const fechaCO = iso => iso ? new Date(new Date(iso).getTime() - 5 * 3600e3).toISOString().slice(0, 10) : '';
 V.conexion = () => {
   const e = emp(PERFIL.empresa);
   const apps = { 'AcademIA': 'estudiantes matriculados con su foto, programa, semestre y si están al día con la cartera', 'Colegio-IA': 'alumnos matriculados con su foto, grado y si la familia está al día', 'Clínica-IA': 'solo pacientes y funcionarios que aceptaron el carnet: nombre, documento y foto (nunca diagnósticos ni ningún dato de salud)', 'manual': 'un archivo de Excel (CSV) con nombre, documento, tipo y detalle' };
   const ll = e.llave; const LLAVE_NUEVA = window.__llaveNueva || '';
   return cab('Conexión con su app', 'Los matriculados llegan solos: no hay que volver a digitar a nadie') + `
   <div class="caja" style="display:flex;flex-direction:column;gap:12px;min-width:0;overflow-wrap:anywhere">
-    <div class="fila"><span class="pill ${ll ? 'p-ok' : 'p-esp'}">${ll ? 'Conectado' + (e.origen !== 'manual' ? ' con ' + esc(e.origen) : '') : 'Sin conexión'}</span><span class="nota">${ll ? 'Llave creada el ' + fmtF((ll.creada || '').slice(0, 10)) + ' (termina en …' + esc(ll.pista) + ')' + (ll.ultimo ? ' · último envío ' + fmtF(ll.ultimo.slice(0, 10)) : ' · aún no ha llegado ningún envío') : 'Genere una llave y péguela en su app.'}</span></div>
+    <div class="fila"><span class="pill ${ll ? 'p-ok' : 'p-esp'}">${ll ? 'Conectado' + (e.origen !== 'manual' ? ' con ' + esc(e.origen) : '') : 'Sin conexión'}</span><span class="nota">${ll ? 'Llave creada el ' + fmtF(fechaCO(ll.creada)) + ' (termina en …' + esc(ll.pista) + ')' + (ll.ultimo ? ' · último envío ' + fmtF(fechaCO(ll.ultimo)) : ' · aún no ha llegado ningún envío') : 'Genere una llave y péguela en su app.'}</span></div>
     <label class="c" for="cOrigen">Su app<select id="cOrigen">${Object.keys(apps).map(k => `<option value="${k}" ${e.origen === k ? 'selected' : ''}>${k === 'manual' ? 'Otra app o Excel' : k}</option>`).join('')}</select></label>
     <p class="nota">Trae: ${esc(apps[e.origen] || apps.manual)}.</p>
     ${LLAVE_NUEVA ? `<div class="aviso verde"><b>Su llave nueva (cópiela ahora: no se vuelve a mostrar):</b><br><code style="word-break:break-all;user-select:all">${esc(LLAVE_NUEVA)}</code><div class="fila" style="margin-top:8px"><button class="btn chico" data-copllave>Copiar llave</button></div></div>` : ''}
@@ -844,12 +845,12 @@ let SESION = null, PUB = 'portada', REC_CORREO = '', CLAVE_PARA = '';
 const bitQ = (quien, que) => { D.bitacora.unshift({ t: Date.now(), quien, que }); D.bitacora = D.bitacora.slice(0, 300); };
 const campoClave = (id, etq, ac) => `<label class="c" for="${id}">${etq}<span class="clave-caja"><input type="password" id="${id}" autocomplete="${ac}"><button type="button" class="ojo" data-ojo="${id}">Mostrar</button></span></label>`;
 const FOTOS = {
-  hero: 'Estudiante en la entrada de su institución mostrando el carnet en el celular',
-  porteria: 'Vigilante en la portería escaneando el QR de un carnet con el celular',
+  hero: 'Hombre sonriente con su carnet colgado de una cinta',
+  porteria: 'Celular mostrando el código QR de un carnet',
   impresion: 'Persona recibiendo su carnet impreso en tarjeta plástica',
   equipo: 'Secretaria de una institución revisando la lista de carnets en el computador'
 };
-const FOTO_URL = { hero: 'photo-1758270704689-2850704b7338', porteria: 'photo-1485230405346-71acb9518d9c', equipo: 'photo-1713946598544-c3d106930f72' };
+const FOTO_URL = { hero: 'photo-1783120947294-a8168b368534', porteria: 'photo-1595079676339-1534801ad6cf', equipo: 'photo-1713946598544-c3d106930f72' };
 const fotoSec = k => `<figure class="foto-sec">${FOTO_URL[k] ? `<img src="https://images.unsplash.com/${FOTO_URL[k]}?w=900&q=70&auto=format&fit=crop" alt="${FOTOS[k]}" loading="lazy" onerror="this.remove()">` : ''}<figcaption>${FOTOS[k]}</figcaption></figure>`;
 V.portada = () => {
   const ej = D.personas.find(p => p.empresa === 'e-poli' && estadoCarne(p).ok) || D.personas[0];
@@ -867,7 +868,7 @@ V.portada = () => {
     <div class="tarjeta"><span class="ic">⏳</span><b>Imprimir cuesta y demora</b><span class="nota">Cada año hay que volver a tomar fotos, diseñar e imprimir todo.</span></div>
   </div></section>
   <section class="sec"><h2>Así funciona</h2><div class="dos"><div class="tarjetas" style="grid-template-columns:1fr">
-    <div class="tarjeta"><span class="paso-n">1</span><b>Cargue a su gente</b><span class="nota">Desde un Excel o, si ya usa AcademIA, Colegio-IA o Clínica-IA, los datos llegan solos.</span></div>
+    <div class="tarjeta"><span class="paso-n">1</span><b>Cargue a su gente</b><span class="nota">Desde un Excel o conectando su software con una llave segura: cada matriculado llega con su foto.</span></div>
     <div class="tarjeta"><span class="paso-n">2</span><b>Autorice y entregue</b><span class="nota">Cada persona recibe su carnet en el celular. Si quiere, lo imprime en tarjeta plástica o nos lo pide impreso.</span></div>
     <div class="tarjeta"><span class="paso-n">3</span><b>Verifique en la puerta</b><span class="nota">Cualquier celular escanea el QR: VIGENTE o NO VIGENTE, con foto y nombre. Cada entrada queda registrada.</span></div>
   </div>${fotoSec('porteria')}</div></section>
@@ -891,7 +892,7 @@ V.portada = () => {
   </div></section>
   <section class="sec"><h2>Preguntas frecuentes</h2>
     <details class="faq"><summary>¿El QR muestra la cédula de la persona?</summary><p>No. Muestra foto, nombre, tipo y vigencia. Su institución puede escoger el modo reducido: solo nombre corto y vigencia, sin foto.</p></details>
-    <details class="faq"><summary>¿Qué pasa si una persona se retira o deja de pagar?</summary><p>El carnet pasa a NO VIGENTE al instante: lo suspende la institución o llega solo desde su app (AcademIA, Colegio-IA, Clínica-IA).</p></details>
+    <details class="faq"><summary>¿Qué pasa si una persona se retira o deja de pagar?</summary><p>El carnet pasa a NO VIGENTE al instante: lo suspende la institución o lo avisa su software conectado.</p></details>
     <details class="faq"><summary>¿Puedo imprimirlos en tarjeta plástica?</summary><p>Sí. La app le entrega el diseño listo para imprimir por las dos caras, o nos los pide impresos a ${peso(PRECIO_IMPRESO)} cada uno con envío a todo el país.</p></details>
     <details class="faq"><summary>¿Necesito comprar un lector para la portería?</summary><p>No. Basta un celular con cámara e internet. Si prefiere, funciona también con un lector QR de mesa (USB) conectado al computador de la portería.</p></details>
     <details class="faq"><summary>¿Sirve para controlar la asistencia de empleados o estudiantes?</summary><p>Sí, con el módulo de control de acceso y asistencia (desde ${peso(ASIS.p100)} al mes adicionales): usted pone el horario y la app le dice quién llegó tarde, quién faltó y cuántas horas estuvo cada uno, con informes que se descargan para Excel. No necesita tener Colegio-IA ni ninguna otra app nuestra.</p></details>
