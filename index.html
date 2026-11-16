@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="Identidad IA: carnés digitales con QR que cualquiera verifica en segundos, con control de acceso y asistencia. Una aplicación de SkyNet Genesis."><meta name="theme-color" content="#0B4F8A"><style>[hidden]{display:none!important}</style></head><body>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="Identidad IA: carnets digitales con QR que cualquiera verifica en segundos, con control de acceso y asistencia. Una aplicación de SkyNet Genesis."><meta name="theme-color" content="#0B4F8A"><style>[hidden]{display:none!important}</style></head><body>
 <title>Identidad IA</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -7,7 +7,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 <style>
-/* Layout: barra superior blanca + menú lateral por perfil; el carné CR80 (85,6 × 54 mm) es la pieza central. Solo modo claro (paleta FamilIA Salud). */
+/* Layout: barra superior blanca + menú lateral por perfil; el carnet CR80 (85,6 × 54 mm) es la pieza central. Solo modo claro (paleta FamilIA Salud). */
 :root{
   --azul:#0B4F8A; --azul2:#1867B0; --verde:#14A38B; --verde-o:#0E8571; --wa:#1F8A4C;
   --fondo:#F4F8FB; --sup:#FFFFFF; --txt:#1C2B39; --suave:#5D6B78; --borde:#DCE5EE;
@@ -75,7 +75,7 @@ tr:last-child td{border-bottom:0}
 .aviso.azul{background:var(--fa);color:var(--azul);border:1px solid #C9DDF1}
 .aviso.verde{background:var(--fv);color:var(--verde-o);border:1px solid #BFE7DE}
 .nota{font-size:13px;color:var(--suave)}
-/* ---- carné CR80 ---- */
+/* ---- carnet CR80 ---- */
 .carne{width:min(100%,428px);aspect-ratio:85.6/54;border-radius:18px;position:relative;overflow:hidden;box-shadow:0 10px 30px rgba(11,79,138,.18);color:#fff;font-family:var(--cuerpo);container-type:inline-size;flex:none}
 .carne .fondo{position:absolute;inset:0;background:linear-gradient(135deg,var(--c1),var(--c2))}
 .carne .fondo::after{content:"";position:absolute;right:-18%;top:-40%;width:70%;aspect-ratio:1;border-radius:50%;background:rgba(255,255,255,.09)}
@@ -187,7 +187,7 @@ body.con-fija .toast{bottom:calc(88px + env(safe-area-inset-bottom,0px))}
 <header class="barra">
   <div class="marca">
     <svg viewBox="0 0 200 200" aria-hidden="true"><rect x="4" y="4" width="192" height="192" rx="46" fill="#1E3A4C"/><g stroke="#FFFFFF" stroke-linecap="round"><polygon points="100,42 150.2,71 150.2,129 100,158 49.8,129 49.8,71" fill="none" stroke-opacity=".35" stroke-width="4"/><path d="M100 100L100 42M100 100L150.2 71M100 100L150.2 129M100 100L100 158M100 100L49.8 129M100 100L49.8 71" stroke-width="6"/></g><g fill="#FFFFFF"><circle cx="150.2" cy="71" r="10"/><circle cx="150.2" cy="129" r="10"/><circle cx="100" cy="158" r="10"/><circle cx="49.8" cy="129" r="10"/><circle cx="49.8" cy="71" r="10"/></g><circle cx="100" cy="42" r="13" fill="#E0A21A"/><circle cx="100" cy="100" r="20" fill="#E0A21A"/></svg>
-    <div>Identidad IA<small>Carnés digitales con QR · SkyNet Genesis</small></div>
+    <div>Identidad IA<small>Carnets digitales con QR · SkyNet Genesis</small></div>
   </div>
   <div class="espacio"></div>
   <div class="perfil" id="barraDer"></div>
@@ -215,7 +215,7 @@ const uid = (p = '') => p + Math.random().toString(36).slice(2, 8) + Date.now().
 const token = () => Array.from(crypto.getRandomValues(new Uint8Array(9))).map(b => 'abcdefghjkmnpqrstuvwxyz23456789'[b % 31]).join('');
 let tt; const toast = m => { clearTimeout(tt); const e = document.createElement('div'); e.className = 'toast'; e.textContent = m; document.querySelectorAll('.toast').forEach(x => x.remove()); document.body.appendChild(e); tt = setTimeout(() => e.remove(), 5500); };
 const URL_VERIF = 'identidad-ia.skynetgenesis.com/?v=';
-const WA = 'https://wa.me/573044375758?text=' + encodeURIComponent('Hola, quiero información sobre Identidad IA (carnés digitales con QR).');
+const WA = 'https://wa.me/573044375758?text=' + encodeURIComponent('Hola, quiero información sobre Identidad IA (carnets digitales con QR).');
 const sumDias = (f, n) => { const d = new Date(f + 'T12:00:00'); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
 const finMes = f => { const d = new Date(f.slice(0, 8) + '01T12:00:00'); d.setMonth(d.getMonth() + 1); d.setDate(0); return d.toISOString().slice(0, 10); };
 const finMesMas = (f, m) => finMes(sumMeses(f.slice(0, 8) + '01', m));
@@ -233,14 +233,14 @@ const avatar = (nombre, c = '#0B4F8A') => { const ini = nombre.split(/\s+/).filt
 /* ================= datos ================= */
 const CLAVE = 'identidadia_v3';
 const PLANES = [
-  { id: 'p100', nombre: 'Hasta 100 carnés', max: 100, precio: 39000 },
-  { id: 'p500', nombre: 'Hasta 500 carnés', max: 500, precio: 89000 },
-  { id: 'p2000', nombre: 'Hasta 2.000 carnés', max: 2000, precio: 179000 },
-  { id: 'pmax', nombre: 'Más de 2.000 carnés', max: 1e9, precio: 299000 }
+  { id: 'p100', nombre: 'Hasta 100 carnets', max: 100, precio: 39000 },
+  { id: 'p500', nombre: 'Hasta 500 carnets', max: 500, precio: 89000 },
+  { id: 'p2000', nombre: 'Hasta 2.000 carnets', max: 2000, precio: 179000 },
+  { id: 'pmax', nombre: 'Más de 2.000 carnets', max: 1e9, precio: 299000 }
 ];
-/* Cobro aprobado por el señor (15 nov 2026): $3.000 por cada carné hecho (nuevo, duplicado o cambio de foto) + mensualidad por mantener la comprobación del QR */
+/* Cobro aprobado por el señor (15 nov 2026): $3.000 por cada carnet hecho (nuevo, duplicado o cambio de foto) + mensualidad por mantener la comprobación del QR */
 const PRECIO_CARNE = 3000;
-/* Aprobado (15 nov 2026): SkyNet Genesis imprime en PVC dos caras (Zebra ZC32) a $8.000 por carné y envía por Interrapidísimo; el envío se cobra aparte por paquete */
+/* Aprobado (15 nov 2026): SkyNet Genesis imprime en PVC dos caras (Zebra ZC32) a $8.000 por carnet y envía por Interrapidísimo; el envío se cobra aparte por paquete */
 const PRECIO_IMPRESO = 8000;
 /* Control de acceso y asistencia: adicional mensual según el plan (aprobado por el señor el 15 nov 2026) */
 const ASIS = { p100: 19000, p500: 39000, p2000: 69000, pmax: 99000 };
@@ -326,11 +326,11 @@ function accesosDemo(P) {
 function semilla() {
   const f = hoy();
   const E = [
-    { id: 'e-poli', nombre: 'POLIANDES', largo: 'Politécnico Industrial de Los Andes', nit: '900043963-7', tipo: 'Institución ETDH', c1: '#0B2E59', c2: '#1867B0', interna: true, plan: 'p500', pagadoHasta: '', origen: 'AcademIA', vigencia: 6, requierePago: true, valor: 25000, reverso: 'Este carné identifica a su portador como miembro de POLIANDES, institución de educación para el trabajo y el desarrollo humano. Es personal e intransferible. Si lo encuentra, devuélvalo en la Calle 11D No. 22-90, Santa Marta.', firma: 'Rector', alDiaDesdeApp: true },
-    { id: 'e-anglo', nombre: 'Colegio Anglocolombiano', largo: 'Colegio Cristiano Anglocolombiano', nit: '', tipo: 'Colegio', c1: '#7A1F2B', c2: '#C0392B', interna: true, plan: 'p500', pagadoHasta: '', origen: 'Colegio-IA', vigencia: 12, requierePago: false, valor: 0, reverso: 'Carné escolar del Colegio Cristiano Anglocolombiano. En caso de emergencia, comuníquese con el acudiente registrado.', firma: 'Rectoría', alDiaDesdeApp: true, verif: 'reducida' },
-    { id: 'e-reina', nombre: 'Reina Elizabeth IPS', largo: 'Clínica Reina Elizabeth IPS', nit: '', tipo: 'IPS', c1: '#0E8571', c2: '#14A38B', interna: true, plan: 'p500', pagadoHasta: '', origen: 'Clínica-IA', vigencia: 12, requierePago: false, valor: 0, reverso: 'Carné de paciente de la Clínica Reina Elizabeth IPS. Preséntelo en recepción para agilizar su atención. Calle 22 No. 18-18, Santa Marta.', firma: 'Dirección', alDiaDesdeApp: false, verif: 'reducida' },
+    { id: 'e-poli', nombre: 'POLIANDES', largo: 'Politécnico Industrial de Los Andes', nit: '900043963-7', tipo: 'Institución ETDH', c1: '#0B2E59', c2: '#1867B0', interna: true, plan: 'p500', pagadoHasta: '', origen: 'AcademIA', vigencia: 6, requierePago: true, valor: 25000, reverso: 'Este carnet identifica a su portador como miembro de POLIANDES, institución de educación para el trabajo y el desarrollo humano. Es personal e intransferible. Si lo encuentra, devuélvalo en la Calle 11D No. 22-90, Santa Marta.', firma: 'Rector', alDiaDesdeApp: true },
+    { id: 'e-anglo', nombre: 'Colegio Anglocolombiano', largo: 'Colegio Cristiano Anglocolombiano', nit: '', tipo: 'Colegio', c1: '#7A1F2B', c2: '#C0392B', interna: true, plan: 'p500', pagadoHasta: '', origen: 'Colegio-IA', vigencia: 12, requierePago: false, valor: 0, reverso: 'Carnet escolar del Colegio Cristiano Anglocolombiano. En caso de emergencia, comuníquese con el acudiente registrado.', firma: 'Rectoría', alDiaDesdeApp: true, verif: 'reducida' },
+    { id: 'e-reina', nombre: 'Reina Elizabeth IPS', largo: 'Clínica Reina Elizabeth IPS', nit: '', tipo: 'IPS', c1: '#0E8571', c2: '#14A38B', interna: true, plan: 'p500', pagadoHasta: '', origen: 'Clínica-IA', vigencia: 12, requierePago: false, valor: 0, reverso: 'Carnet de paciente de la Clínica Reina Elizabeth IPS. Preséntelo en recepción para agilizar su atención. Calle 22 No. 18-18, Santa Marta.', firma: 'Dirección', alDiaDesdeApp: false, verif: 'reducida' },
     { id: 'e-gym', nombre: 'Gimnasio Fuerza Caribe', largo: 'Gimnasio Fuerza Caribe (ejemplo)', nit: '901000000-1', tipo: 'Gimnasio', c1: '#1C2B39', c2: '#0B4F8A', interna: false, plan: 'p100', pagadoHasta: finMes(f), origen: 'manual', vigencia: 1, requierePago: false, valor: 0, reverso: 'Membresía personal. Preséntela en la entrada.', firma: 'Administración', alDiaDesdeApp: false, verif: 'completa', cupoCarnes: 48, usadosPrueba: 0 },
-    { id: 'e-conj', nombre: 'Conjunto Altos del Mar', largo: 'Conjunto Residencial Altos del Mar (ejemplo)', nit: '901222333-4', tipo: 'Conjunto residencial', c1: '#0E8571', c2: '#0B4F8A', interna: false, plan: 'p500', pagadoHasta: '', pruebaHasta: sumDias(f, 8), origen: 'manual', vigencia: 12, requierePago: false, valor: 0, reverso: 'Carné de residente. Preséntelo en la portería.', firma: 'Administración', alDiaDesdeApp: false, verif: 'completa', cupoCarnes: 0, usadosPrueba: 2, cantidad: 300 }
+    { id: 'e-conj', nombre: 'Conjunto Altos del Mar', largo: 'Conjunto Residencial Altos del Mar (ejemplo)', nit: '901222333-4', tipo: 'Conjunto residencial', c1: '#0E8571', c2: '#0B4F8A', interna: false, plan: 'p500', pagadoHasta: '', pruebaHasta: sumDias(f, 8), origen: 'manual', vigencia: 12, requierePago: false, valor: 0, reverso: 'Carnet de residente. Preséntelo en la portería.', firma: 'Administración', alDiaDesdeApp: false, verif: 'completa', cupoCarnes: 0, usadosPrueba: 2, cantidad: 300 }
   ];
   const nombres = {
     'e-poli': [['Valentina Rojas Mejía', 'Estudiante', 'Técnico en Veterinaria · Semestre 3', true], ['Andrés Felipe Ospina', 'Estudiante', 'Técnico en Administración · Semestre 2', true], ['Mariana Castro Peña', 'Estudiante', 'Técnico en Preescolar · Semestre 1', false], ['Luis Eduardo Barrios', 'Docente', 'Docente de Maquinaria Pesada', true], ['Daniela Suárez Gil', 'Estudiante', 'Técnico en Maquinaria Pesada · Semestre 4', true]],
@@ -367,13 +367,13 @@ const bit = (que) => { D.bitacora.unshift({ t: Date.now(), quien: PERFIL.nombre,
 const emp = id => D.empresas.find(e => e.id === id);
 
 /* ================= reglas ================= */
-/* Estado del carné. Nunca se expone la cédula en la verificación. */
+/* Estado del carnet. Nunca se expone la cédula en la verificación. */
 function estadoCarne(p) {
   const e = emp(p.empresa);
   if (!e) return { ok: false, motivo: 'Institución no encontrada' };
   if (!e.interna && estadoCuenta(e).bloqueada) return { ok: false, motivo: 'Servicio de la institución suspendido' };
-  if (p.estado === 'anulado') return { ok: false, motivo: 'Carné anulado' };
-  if (p.estado === 'suspendido') return { ok: false, motivo: 'Carné suspendido por la institución' };
+  if (p.estado === 'anulado') return { ok: false, motivo: 'Carnet anulado' };
+  if (p.estado === 'suspendido') return { ok: false, motivo: 'Carnet suspendido por la institución' };
   if (e.requierePago && !p.pagado) return { ok: false, motivo: 'Pendiente de pago', espera: true };
   if (!p.autorizado) return { ok: false, motivo: 'Por autorizar', espera: true };
   if (p.vence && p.vence < hoy()) return { ok: false, motivo: 'Vencido' };
@@ -424,15 +424,15 @@ const PERFILES = [
   { id: 'adm-gym', nombre: 'Administrador · Gimnasio (cliente que paga)', tipo: 'admin', empresa: 'e-gym' },
   { id: 'adm-conj', nombre: 'Administrador · Conjunto (en prueba)', tipo: 'admin', empresa: 'e-conj' },
   { id: 'port-poli', nombre: 'Portería · POLIANDES', tipo: 'porteria', empresa: 'e-poli' },
-  { id: 'pers', nombre: 'Estudiante (ver mi carné)', tipo: 'persona' }
+  { id: 'pers', nombre: 'Estudiante (ver mi carnet)', tipo: 'persona' }
 ];
 let PERFIL = PERFILES[1];
 let VISTA = 'inicio';
 const MENU = {
   super: [['Plataforma'], ['inicio', '🏠', 'Resumen'], ['empresas', '🏢', 'Instituciones'], ['cuentas', '🔐', 'Cuentas y accesos'], ['planes', '💳', 'Planes y precios'], ['pedidos', '📦', 'Pedidos de impresión'], ['bitacora', '📜', 'Bitácora']],
-  admin: [['Carnés'], ['inicio', '🏠', 'Inicio'], ['personas', '🪪', 'Personas y carnés'], ['autorizar', '✍', 'Por autorizar'], ['imprimir', '🖨', 'Imprimir en PVC'], ['pedido', '📦', 'Pedir carnés impresos'], ['Control de acceso'], ['porteria', '📷', 'Portería'], ['accesos', '🕒', 'Registro de entradas'], ['asistencia', '📊', 'Asistencia y reportes'], ['Institución'], ['diseno', '🎨', 'Diseño del carné'], ['conexion', '🔗', 'Conexión con su app'], ['usuarios', '👥', 'Usuarios'], ['pago', '💳', 'Mi plan']],
-  porteria: [['Portería'], ['porteria', '📷', 'Escanear carné'], ['accesos', '🕒', 'Entradas de hoy']],
-  persona: [['Mi carné'], ['micarne', '🪪', 'Mi carné']]
+  admin: [['Carnets'], ['inicio', '🏠', 'Inicio'], ['personas', '🪪', 'Personas y carnets'], ['autorizar', '✍', 'Por autorizar'], ['imprimir', '🖨', 'Imprimir en PVC'], ['pedido', '📦', 'Pedir carnets impresos'], ['Control de acceso'], ['porteria', '📷', 'Portería'], ['accesos', '🕒', 'Registro de entradas'], ['asistencia', '📊', 'Asistencia y reportes'], ['Institución'], ['diseno', '🎨', 'Diseño del carnet'], ['conexion', '🔗', 'Conexión con su app'], ['usuarios', '👥', 'Usuarios'], ['pago', '💳', 'Mi plan']],
+  porteria: [['Portería'], ['porteria', '📷', 'Escanear carnet'], ['accesos', '🕒', 'Entradas de hoy']],
+  persona: [['Mi carnet'], ['micarne', '🪪', 'Mi carnet']]
 };
 
 
@@ -441,7 +441,7 @@ function pintarMenu() {
   $('#menu').querySelectorAll('button').forEach(b => b.onclick = () => { VISTA = b.dataset.v; pintar(); });
 }
 
-/* ================= el carné ================= */
+/* ================= el carnet ================= */
 function qrSvg(texto) {
   try { const q = qrcode(0, 'M'); q.addData(texto); q.make(); return q.createSvgTag({ cellSize: 4, margin: 0, scalable: true }); } catch (e) { return '<svg viewBox="0 0 10 10"><rect width="10" height="10" fill="#eee"/></svg>'; }
 }
@@ -449,7 +449,7 @@ function carneFrente(p) {
   const e = emp(p.empresa); const st = estadoCarne(p);
   const foto = imgOk(p.foto) ? p.foto : avatar(p.nombre, e.c1);
   const lg = imgOk(e.logo) ? `<img src="${e.logo}" alt="">` : esc(e.nombre.split(/\s+/).map(x => x[0]).join('').slice(0, 3));
-  return `<div class="carne ${st.ok ? '' : 'no'}" style="--c1:${e.c1};--c2:${e.c2}" role="img" aria-label="Carné de ${esc(p.nombre)}">
+  return `<div class="carne ${st.ok ? '' : 'no'}" style="--c1:${e.c1};--c2:${e.c2}" role="img" aria-label="Carnet de ${esc(p.nombre)}">
     <div class="fondo"></div>
     <div class="cab"><div class="lg">${lg}</div><div><b>${esc(e.nombre)}</b><span>${esc(e.tipo)}${e.nit ? ' · NIT ' + esc(e.nit) : ''}</span></div></div>
     <img class="foto" src="${foto}" alt="">
@@ -461,7 +461,7 @@ function carneFrente(p) {
 }
 function carneReverso(p) {
   const e = emp(p.empresa);
-  return `<div class="carne reverso" style="--c1:${e.c1};--c2:${e.c2}" role="img" aria-label="Reverso del carné">
+  return `<div class="carne reverso" style="--c1:${e.c1};--c2:${e.c2}" role="img" aria-label="Reverso del carnet">
     <div class="fondo"></div><div class="franja"></div>
     <div class="txt"><b>${esc(e.largo || e.nombre)}</b><span>${esc(e.reverso)}</span><span>Emergencia: ${esc(p.emergencia || '—')}</span><span>Código: ${esc(p.token.toUpperCase())}</span></div>
     <div class="firma">${esc(e.firma || 'Firma autorizada')}</div>
@@ -478,8 +478,8 @@ const misPersonas = () => D.personas.filter(p => p.empresa === PERFIL.empresa);
 function avisoCobro(e) {
   if (!e || e.interna) return '';
   const c = estadoCuenta(e); const admin = PERFIL.tipo === 'admin';
-  if (c.prueba) return `<div class="aviso azul"><b>Está en prueba gratis: ${c.prueba === 1 ? 'hoy es el último día' : 'le quedan ' + c.prueba + ' días'}.</b> Tiene ${pruebaRest(e)} carnés de prueba. Cuando quiera, arme su plan y pague para no perder el servicio.<span class="espacio"></span>${admin ? '<button class="btn chico v" data-ir="pago">Arme su plan</button>' : ''}</div>`;
-  if (c.cierre) return `<div class="aviso rojo"><b>Su pago está pendiente.</b> El acceso se cierra el ${fmtF(c.cierre)} y los carnés aparecerán NO VIGENTE.<span class="espacio"></span>${admin ? '<button class="btn chico" data-ir="pago">Pagar ahora</button>' : 'Avísele al administrador.'}<a class="btn wa chico" href="${WA}" target="_blank" rel="noopener">WhatsApp soporte</a></div>`;
+  if (c.prueba) return `<div class="aviso azul"><b>Está en prueba gratis: ${c.prueba === 1 ? 'hoy es el último día' : 'le quedan ' + c.prueba + ' días'}.</b> Tiene ${pruebaRest(e)} carnets de prueba. Cuando quiera, arme su plan y pague para no perder el servicio.<span class="espacio"></span>${admin ? '<button class="btn chico v" data-ir="pago">Arme su plan</button>' : ''}</div>`;
+  if (c.cierre) return `<div class="aviso rojo"><b>Su pago está pendiente.</b> El acceso se cierra el ${fmtF(c.cierre)} y los carnets aparecerán NO VIGENTE.<span class="espacio"></span>${admin ? '<button class="btn chico" data-ir="pago">Pagar ahora</button>' : 'Avísele al administrador.'}<a class="btn wa chico" href="${WA}" target="_blank" rel="noopener">WhatsApp soporte</a></div>`;
   return '';
 }
 
@@ -490,27 +490,27 @@ V.inicio = () => {
     const conAsis = e => !!((e.asistencia || {}).activa && ((e.asistencia || {}).hasta || '') >= hoy());
     const ingreso = clientes.filter(e => (e.pagadoHasta || '') >= hoy()).reduce((s, e) => s + planDe(e).precio + (conAsis(e) ? ASIS[planDe(e).id] : 0), 0);
     return cab('Resumen de la plataforma', 'Todas las instituciones que usan Identidad IA') + `
-    <div class="cifras"><div class="cifra"><b>${D.empresas.length}</b><span>Instituciones (${D.empresas.filter(e => e.interna).length} internas)</span></div><div class="cifra"><b>${tot}</b><span>Carnés registrados</span></div><div class="cifra"><b>${ok}</b><span>Vigentes hoy</span></div><div class="cifra"><b>${peso(ingreso)}</b><span>Mensualidades de clientes al día</span></div></div>
+    <div class="cifras"><div class="cifra"><b>${D.empresas.length}</b><span>Instituciones (${D.empresas.filter(e => e.interna).length} internas)</span></div><div class="cifra"><b>${tot}</b><span>Carnets registrados</span></div><div class="cifra"><b>${ok}</b><span>Vigentes hoy</span></div><div class="cifra"><b>${peso(ingreso)}</b><span>Mensualidades de clientes al día</span></div></div>
     <div class="caja"><h2 style="font-size:22px;color:var(--azul);margin-bottom:10px">Instituciones</h2>${tablaEmpresas()}</div>`;
   }
   const e = emp(PERFIL.empresa); const ps = misPersonas();
   const ok = ps.filter(p => estadoCarne(p).ok).length, esp = ps.filter(p => estadoCarne(p).espera).length;
   const hoyA = D.accesos.filter(a => a.empresa === e.id && a.t.slice(0, 10) === hoy()).length;
-  return avisoCobro(e) + cab(esc(e.nombre), `${esc(e.tipo)} · ${e.interna ? 'Institución interna de SkyNet Genesis, sin cobro' : planDe(e).nombre + ' · ' + dispTxt(e) + ' carnés disponibles'}`, `<button class="btn v" data-ir="personas">＋ Nuevo carné</button>`) + `
-  <div class="cifras"><div class="cifra"><b>${ps.length}</b><span>Personas con carné</span></div><div class="cifra"><b>${ok}</b><span>Vigentes</span></div><div class="cifra"><b>${esp}</b><span>Por pagar o por autorizar</span></div><div class="cifra"><b>${hoyA}</b><span>Entradas registradas hoy</span></div></div>
+  return avisoCobro(e) + cab(esc(e.nombre), `${esc(e.tipo)} · ${e.interna ? 'Institución interna de SkyNet Genesis, sin cobro' : planDe(e).nombre + ' · ' + dispTxt(e) + ' carnets disponibles'}`, `<button class="btn v" data-ir="personas">＋ Nuevo carnet</button>`) + `
+  <div class="cifras"><div class="cifra"><b>${ps.length}</b><span>Personas con carnet</span></div><div class="cifra"><b>${ok}</b><span>Vigentes</span></div><div class="cifra"><b>${esp}</b><span>Por pagar o por autorizar</span></div><div class="cifra"><b>${hoyA}</b><span>Entradas registradas hoy</span></div></div>
   <div class="grid2">
-    <div class="caja" style="display:flex;flex-direction:column;gap:12px"><h2 style="font-size:22px;color:var(--azul)">Así se ve un carné de ${esc(e.nombre)}</h2>${ps[0] ? carneFrente(ps[0]) : '<p class="nota">Aún no hay personas.</p>'}<p class="nota">Cada persona recibe un enlace para abrir su carné en el celular. El QR lo puede escanear cualquiera: muestra foto, nombre y si está vigente, nunca el número de documento.</p></div>
+    <div class="caja" style="display:flex;flex-direction:column;gap:12px"><h2 style="font-size:22px;color:var(--azul)">Así se ve un carnet de ${esc(e.nombre)}</h2>${ps[0] ? carneFrente(ps[0]) : '<p class="nota">Aún no hay personas.</p>'}<p class="nota">Cada persona recibe un enlace para abrir su carnet en el celular. El QR lo puede escanear cualquiera: muestra foto, nombre y si está vigente, nunca el número de documento.</p></div>
     <div class="caja" style="display:flex;flex-direction:column;gap:10px"><h2 style="font-size:22px;color:var(--azul)">Qué hacer hoy</h2>
-      ${esp ? `<div class="aviso azul">Hay ${esp} carné(s) esperando pago o autorización.<span class="espacio"></span><button class="btn chico" data-ir="autorizar">Revisar</button></div>` : '<div class="aviso verde">No hay carnés esperando autorización.</div>'}
+      ${esp ? `<div class="aviso azul">Hay ${esp} carnet(s) esperando pago o autorización.<span class="espacio"></span><button class="btn chico" data-ir="autorizar">Revisar</button></div>` : '<div class="aviso verde">No hay carnets esperando autorización.</div>'}
       <div class="aviso azul">Datos que llegan solos desde <b>${esc(e.origen === 'manual' ? 'su archivo de Excel' : e.origen)}</b>.<span class="espacio"></span><button class="btn chico l" data-ir="conexion">Ver conexión</button></div>
-      <div class="aviso azul">Imprima carnés en PVC por lote o uno por uno.<span class="espacio"></span><button class="btn chico l" data-ir="imprimir">Imprimir</button></div>
-      <div class="aviso azul">${asisOn(e) ? 'Vea quién está adentro, quién llegó tarde y quién no ha llegado.' : 'Controle la asistencia con el mismo carné: retardos, faltas e informes para Excel.'}<span class="espacio"></span><button class="btn chico l" data-ir="asistencia">Asistencia</button></div>
+      <div class="aviso azul">Imprima carnets en PVC por lote o uno por uno.<span class="espacio"></span><button class="btn chico l" data-ir="imprimir">Imprimir</button></div>
+      <div class="aviso azul">${asisOn(e) ? 'Vea quién está adentro, quién llegó tarde y quién no ha llegado.' : 'Controle la asistencia con el mismo carnet: retardos, faltas e informes para Excel.'}<span class="espacio"></span><button class="btn chico l" data-ir="asistencia">Asistencia</button></div>
     </div>
   </div>`;
 };
 
 function tablaEmpresas() {
-  return `<div class="tabla"><table><thead><tr><th>Institución</th><th>Tipo</th><th>Origen de datos</th><th>Carnés</th><th>Plan</th><th>Pagado hasta</th><th>Estado</th><th></th></tr></thead><tbody>${D.empresas.map(e => { const c = estadoCuenta(e); return `<tr><td><b>${esc(e.nombre)}</b></td><td>${esc(e.tipo)}</td><td>${esc(e.origen === 'manual' ? 'Excel / a mano' : e.origen)}</td><td style="font-variant-numeric:tabular-nums">${activosDe(e)}</td><td>${e.interna ? '—' : esc(planDe(e).nombre) + ' · ' + peso(planDe(e).precio) + ((e.asistencia || {}).activa ? ' + asistencia ' + peso(ASIS[planDe(e).id]) : '')}</td><td>${e.interna ? '—' : `<input type="date" value="${esc(e.pagadoHasta)}" data-ph="${e.id}" aria-label="Pagado hasta" style="max-width:150px">`}</td><td><span class="pill ${c.clase}">${c.txt}</span></td><td><button class="btn chico l" data-interna="${e.id}">${e.interna ? 'Quitar interna' : 'Hacer interna'}</button></td></tr>`; }).join('')}</tbody></table></div>`;
+  return `<div class="tabla"><table><thead><tr><th>Institución</th><th>Tipo</th><th>Origen de datos</th><th>Carnets</th><th>Plan</th><th>Pagado hasta</th><th>Estado</th><th></th></tr></thead><tbody>${D.empresas.map(e => { const c = estadoCuenta(e); return `<tr><td><b>${esc(e.nombre)}</b></td><td>${esc(e.tipo)}</td><td>${esc(e.origen === 'manual' ? 'Excel / a mano' : e.origen)}</td><td style="font-variant-numeric:tabular-nums">${activosDe(e)}</td><td>${e.interna ? '—' : esc(planDe(e).nombre) + ' · ' + peso(planDe(e).precio) + ((e.asistencia || {}).activa ? ' + asistencia ' + peso(ASIS[planDe(e).id]) : '')}</td><td>${e.interna ? '—' : `<input type="date" value="${esc(e.pagadoHasta)}" data-ph="${e.id}" aria-label="Pagado hasta" style="max-width:150px">`}</td><td><span class="pill ${c.clase}">${c.txt}</span></td><td><button class="btn chico l" data-interna="${e.id}">${e.interna ? 'Quitar interna' : 'Hacer interna'}</button></td></tr>`; }).join('')}</tbody></table></div>`;
 }
 V.empresas = () => cab('Instituciones', 'Clientes que pagan y empresas internas de SkyNet Genesis (POLIANDES, Anglocolombiano, Reina Elizabeth)', '<button class="btn v" data-nuevaemp>＋ Nueva institución</button>') + tablaEmpresas() + `<p class="nota">Al cambiar «Pagado hasta», el acceso se restablece de inmediato. Si el cliente no paga, el acceso se cierra el día 5 del mes siguiente, sin multas; las empresas internas nunca se cobran.</p>`;
 
@@ -520,9 +520,9 @@ function filasCuentas(q) {
   return D.cuentas.filter(c => !q || (c.correo + ' ' + (emp(c.empresa)?.nombre || '')).toLowerCase().includes(q)).map((c, i) => `<tr><td>${esc(c.correo)}</td><td>${esc(c.nombre)}</td><td>${esc(emp(c.empresa)?.nombre || 'SkyNet Genesis')}</td><td>${esc({ superadmin: 'Superadministrador', admin: 'Administrador', porteria: 'Portería' }[c.perfil])}</td><td>${c.clave ? '<span class="pill p-ok">Creada</span>' : '<span class="pill p-esp">Sin crear</span>'}</td><td>${c.ultimo ? fmtH(c.ultimo) : '—'}</td><td class="fila"><button class="btn chico l" data-enlace="${esc(c.correo)}">Enviar enlace</button>${c.perfil !== 'superadmin' ? `<button class="btn chico r" data-bloq="${esc(c.correo)}">${c.bloqueada ? 'Desbloquear' : 'Bloquear'}</button>` : ''}</td></tr>`).join('');
 }
 
-V.planes = () => cab('Planes y precios', 'Se cobra por hacer cada carné y por mantener la comprobación mensual del QR. Se paga solo con Bold de SkyNet Genesis.') + `<div class="aviso azul"><b>Por hacer cada carné: ${peso(PRECIO_CARNE)}</b> (una sola vez; también duplicados o cambio de foto). Más la mensualidad de comprobación según los carnés activos. Solo pago mes a mes, sin descuentos.</div><div class="planes">${PLANES.map((p, i) => `<div class="plan ${i === 1 ? 'dest' : ''}"><span class="nota">${i === 1 ? 'El más elegido' : 'Plan'}</span><h3 style="font-size:22px">${p.nombre}</h3><b>${peso(p.precio)}</b><span class="nota">comprobación al mes</span></div>`).join('')}</div>
+V.planes = () => cab('Planes y precios', 'Se cobra por hacer cada carnet y por mantener la comprobación mensual del QR. Se paga solo con Bold de SkyNet Genesis.') + `<div class="aviso azul"><b>Por hacer cada carnet: ${peso(PRECIO_CARNE)}</b> (una sola vez; también duplicados o cambio de foto). Más la mensualidad de comprobación según los carnets activos. Solo pago mes a mes, sin descuentos.</div><div class="planes">${PLANES.map((p, i) => `<div class="plan ${i === 1 ? 'dest' : ''}"><span class="nota">${i === 1 ? 'El más elegido' : 'Plan'}</span><h3 style="font-size:22px">${p.nombre}</h3><b>${peso(p.precio)}</b><span class="nota">comprobación al mes</span></div>`).join('')}</div>
   <div class="aviso azul"><b>Adicional: control de acceso y asistencia</b>&nbsp;(entradas, salidas, retardos, faltas, horas e informes para Excel): ${PLANES.map(p => esc(p.nombre) + ' ' + peso(ASIS[p.id])).join(' · ')} al mes. Gratis en la prueba y en las internas.</div>
-<div class="caja"><h2 style="font-size:22px;color:var(--azul);margin-bottom:8px">Incluido en todos los planes</h2><ul style="margin:0;padding-left:20px;display:grid;gap:4px"><li>Carné digital en el celular con QR verificable (sin mostrar el documento).</li><li>Diseño listo para imprimir en PVC por lote (PDF tamaño tarjeta, frente y reverso). La tarjeta plástica y la impresión no van incluidas: el cliente las imprime por su cuenta o las pide impresas a SkyNet Genesis (${peso(PRECIO_IMPRESO)} cada una, por las dos caras, con envío por Interrapidísimo aparte).</li><li>Si el cliente no paga la mensualidad, todos sus carnés aparecen NO VIGENTE al escanear el QR.</li><li>Portería: entradas y salidas con el QR desde cualquier celular.</li><li>Carné NO VIGENTE automático si la persona no está al día o venció.</li><li>Carga desde Excel o conexión con AcademIA, Colegio-IA y Clínica-IA.</li></ul></div>`;
+<div class="caja"><h2 style="font-size:22px;color:var(--azul);margin-bottom:8px">Incluido en todos los planes</h2><ul style="margin:0;padding-left:20px;display:grid;gap:4px"><li>Carnet digital en el celular con QR verificable (sin mostrar el documento).</li><li>Diseño listo para imprimir en PVC por lote (PDF tamaño tarjeta, frente y reverso). La tarjeta plástica y la impresión no van incluidas: el cliente las imprime por su cuenta o las pide impresas a SkyNet Genesis (${peso(PRECIO_IMPRESO)} cada una, por las dos caras, con envío por Interrapidísimo aparte).</li><li>Si el cliente no paga la mensualidad, todos sus carnets aparecen NO VIGENTE al escanear el QR.</li><li>Portería: entradas y salidas con el QR desde cualquier celular.</li><li>Carnet NO VIGENTE automático si la persona no está al día o venció.</li><li>Carga desde Excel o conexión con AcademIA, Colegio-IA y Clínica-IA.</li></ul></div>`;
 
 V.bitacora = () => cab('Bitácora', 'Quién hizo qué y cuándo. No se puede borrar.') + `<div class="tabla"><table><thead><tr><th>Fecha</th><th>Quién</th><th>Qué</th></tr></thead><tbody>${D.bitacora.map(b => `<tr><td style="white-space:nowrap">${fmtH(b.t)}</td><td>${esc(b.quien)}</td><td>${esc(b.que)}</td></tr>`).join('')}</tbody></table></div>`;
 
@@ -530,17 +530,17 @@ let FILTRO = 'todos', BUS = '';
 V.personas = () => {
   const e = emp(PERFIL.empresa);
   const ps = misPersonas().filter(p => (FILTRO === 'todos' || (FILTRO === 'ok' ? estadoCarne(p).ok : !estadoCarne(p).ok)) && (!BUS || p.nombre.toLowerCase().includes(BUS.toLowerCase())));
-  return avisoCobro(e) + cab('Personas y carnés', `${misPersonas().length} personas · ${e.origen === 'manual' ? 'cargadas a mano o desde Excel' : 'llegan solas desde ' + esc(e.origen)}`, `<button class="btn l" data-csv>⬆ Cargar desde Excel (CSV)</button><button class="btn v" data-nueva>＋ Nueva persona</button>`) + `
+  return avisoCobro(e) + cab('Personas y carnets', `${misPersonas().length} personas · ${e.origen === 'manual' ? 'cargadas a mano o desde Excel' : 'llegan solas desde ' + esc(e.origen)}`, `<button class="btn l" data-csv>⬆ Cargar desde Excel (CSV)</button><button class="btn v" data-nueva>＋ Nueva persona</button>`) + `
   <div class="fila"><div class="chips">${[['todos', 'Todos'], ['ok', 'Vigentes'], ['no', 'No vigentes o en espera']].map(([k, t]) => `<button class="chip ${FILTRO === k ? 'on' : ''}" data-filtro="${k}">${t}</button>`).join('')}</div><span class="espacio"></span><input type="text" id="busP" placeholder="Buscar por nombre" value="${esc(BUS)}" style="max-width:240px"></div>
-  <div class="tabla"><table><thead><tr><th>Persona</th><th>Tipo</th><th>Detalle</th><th>Vence</th><th>Al día</th><th>Estado del carné</th><th></th></tr></thead><tbody>${ps.map(p => `<tr><td><div class="persona-cel"><img class="mini" src="${p.foto || avatar(p.nombre, e.c1)}" alt=""><b>${esc(p.nombre)}</b></div></td><td>${esc(p.rol)}</td><td>${esc(p.detalle)}</td><td style="white-space:nowrap">${fmtF(p.vence)}</td><td>${e.alDiaDesdeApp ? (p.alDia ? '<span class="pill p-ok">Sí</span>' : '<span class="pill p-no">No</span>') : '<span class="nota">No aplica</span>'}</td><td>${pillEstado(p)}</td><td class="fila" style="flex-wrap:nowrap"><button class="btn chico" data-ver="${p.id}">Ver carné</button><button class="btn chico l" data-editar="${p.id}">Editar</button></td></tr>`).join('') || '<tr><td colspan="7" class="nota">No hay personas con ese filtro.</td></tr>'}</tbody></table></div>`;
+  <div class="tabla"><table><thead><tr><th>Persona</th><th>Tipo</th><th>Detalle</th><th>Vence</th><th>Al día</th><th>Estado del carnet</th><th></th></tr></thead><tbody>${ps.map(p => `<tr><td><div class="persona-cel"><img class="mini" src="${p.foto || avatar(p.nombre, e.c1)}" alt=""><b>${esc(p.nombre)}</b></div></td><td>${esc(p.rol)}</td><td>${esc(p.detalle)}</td><td style="white-space:nowrap">${fmtF(p.vence)}</td><td>${e.alDiaDesdeApp ? (p.alDia ? '<span class="pill p-ok">Sí</span>' : '<span class="pill p-no">No</span>') : '<span class="nota">No aplica</span>'}</td><td>${pillEstado(p)}</td><td class="fila" style="flex-wrap:nowrap"><button class="btn chico" data-ver="${p.id}">Ver carnet</button><button class="btn chico l" data-editar="${p.id}">Editar</button></td></tr>`).join('') || '<tr><td colspan="7" class="nota">No hay personas con ese filtro.</td></tr>'}</tbody></table></div>`;
 };
 
 V.autorizar = () => {
   const e = emp(PERFIL.empresa);
   const ps = misPersonas().filter(p => p.estado === 'activo' && (!p.autorizado || (e.requierePago && !p.pagado)));
-  return cab('Por autorizar', 'Ningún carné sale solo: primero el pago (si su institución lo cobra) y luego la autorización de una persona de la institución.') + (e.requierePago ? `<div class="aviso azul">El carné cuesta ${peso(e.valor)} y lo paga la persona en el portal de ${esc(e.origen)}. Cuando el pago se confirma, aparece aquí listo para autorizar.</div>` : '') + `
+  return cab('Por autorizar', 'Ningún carnet sale solo: primero el pago (si su institución lo cobra) y luego la autorización de una persona de la institución.') + (e.requierePago ? `<div class="aviso azul">El carnet cuesta ${peso(e.valor)} y lo paga la persona en el portal de ${esc(e.origen)}. Cuando el pago se confirma, aparece aquí listo para autorizar.</div>` : '') + `
   ${(() => { const listos = ps.filter(p => !(e.requierePago && !p.pagado)); return listos.length > 1 ? `<div class="fila" style="margin-bottom:10px"><button class="btn v" data-autall="${listos.map(p => p.id).join(',')}">✍ Autorizar los ${listos.length} listos</button><span class="nota">Revise antes las fotos con «Revisar». Los que llegan desde su app tienen la etiqueta «Llegó de ${esc(e.origen === 'manual' ? 'su app' : e.origen)}».</span></div>` : ''; })()}
-  <div class="tabla"><table><thead><tr><th>Persona</th><th>Tipo</th><th>Pago</th><th>Estado</th><th></th></tr></thead><tbody>${ps.map(p => `<tr><td><b>${esc(p.nombre)}</b>${p.llego ? ` <span class="pill p-esp">Llegó de ${esc(e.origen === 'manual' ? 'su app' : e.origen)}</span>` : ''}<br><span class="nota">${esc(p.detalle)}</span></td><td>${esc(p.rol)}</td><td>${e.requierePago ? (p.pagado ? '<span class="pill p-ok">Pagado</span>' : '<span class="pill p-esp">Sin pagar</span>') : '<span class="nota">No se cobra</span>'}</td><td>${pillEstado(p)}</td><td class="fila"><button class="btn chico" data-ver="${p.id}">Revisar</button><button class="btn chico v" data-autorizar="${p.id}" ${e.requierePago && !p.pagado ? 'disabled title="Primero debe estar pagado"' : ''}>✍ Autorizar</button></td></tr>`).join('') || '<tr><td colspan="5" class="nota">No hay carnés esperando. Todo está al día.</td></tr>'}</tbody></table></div>`;
+  <div class="tabla"><table><thead><tr><th>Persona</th><th>Tipo</th><th>Pago</th><th>Estado</th><th></th></tr></thead><tbody>${ps.map(p => `<tr><td><b>${esc(p.nombre)}</b>${p.llego ? ` <span class="pill p-esp">Llegó de ${esc(e.origen === 'manual' ? 'su app' : e.origen)}</span>` : ''}<br><span class="nota">${esc(p.detalle)}</span></td><td>${esc(p.rol)}</td><td>${e.requierePago ? (p.pagado ? '<span class="pill p-ok">Pagado</span>' : '<span class="pill p-esp">Sin pagar</span>') : '<span class="nota">No se cobra</span>'}</td><td>${pillEstado(p)}</td><td class="fila"><button class="btn chico" data-ver="${p.id}">Revisar</button><button class="btn chico v" data-autorizar="${p.id}" ${e.requierePago && !p.pagado ? 'disabled title="Primero debe estar pagado"' : ''}>✍ Autorizar</button></td></tr>`).join('') || '<tr><td colspan="5" class="nota">No hay carnets esperando. Todo está al día.</td></tr>'}</tbody></table></div>`;
 };
 
 let SEL_IMP = null, SEL_EMP = '';
@@ -548,8 +548,8 @@ V.imprimir = () => {
   const ps = misPersonas().filter(p => estadoCarne(p).ok);
   if (!SEL_IMP || SEL_EMP !== PERFIL.empresa) { SEL_IMP = new Set(ps.map(p => p.id)); SEL_EMP = PERFIL.empresa; }
   const sel = ps.filter(p => SEL_IMP.has(p.id));
-  return cab('Imprimir en PVC', 'Tamaño tarjeta de crédito (CR80, 85,6 × 54 mm), frente y reverso. Solo se imprimen carnés vigentes. La tarjeta plástica y la impresión las pone la institución, o pídalos ya impresos en «Pedir carnés impresos».', `<button class="btn" data-pdf>🖨 Imprimir (${sel.length})</button>`) + `
-  <div class="caja"><div class="fila" style="margin-bottom:10px"><b>Elija quiénes</b><span class="espacio"></span><button class="btn chico l" data-todos>Todos</button><button class="btn chico l" data-ninguno>Ninguno</button></div><div class="chips">${ps.map(p => `<button class="chip ${SEL_IMP.has(p.id) ? 'on' : ''}" data-sel="${p.id}">${esc(p.nombre)}</button>`).join('') || '<span class="nota">No hay carnés vigentes.</span>'}</div></div>
+  return cab('Imprimir en PVC', 'Tamaño tarjeta de crédito (CR80, 85,6 × 54 mm), frente y reverso. Solo se imprimen carnets vigentes. La tarjeta plástica y la impresión las pone la institución, o pídalos ya impresos en «Pedir carnets impresos».', `<button class="btn" data-pdf>🖨 Imprimir (${sel.length})</button>`) + `
+  <div class="caja"><div class="fila" style="margin-bottom:10px"><b>Elija quiénes</b><span class="espacio"></span><button class="btn chico l" data-todos>Todos</button><button class="btn chico l" data-ninguno>Ninguno</button></div><div class="chips">${ps.map(p => `<button class="chip ${SEL_IMP.has(p.id) ? 'on' : ''}" data-sel="${p.id}">${esc(p.nombre)}</button>`).join('') || '<span class="nota">No hay carnets vigentes.</span>'}</div></div>
   <div><h2 style="font-size:20px;color:var(--azul);margin:4px 0 8px">Vista previa · frente</h2><div class="hoja">${sel.map(carneFrente).join('')}</div></div>
   <div><h2 style="font-size:20px;color:var(--azul);margin:4px 0 8px">Vista previa · reverso</h2><div class="hoja">${sel.map(carneReverso).join('')}</div></div>`;
 };
@@ -557,7 +557,7 @@ V.imprimir = () => {
 let PED = { sel: null, entrega: 'recoger', ciudad: '', dir: '' };
 const sigPed = x => x.estado === 'Pagado' ? 'Impreso' : x.estado === 'Impreso' ? (x.entrega === 'envio' ? 'Enviado' : 'Entregado') : 'Entregado';
 function tablaPedidos(lst, admin) {
-  return `<div class="tabla"><table><thead><tr><th>Fecha</th>${admin ? '<th>Institución</th>' : ''}<th>Carnés</th><th>Entrega</th><th>Total</th><th>Estado</th>${admin ? '<th></th>' : ''}</tr></thead><tbody>${lst.map(x => `<tr><td style="white-space:nowrap">${fmtH(x.t)}</td>${admin ? `<td>${esc(emp(x.empresa)?.nombre || '')}</td>` : ''}<td style="font-variant-numeric:tabular-nums">${x.cantidad}</td><td>${x.entrega === 'envio' ? 'Interrapidísimo · ' + esc(x.ciudad) + (x.guia ? ' · guía ' + esc(x.guia) : '') + (admin ? '<br><span class="nota">' + esc(x.dir) + '</span>' : '') : 'Recoge en Santa Marta'}</td><td style="font-variant-numeric:tabular-nums">${peso(x.total)}</td><td><span class="pill ${x.estado === 'Entregado' ? 'p-ok' : 'p-esp'}">${esc(x.estado)}</span></td>${admin ? `<td>${x.estado !== 'Entregado' ? `<button class="btn chico v" data-pedavanza="${x.id}">Marcar ${esc(sigPed(x).toLowerCase())}</button>` : ''}</td>` : ''}</tr>`).join('') || `<tr><td colspan="${admin ? 7 : 5}" class="nota">Todavía no hay pedidos.</td></tr>`}</tbody></table></div>`;
+  return `<div class="tabla"><table><thead><tr><th>Fecha</th>${admin ? '<th>Institución</th>' : ''}<th>Carnets</th><th>Entrega</th><th>Total</th><th>Estado</th>${admin ? '<th></th>' : ''}</tr></thead><tbody>${lst.map(x => `<tr><td style="white-space:nowrap">${fmtH(x.t)}</td>${admin ? `<td>${esc(emp(x.empresa)?.nombre || '')}</td>` : ''}<td style="font-variant-numeric:tabular-nums">${x.cantidad}</td><td>${x.entrega === 'envio' ? 'Interrapidísimo · ' + esc(x.ciudad) + (x.guia ? ' · guía ' + esc(x.guia) : '') + (admin ? '<br><span class="nota">' + esc(x.dir) + '</span>' : '') : 'Recoge en Santa Marta'}</td><td style="font-variant-numeric:tabular-nums">${peso(x.total)}</td><td><span class="pill ${x.estado === 'Entregado' ? 'p-ok' : 'p-esp'}">${esc(x.estado)}</span></td>${admin ? `<td>${x.estado !== 'Entregado' ? `<button class="btn chico v" data-pedavanza="${x.id}">Marcar ${esc(sigPed(x).toLowerCase())}</button>` : ''}</td>` : ''}</tr>`).join('') || `<tr><td colspan="${admin ? 7 : 5}" class="nota">Todavía no hay pedidos.</td></tr>`}</tbody></table></div>`;
 }
 V.pedido = () => {
   const e = emp(PERFIL.empresa);
@@ -566,34 +566,34 @@ V.pedido = () => {
   const n = ps.filter(p => PED.sel.has(p.id)).length;
   const valor = e.interna ? 0 : n * PRECIO_IMPRESO;
   const envio = PED.entrega === 'recoger' || !n ? 0 : envioAprox(n);
-  return avisoCobro(e) + cab('Pedir carnés impresos', `SkyNet Genesis los imprime en tarjeta plástica por las dos caras y se los envía por Interrapidísimo. ${e.interna ? 'Institución interna: la impresión no se cobra.' : peso(PRECIO_IMPRESO) + ' por carné impreso.'}`) + `
+  return avisoCobro(e) + cab('Pedir carnets impresos', `SkyNet Genesis los imprime en tarjeta plástica por las dos caras y se los envía por Interrapidísimo. ${e.interna ? 'Institución interna: la impresión no se cobra.' : peso(PRECIO_IMPRESO) + ' por carnet impreso.'}`) + `
   <div class="grid2">
-    <div class="caja" style="display:flex;flex-direction:column;gap:10px"><div class="fila"><b>Carnés a imprimir (${n})</b><span class="espacio"></span><button class="btn chico l" data-pedtodos="1">Todos</button><button class="btn chico l" data-pedtodos="0">Ninguno</button></div>
-      <div class="chips">${ps.map(p => `<button class="chip ${PED.sel.has(p.id) ? 'on' : ''}" data-pedsel="${p.id}">${esc(p.nombre)}</button>`).join('') || '<span class="nota">No hay carnés vigentes para imprimir.</span>'}</div>
-      <p class="nota">Solo se imprimen carnés vigentes y autorizados.</p></div>
+    <div class="caja" style="display:flex;flex-direction:column;gap:10px"><div class="fila"><b>Carnets a imprimir (${n})</b><span class="espacio"></span><button class="btn chico l" data-pedtodos="1">Todos</button><button class="btn chico l" data-pedtodos="0">Ninguno</button></div>
+      <div class="chips">${ps.map(p => `<button class="chip ${PED.sel.has(p.id) ? 'on' : ''}" data-pedsel="${p.id}">${esc(p.nombre)}</button>`).join('') || '<span class="nota">No hay carnets vigentes para imprimir.</span>'}</div>
+      <p class="nota">Solo se imprimen carnets vigentes y autorizados.</p></div>
     <div class="caja" style="display:flex;flex-direction:column;gap:12px">
       <label class="c" for="pEntrega">Entrega<select id="pEntrega"><option value="recoger" ${PED.entrega === 'recoger' ? 'selected' : ''}>Recoger en la sede de Santa Marta (sin costo)</option><option value="envio" ${PED.entrega === 'envio' ? 'selected' : ''}>Envío por Interrapidísimo</option></select></label>
       ${PED.entrega === 'envio' ? `<label class="c" for="pCiudad">Ciudad<input type="text" id="pCiudad" value="${esc(PED.ciudad)}" placeholder="Ejemplo: Barranquilla"></label><label class="c" for="pDir">Dirección y quién recibe<input type="text" id="pDir" value="${esc(PED.dir)}" placeholder="Calle, número, barrio · nombre y celular"></label>` : ''}
-      <div class="tabla"><table><tbody><tr><td>${n} carnés impresos × ${e.interna ? '$0' : peso(PRECIO_IMPRESO)}</td><td style="text-align:right;font-variant-numeric:tabular-nums">${peso(valor)}</td></tr><tr><td>Envío${PED.entrega === 'envio' ? ' <span class="nota">(aproximado: el valor exacto sale de la cotización de Interrapidísimo al pagar)</span>' : ''}</td><td style="text-align:right;font-variant-numeric:tabular-nums">${peso(envio)}</td></tr><tr><td><b>Total</b></td><td style="text-align:right;font-variant-numeric:tabular-nums"><b>${peso(valor + envio)}</b></td></tr></tbody></table></div>
+      <div class="tabla"><table><tbody><tr><td>${n} carnets impresos × ${e.interna ? '$0' : peso(PRECIO_IMPRESO)}</td><td style="text-align:right;font-variant-numeric:tabular-nums">${peso(valor)}</td></tr><tr><td>Envío${PED.entrega === 'envio' ? ' <span class="nota">(aproximado: el valor exacto sale de la cotización de Interrapidísimo al pagar)</span>' : ''}</td><td style="text-align:right;font-variant-numeric:tabular-nums">${peso(envio)}</td></tr><tr><td><b>Total</b></td><td style="text-align:right;font-variant-numeric:tabular-nums"><b>${peso(valor + envio)}</b></td></tr></tbody></table></div>
       <button class="btn v" data-pedir ${n ? '' : 'disabled'}>${valor + envio ? 'Pagar con Bold y pedir' : 'Hacer el pedido'}</button>
     </div>
   </div>
   <div class="caja"><h2 style="font-size:22px;color:var(--azul);margin-bottom:10px">Mis pedidos</h2>${tablaPedidos(D.pedidos.filter(x => x.empresa === e.id), false)}</div>`;
 };
-V.pedidos = () => cab('Pedidos de impresión', `Carnés que SkyNet Genesis imprime por las dos caras (Zebra ZC32) y despacha por Interrapidísimo · ${D.pedidos.filter(x => x.estado !== 'Entregado').length} pendientes`) + tablaPedidos(D.pedidos, true) + `<p class="nota">Orden de trabajo: Pagado → Impreso → Enviado (con número de guía) → Entregado. Al marcar «Enviado», al cliente le llega un correo (Brevo) con la guía.</p>`;
+V.pedidos = () => cab('Pedidos de impresión', `Carnets que SkyNet Genesis imprime por las dos caras (Zebra ZC32) y despacha por Interrapidísimo · ${D.pedidos.filter(x => x.estado !== 'Entregado').length} pendientes`) + tablaPedidos(D.pedidos, true) + `<p class="nota">Orden de trabajo: Pagado → Impreso → Enviado (con número de guía) → Entregado. Al marcar «Enviado», al cliente le llega un correo (Brevo) con la guía.</p>`;
 
 V.porteria = () => {
   const e = emp(PERFIL.empresa);
   return cab('Portería', 'Lea el QR con la cámara, con un lector de mesa (USB) o escribiendo el código. Cada lectura queda registrada como entrada o salida.') + `
   <div class="grid2">
     <div class="caja" style="display:flex;flex-direction:column;gap:12px">
-      <h2 style="font-size:22px;color:var(--azul)">Leer un carné</h2>
+      <h2 style="font-size:22px;color:var(--azul)">Leer un carnet</h2>
       <label class="c" for="modoLect">Movimiento<select id="modoLect"><option value="auto" ${MODO_LECT === 'auto' ? 'selected' : ''}>Automático (1.ª lectura del día = entrada; la siguiente = salida)</option><option value="entrada" ${MODO_LECT === 'entrada' ? 'selected' : ''}>Solo entradas</option><option value="salida" ${MODO_LECT === 'salida' ? 'selected' : ''}>Solo salidas</option></select></label>
-      <label class="c" for="codQR">Lector de mesa (USB) o código del reverso<input type="text" id="codQR" placeholder="Pase el carné por el lector o escriba el código" autocomplete="off" autocapitalize="off" spellcheck="false"></label>
+      <label class="c" for="codQR">Lector de mesa (USB) o código del reverso<input type="text" id="codQR" placeholder="Pase el carnet por el lector o escriba el código" autocomplete="off" autocapitalize="off" spellcheck="false"></label>
       <div class="fila"><button class="btn v" data-leer>Verificar</button><button class="btn l" data-camara>📷 Abrir cámara</button></div>
       <video id="cam" playsinline muted hidden style="width:100%;max-height:320px;border-radius:12px;background:#000;object-fit:cover"></video>
       <label class="c" for="fotoQR">Si la cámara no abre: tome una foto del QR<input type="file" id="fotoQR" accept="image/*" capture="environment"></label>
-      <p class="nota" style="margin:0">Con un lector USB no hay que tocar nada: deje el cursor en la casilla y pase los carnés uno tras otro. Si el mismo carné se lee dos veces en menos de un minuto, no se registra repetido.</p>
+      <p class="nota" style="margin:0">Con un lector USB no hay que tocar nada: deje el cursor en la casilla y pase los carnets uno tras otro. Si el mismo carnet se lee dos veces en menos de un minuto, no se registra repetido.</p>
       ${REAL() ? '' : `<p class="nota" style="margin:0">Para probar: elija una persona de ${esc(e.nombre)}.</p><div class="chips">${misPersonas().slice(0, 6).map(p => `<button class="chip" data-sim="${p.token}">${esc(p.nombre.split(' ')[0])}</button>`).join('')}</div>`}
     </div>
     <div style="display:flex;flex-direction:column;gap:14px"><div id="resLectura" class="caja"><p class="nota">Aquí aparece el resultado de la lectura: foto, nombre y si puede entrar.</p></div>
@@ -605,11 +605,11 @@ let MODO_LECT = (() => { try { return localStorage.getItem('identidadia_modo') |
 function ultimasHTML() {
   const t0 = hoy() + 'T05:00:00'; const ls = D.accesos.filter(a => a.empresa === PERFIL.empresa && a.t >= t0).slice(0, 8);
   if (!ls.length) return '<p class="nota" style="margin:0">Todavía no hay lecturas hoy.</p>';
-  return `<div class="tabla"><table><tbody>${ls.map(a => { const p = D.personas.find(x => x.id === a.persona); return `<tr><td style="white-space:nowrap">${new Date(a.t).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' })}</td><td>${esc(p ? p.nombre : a.nombre || 'Carné no encontrado')}</td><td>${a.salida ? 'Salida' : 'Entrada'}</td><td>${a.ok ? '<span class="pill p-ok">Permitido</span>' : '<span class="pill p-no">' + esc(a.motivo) + '</span>'}</td></tr>`; }).join('')}</tbody></table></div>`;
+  return `<div class="tabla"><table><tbody>${ls.map(a => { const p = D.personas.find(x => x.id === a.persona); return `<tr><td style="white-space:nowrap">${new Date(a.t).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' })}</td><td>${esc(p ? p.nombre : a.nombre || 'Carnet no encontrado')}</td><td>${a.salida ? 'Salida' : 'Entrada'}</td><td>${a.ok ? '<span class="pill p-ok">Permitido</span>' : '<span class="pill p-no">' + esc(a.motivo) + '</span>'}</td></tr>`; }).join('')}</tbody></table></div>`;
 }
 function resLecturaHTML(j) {
   const e = emp(PERFIL.empresa);
-  if (!j.encontrado) return `<div class="verif"><div class="estado no"><b>NO ENCONTRADO</b>Este carné no es de ${esc(e.nombre)}.</div></div>`;
+  if (!j.encontrado) return `<div class="verif"><div class="estado no"><b>NO ENCONTRADO</b>Este carnet no es de ${esc(e.nombre)}.</div></div>`;
   const p = j.persona;
   const tit = !j.ok ? 'NO VIGENTE' : j.repetido ? (j.salida ? 'SALIDA YA REGISTRADA' : 'ENTRADA YA REGISTRADA') : (j.salida ? 'SALIDA REGISTRADA' : 'PUEDE ENTRAR');
   const sub = !j.ok ? esc(j.motivo) : j.repetido ? 'Se leyó hace menos de un minuto: no se registró dos veces' : fmtH(Date.now());
@@ -627,7 +627,7 @@ function mostrarLectura(j) {
   const c = $('#codQR'); if (c && ptrFino()) c.focus();
 }
 const modoLectura = () => { const m = $('#modoLect'); return m ? m.value : MODO_LECT; };
-function leerDesdeCampo() { const c = $('#codQR'); if (!c) return; const v = c.value.trim(); if (!v) return toast('Pase el carné por el lector o escriba el código'); c.value = ''; leerCodigo(v); }
+function leerDesdeCampo() { const c = $('#codQR'); if (!c) return; const v = c.value.trim(); if (!v) return toast('Pase el carnet por el lector o escriba el código'); c.value = ''; leerCodigo(v); }
 /* cámara en vivo: lee el QR sin tomar foto */
 let CAM = null;
 async function abrirCamara() {
@@ -660,7 +660,7 @@ function escanear() {
 V.accesos = () => {
   const t0 = hoy() + 'T05:00:00'; const soloHoy = PERFIL.tipo === 'porteria';
   const lst = D.accesos.filter(a => a.empresa === PERFIL.empresa && (!soloHoy || a.t >= t0));
-  return cab(soloHoy ? 'Entradas de hoy' : 'Registro de entradas', 'Entradas y salidas leídas en portería' + (soloHoy ? '' : ' (las más recientes). Para retardos, faltas y horas, vea «Asistencia y reportes».')) + `<div class="tabla"><table><thead><tr><th>Fecha y hora</th><th>Persona</th><th>Movimiento</th><th>Resultado</th><th>Leído por</th></tr></thead><tbody>${lst.slice(0, 500).map(a => { const p = D.personas.find(x => x.id === a.persona); return `<tr><td style="white-space:nowrap">${fmtH(a.t)}</td><td>${esc(p ? p.nombre : a.nombre || 'Carné no encontrado')}</td><td>${a.salida ? 'Salida' : 'Entrada'}</td><td>${a.ok ? '<span class="pill p-ok">Permitido</span>' : '<span class="pill p-no">' + esc(a.motivo) + '</span>'}</td><td>${esc(a.quien)}</td></tr>`; }).join('') || '<tr><td colspan="5" class="nota">Todavía no hay lecturas. Pruebe en Portería.</td></tr>'}</tbody></table></div>`;
+  return cab(soloHoy ? 'Entradas de hoy' : 'Registro de entradas', 'Entradas y salidas leídas en portería' + (soloHoy ? '' : ' (las más recientes). Para retardos, faltas y horas, vea «Asistencia y reportes».')) + `<div class="tabla"><table><thead><tr><th>Fecha y hora</th><th>Persona</th><th>Movimiento</th><th>Resultado</th><th>Leído por</th></tr></thead><tbody>${lst.slice(0, 500).map(a => { const p = D.personas.find(x => x.id === a.persona); return `<tr><td style="white-space:nowrap">${fmtH(a.t)}</td><td>${esc(p ? p.nombre : a.nombre || 'Carnet no encontrado')}</td><td>${a.salida ? 'Salida' : 'Entrada'}</td><td>${a.ok ? '<span class="pill p-ok">Permitido</span>' : '<span class="pill p-no">' + esc(a.motivo) + '</span>'}</td><td>${esc(a.quien)}</td></tr>`; }).join('') || '<tr><td colspan="5" class="nota">Todavía no hay lecturas. Pruebe en Portería.</td></tr>'}</tbody></table></div>`;
 };
 
 /* ================= control de asistencia ================= */
@@ -670,11 +670,11 @@ function asisActivarHTML(e) {
   const c = estadoCuenta(e); const precio = ASIS[planDe(e).id];
   const pagado = !!e.pagadoHasta && e.pagadoHasta >= hoy();
   const lista = `<ul style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px"><li>Entrada y salida de cada persona con la hora exacta, leídas con el celular, una tableta o un lector QR de mesa (USB).</li><li>Horario de su institución (y uno distinto por tipo de persona, si lo necesita): quién llegó tarde, cuántos minutos, quién faltó y cuántas horas estuvo cada uno.</li><li>Quién está adentro ahora mismo y quién no ha llegado.</li><li>Informes por día, semana o mes que se descargan para abrir en Excel. Ya no tiene que llevar la planilla a mano.</li></ul>`;
-  return avisoCobro(e) + cab('Asistencia y reportes', 'Control de acceso y asistencia con el mismo carné QR') + `<div class="caja" style="display:flex;flex-direction:column;gap:12px">
+  return avisoCobro(e) + cab('Asistencia y reportes', 'Control de acceso y asistencia con el mismo carnet QR') + `<div class="caja" style="display:flex;flex-direction:column;gap:12px">
     <h2 style="font-size:22px;color:var(--azul)">Active el control de asistencia</h2>${lista}
     <div class="aviso azul"><b>${peso(precio)} al mes</b>&nbsp;adicionales a su plan ${esc(planDe(e).nombre)}. Se paga con Bold junto con la mensualidad.</div>
     ${pagado ? `<div class="fila"><button class="btn v" data-asispagar>Activar y pagar ${peso(precio)}</button><span class="nota">Queda activo hasta el ${fmtF(e.pagadoHasta)}, igual que su plan. Después va incluido en cada mensualidad.</span></div>` : `<div class="fila"><button class="btn v" data-ir="pago">Ir a «Mi plan»</button><span class="nota">Al pagar su mensualidad, marque «Control de acceso y asistencia».</span></div>`}
-    <p class="nota" style="margin:0">No necesita comprar nada: funciona con el celular de la portería. Si prefiere, use un lector QR de mesa (USB), de los que venden en tiendas de tecnología: se conecta al computador y lee los carnés uno tras otro.</p></div>`;
+    <p class="nota" style="margin:0">No necesita comprar nada: funciona con el celular de la portería. Si prefiere, use un lector QR de mesa (USB), de los que venden en tiendas de tecnología: se conecta al computador y lee los carnets uno tras otro.</p></div>`;
 }
 const rangoAsis = k => { const f = hoy(); if (k === 'semana') { const d = new Date(f + 'T12:00:00Z').getUTCDay(); return { desde: sumDias(f, -((d + 6) % 7)), hasta: f }; } if (k === 'mes') return { desde: f.slice(0, 8) + '01', hasta: f }; if (k === 'ayer') { const y = sumDias(f, -1); return { desde: y, hasta: y }; } return { desde: f, hasta: f }; };
 async function cargarAsis(f) {
@@ -712,7 +712,7 @@ V.asistencia = () => {
     <div class="caja"><h2 style="font-size:20px;color:var(--azul);margin-bottom:8px">No han llegado</h2>${t(h.sinLlegar, ['Persona', 'Tipo', 'Debía entrar'], p => `<tr><td>${esc(p.nombre)}</td><td>${esc(p.rol)}</td><td>${p.hora}</td></tr>`)}</div></div>
     <div class="caja"><h2 style="font-size:20px;color:var(--azul);margin-bottom:8px">Ya salieron</h2>${t(h.salieron, ['Persona', 'Tipo', 'Entró', 'Salió'], p => `<tr><td>${esc(p.nombre)}</td><td>${esc(p.rol)}</td><td>${p.entrada}</td><td>${p.salida || '—'}</td></tr>`)}</div>`;
   }
-  if (f.tab === 'resumen') return top + `<div class="tabla"><table><thead><tr><th>Persona</th><th>Tipo</th><th>Días que asistió</th><th>Retardos</th><th>Faltas</th><th>Horas</th><th>Sin salida</th></tr></thead><tbody>${r.resumen.map(p => `<tr><td>${esc(p.nombre)}</td><td>${esc(p.rol)}</td><td class="num">${p.asistidos}</td><td class="num">${p.retardos}${p.minRetardo ? ' (' + p.minRetardo + ' min)' : ''}</td><td class="num">${p.faltas ? '<span class="pill p-no">' + p.faltas + '</span>' : '0'}</td><td class="num">${horasTxt(p.minutos)}</td><td class="num">${p.sinSalida}</td></tr>`).join('') || '<tr><td colspan="7" class="nota">No hay personas con carné autorizado.</td></tr>'}</tbody></table></div><p class="nota">Del ${fmtF(r.desde)} al ${fmtF(r.hasta)}. Las faltas cuentan solo los días de trabajo del horario y desde que se autorizó el carné. «Sin salida»: entró y no se leyó su salida, así que esas horas no se suman.</p>`;
+  if (f.tab === 'resumen') return top + `<div class="tabla"><table><thead><tr><th>Persona</th><th>Tipo</th><th>Días que asistió</th><th>Retardos</th><th>Faltas</th><th>Horas</th><th>Sin salida</th></tr></thead><tbody>${r.resumen.map(p => `<tr><td>${esc(p.nombre)}</td><td>${esc(p.rol)}</td><td class="num">${p.asistidos}</td><td class="num">${p.retardos}${p.minRetardo ? ' (' + p.minRetardo + ' min)' : ''}</td><td class="num">${p.faltas ? '<span class="pill p-no">' + p.faltas + '</span>' : '0'}</td><td class="num">${horasTxt(p.minutos)}</td><td class="num">${p.sinSalida}</td></tr>`).join('') || '<tr><td colspan="7" class="nota">No hay personas con carnet autorizado.</td></tr>'}</tbody></table></div><p class="nota">Del ${fmtF(r.desde)} al ${fmtF(r.hasta)}. Las faltas cuentan solo los días de trabajo del horario y desde que se autorizó el carnet. «Sin salida»: entró y no se leyó su salida, así que esas horas no se suman.</p>`;
   const MAX = 1500;
   return top + `<div class="tabla"><table><thead><tr><th>Fecha</th><th>Persona</th><th>Tipo</th><th>Entrada</th><th>Salida</th><th>Horas</th><th>Estado</th></tr></thead><tbody>${r.detalle.slice(0, MAX).map(d => `<tr><td style="white-space:nowrap">${fmtF(d.fecha)}</td><td>${esc(d.nombre)}</td><td>${esc(d.rol)}</td><td>${d.entrada || '—'}</td><td>${d.salida || '—'}</td><td class="num">${horasTxt(d.minutos)}</td><td><span class="pill ${/Falta/.test(d.estado) ? 'p-no' : /Retardo|sin|Sin/.test(d.estado) ? 'p-esp' : 'p-ok'}">${esc(d.estado)}${d.retardo ? ' · ' + d.retardo + ' min' : ''}</span></td></tr>`).join('') || '<tr><td colspan="7" class="nota">No hay registros en estas fechas.</td></tr>'}</tbody></table></div>${r.detalle.length > MAX ? `<p class="nota">Se muestran ${MAX} de ${r.detalle.length} filas: descargue el archivo para verlas todas.</p>` : ''}`;
 };
@@ -754,14 +754,14 @@ function asisConfig() {
 
 V.diseno = () => {
   const e = emp(PERFIL.empresa); const ej = misPersonas()[0];
-  return cab('Diseño del carné', 'Colores, logo y texto del reverso de su institución') + `
+  return cab('Diseño del carnet', 'Colores, logo y texto del reverso de su institución') + `
   <div class="grid2"><div class="caja" style="display:flex;flex-direction:column;gap:12px">
     <div class="form"><label class="c" for="dC1">Color principal<input type="color" id="dC1" value="${e.c1}"></label><label class="c" for="dC2">Color secundario<input type="color" id="dC2" value="${e.c2}"></label></div>
     <label class="c" for="dLogo">Logo (PNG o JPG)<input type="file" id="dLogo" accept="image/png,image/jpeg"></label>
     <label class="c" for="dLargo">Nombre completo de la institución<input type="text" id="dLargo" value="${esc(e.largo)}"></label>
     <label class="c" for="dRev">Texto del reverso<textarea id="dRev">${esc(e.reverso)}</textarea></label>
     <div class="form"><label class="c" for="dFirma">Quién firma<input type="text" id="dFirma" value="${esc(e.firma)}"></label><label class="c" for="dVig">Vigencia (meses)<input type="number" id="dVig" min="1" max="60" value="${e.vigencia}"></label></div>
-    <div class="form"><label class="c" for="dPago">¿El carné se cobra?<select id="dPago"><option value="0" ${!e.requierePago ? 'selected' : ''}>No se cobra</option><option value="1" ${e.requierePago ? 'selected' : ''}>Sí se cobra</option></select></label><label class="c" for="dValor">Valor del carné<input type="number" id="dValor" min="0" step="1000" value="${e.valor}"></label></div>
+    <div class="form"><label class="c" for="dPago">¿El carnet se cobra?<select id="dPago"><option value="0" ${!e.requierePago ? 'selected' : ''}>No se cobra</option><option value="1" ${e.requierePago ? 'selected' : ''}>Sí se cobra</option></select></label><label class="c" for="dValor">Valor del carnet<input type="number" id="dValor" min="0" step="1000" value="${e.valor}"></label></div>
     <label class="c" for="dAldia">¿Mostrar NO VIGENTE si la persona no está al día?<select id="dAldia"><option value="1" ${e.alDiaDesdeApp ? 'selected' : ''}>Sí, según los pagos de ${esc(e.origen === 'manual' ? 'la institución' : e.origen)}</option><option value="0" ${!e.alDiaDesdeApp ? 'selected' : ''}>No</option></select></label>
     <label class="c" for="dVerif">Lo que muestra el QR a cualquier persona<select id="dVerif"><option value="completa" ${e.verif !== 'reducida' ? 'selected' : ''}>Completo: foto, nombre, tipo y detalle</option><option value="reducida" ${e.verif === 'reducida' ? 'selected' : ''}>Reducido: nombre corto y vigencia, sin foto (recomendado para menores de edad y pacientes)</option></select></label>
     <button class="btn v" data-gdiseno>Guardar diseño</button>
@@ -770,7 +770,7 @@ V.diseno = () => {
 
 V.conexion = () => {
   const e = emp(PERFIL.empresa);
-  const apps = { 'AcademIA': 'estudiantes matriculados con su foto, programa, semestre y si están al día con la cartera', 'Colegio-IA': 'alumnos matriculados con su foto, grado y si la familia está al día', 'Clínica-IA': 'solo pacientes y funcionarios que aceptaron el carné: nombre, documento y foto (nunca diagnósticos ni ningún dato de salud)', 'manual': 'un archivo de Excel (CSV) con nombre, documento, tipo y detalle' };
+  const apps = { 'AcademIA': 'estudiantes matriculados con su foto, programa, semestre y si están al día con la cartera', 'Colegio-IA': 'alumnos matriculados con su foto, grado y si la familia está al día', 'Clínica-IA': 'solo pacientes y funcionarios que aceptaron el carnet: nombre, documento y foto (nunca diagnósticos ni ningún dato de salud)', 'manual': 'un archivo de Excel (CSV) con nombre, documento, tipo y detalle' };
   const ll = e.llave; const LLAVE_NUEVA = window.__llaveNueva || '';
   return cab('Conexión con su app', 'Los matriculados llegan solos: no hay que volver a digitar a nadie') + `
   <div class="caja" style="display:flex;flex-direction:column;gap:12px;min-width:0;overflow-wrap:anywhere">
@@ -778,7 +778,7 @@ V.conexion = () => {
     <label class="c" for="cOrigen">Su app<select id="cOrigen">${Object.keys(apps).map(k => `<option value="${k}" ${e.origen === k ? 'selected' : ''}>${k === 'manual' ? 'Otra app o Excel' : k}</option>`).join('')}</select></label>
     <p class="nota">Trae: ${esc(apps[e.origen] || apps.manual)}.</p>
     ${LLAVE_NUEVA ? `<div class="aviso verde"><b>Su llave nueva (cópiela ahora: no se vuelve a mostrar):</b><br><code style="word-break:break-all;user-select:all">${esc(LLAVE_NUEVA)}</code><div class="fila" style="margin-top:8px"><button class="btn chico" data-copllave>Copiar llave</button></div></div>` : ''}
-    <div class="aviso azul"><b>Cómo funciona:</b> 1) Genere la llave y péguela en ${esc(e.origen === 'manual' ? 'su app' : e.origen)} (Parametrización › Identidad IA). 2) Al confirmar una matrícula, la app envía nombre, documento, programa o grado y la foto (obligatoria). 3) El carné aparece en «Por autorizar»: ninguno sale solo. 4) Si la persona se retira o deja de estar al día, su carné pasa solo a NO VIGENTE.</div>
+    <div class="aviso azul"><b>Cómo funciona:</b> 1) Genere la llave y péguela en ${esc(e.origen === 'manual' ? 'su app' : e.origen)} (Parametrización › Identidad IA). 2) Al confirmar una matrícula, la app envía nombre, documento, programa o grado y la foto (obligatoria). 3) El carnet aparece en «Por autorizar»: ninguno sale solo. 4) Si la persona se retira o deja de estar al día, su carnet pasa solo a NO VIGENTE.</div>
     <div class="fila"><button class="btn" data-gcon>Guardar</button><button class="btn v" data-genllave>${ll ? '⟳ Cambiar la llave' : '🔑 Generar llave'}</button>${ll ? '<button class="btn l" data-quitllave>Desconectar</button>' : ''}</div>
     <p class="nota" style="overflow-wrap:anywhere">Para técnicos: POST ${esc(API)}/api/integracion/personas con encabezado <code>x-llave</code> y cuerpo {"personas":[{"ref","nombre","documento","rol","detalle","foto","alDia","estado":"activo|retirado","pagadoCarne"}]} (máximo 30 por envío; foto JPG/PNG/WEBP en base64 de menos de 300 KB).</p>
   </div>`;
@@ -787,7 +787,7 @@ V.conexion = () => {
 V.pago = () => {
   const e = emp(PERFIL.empresa); const c = estadoCuenta(e);
   if (e.interna) return cab('Mi plan', 'Institución interna de SkyNet Genesis') + `<div class="aviso verde"><b>Sin cobro.</b> ${esc(e.nombre)} es una empresa interna: tiene Identidad IA activa sin límite y sin pagos.</div>`;
-  return avisoCobro(e) + cab('Mi plan', `${planDe(e).nombre} · ${activosDe(e)} carnés activos · ${dispTxt(e)} carnés disponibles para hacer`) + `<div class="caja fila"><span class="pill ${c.clase}">${c.txt}</span><span>Pagado hasta: <b>${e.pagadoHasta ? fmtF(e.pagadoHasta) : 'aún no ha pagado'}</b></span>${e.pruebaHasta && !e.pagadoHasta ? `<span>Prueba gratis hasta: <b>${fmtF(e.pruebaHasta)}</b></span>` : ''}</div>
+  return avisoCobro(e) + cab('Mi plan', `${planDe(e).nombre} · ${activosDe(e)} carnets activos · ${dispTxt(e)} carnets disponibles para hacer`) + `<div class="caja fila"><span class="pill ${c.clase}">${c.txt}</span><span>Pagado hasta: <b>${e.pagadoHasta ? fmtF(e.pagadoHasta) : 'aún no ha pagado'}</b></span>${e.pruebaHasta && !e.pagadoHasta ? `<span>Prueba gratis hasta: <b>${fmtF(e.pruebaHasta)}</b></span>` : ''}</div>
   <h2 class="sub">Arme su plan</h2>${armePlanHTML(e)}<p class="nota">Todo va en un solo pago, con todos los medios (tarjeta débito o crédito, PSE, Nequi, llave Bre-B). El servicio se activa cuando el pago queda confirmado.</p>`;
 };
 function planPorCantidad(n) { return PLANES.find(p => n <= p.max) || PLANES[PLANES.length - 1]; }
@@ -798,8 +798,8 @@ function leerArme(e) {
 function armePlanHTML(e) {
   const a = leerArme(e);
   return `<div class="caja arme" style="display:flex;flex-direction:column;gap:12px">
-    <div class="form"><label class="c" for="mCant">¿Cuántas personas tendrán carné activo?<input type="number" id="mCant" min="1" step="1" value="${a.n}"></label>
-    <label class="c" for="mNuevos">Carnés por hacer ahora (${peso(PRECIO_CARNE)} cada uno)<input type="number" id="mNuevos" min="0" step="1" value="${a.nu}"></label></div>
+    <div class="form"><label class="c" for="mCant">¿Cuántas personas tendrán carnet activo?<input type="number" id="mCant" min="1" step="1" value="${a.n}"></label>
+    <label class="c" for="mNuevos">Carnets por hacer ahora (${peso(PRECIO_CARNE)} cada uno)<input type="number" id="mNuevos" min="0" step="1" value="${a.nu}"></label></div>
     <label class="c" for="mAsis" style="flex-direction:row;align-items:center;gap:8px"><input type="checkbox" id="mAsis" ${a.asis ? 'checked' : ''}> Incluir control de acceso y asistencia (entradas, salidas, retardos, faltas e informes para Excel)</label>
     <div id="mRes">${resumenPlanHTML(e)}</div></div>`;
 }
@@ -812,27 +812,27 @@ function resumenPlanHTML(e) {
   return `<div class="tabla"><table><tbody>
     <tr><td>Plan <b>${p.nombre}</b> · comprobación del QR (primer mes)</td><td class="num">${peso(mens)}</td></tr>
     ${asis ? `<tr><td>Control de acceso y asistencia (primer mes)</td><td class="num">${peso(vAsis)}</td></tr>` : ''}
-    <tr><td>${nu} carnés por hacer × ${peso(PRECIO_CARNE)}</td><td class="num">${peso(nu * PRECIO_CARNE)}</td></tr>
+    <tr><td>${nu} carnets por hacer × ${peso(PRECIO_CARNE)}</td><td class="num">${peso(nu * PRECIO_CARNE)}</td></tr>
     <tr><td><b>Total en un solo pago</b></td><td class="num"><b>${peso(total)}</b></td></tr></tbody></table></div>
-    <p class="nota">${e ? 'Con este pago queda al día hasta el <b>' + fmtF(hasta) + '</b>.' : 'Si paga al terminar la prueba, queda al día hasta el <b>' + fmtF(hasta) + '</b> (el resto del primer mes no se cobra).'} Después paga solo la mensualidad de ${peso(p.precio + vAsis)}${asis ? ' (plan + asistencia)' : ''} y ${peso(PRECIO_CARNE)} por cada carné nuevo. Carnés impresos en tarjeta plástica: ${peso(PRECIO_IMPRESO)} cada uno, aparte.</p>
+    <p class="nota">${e ? 'Con este pago queda al día hasta el <b>' + fmtF(hasta) + '</b>.' : 'Si paga al terminar la prueba, queda al día hasta el <b>' + fmtF(hasta) + '</b> (el resto del primer mes no se cobra).'} Después paga solo la mensualidad de ${peso(p.precio + vAsis)}${asis ? ' (plan + asistencia)' : ''} y ${peso(PRECIO_CARNE)} por cada carnet nuevo. Carnets impresos en tarjeta plástica: ${peso(PRECIO_IMPRESO)} cada uno, aparte.</p>
     ${e ? `<button class="btn v" data-pagarplan="${p.id}" data-meses="${meses}" data-nuevos="${nu}" data-asis="${asis ? 1 : 0}" data-total="${total}">Pagar ${peso(total)}</button>` : `<div class="fila"><button class="btn v" data-pub="registro">¡Quiero Identidad IA ya para mi institución!</button><span class="nota">Primero 15 días gratis, sin tarjeta.</span></div>`}`;
 }
 V.cerrada = e => {
   const c = estadoCuenta(e);
-  return cab('Acceso cerrado', esc(e.nombre)) + `<div class="caja" style="display:flex;flex-direction:column;gap:12px"><p style="margin:0">${c.finPrueba ? 'Terminaron los 15 días de prueba gratis.' : 'No se recibió el pago de la mensualidad y el acceso se cerró el día 5.'} Mientras tanto, los carnés de su institución aparecen <b>NO VIGENTE</b> al escanear el QR. No hay multas: al pagar, todo vuelve a funcionar de inmediato y no se cobran los meses que estuvo cerrado.</p>${PERFIL.tipo === 'admin' ? `<div class="fila"><button class="btn v" data-ir="pago">Arme su plan y pague</button><a class="btn wa" href="${WA}" target="_blank" rel="noopener">WhatsApp soporte</a></div>` : '<p class="nota">Avísele al administrador de su institución para que haga el pago.</p>'}</div>`;
+  return cab('Acceso cerrado', esc(e.nombre)) + `<div class="caja" style="display:flex;flex-direction:column;gap:12px"><p style="margin:0">${c.finPrueba ? 'Terminaron los 15 días de prueba gratis.' : 'No se recibió el pago de la mensualidad y el acceso se cerró el día 5.'} Mientras tanto, los carnets de su institución aparecen <b>NO VIGENTE</b> al escanear el QR. No hay multas: al pagar, todo vuelve a funcionar de inmediato y no se cobran los meses que estuvo cerrado.</p>${PERFIL.tipo === 'admin' ? `<div class="fila"><button class="btn v" data-ir="pago">Arme su plan y pague</button><a class="btn wa" href="${WA}" target="_blank" rel="noopener">WhatsApp soporte</a></div>` : '<p class="nota">Avísele al administrador de su institución para que haga el pago.</p>'}</div>`;
 };
 
 V.micarne = () => {
   const p = D.personas.find(x => x.empresa === 'e-poli' && estadoCarne(x).ok) || D.personas[0];
-  return `<div class="verif">${cab('Mi carné', esc(emp(p.empresa).nombre))}<p class="nota">Esto es lo que ve ${esc(p.nombre.split(' ')[0])} al abrir el enlace de su carné. Puede agregarlo a la pantalla de inicio del celular para tenerlo siempre a mano.</p>${carneFrente(p)}${carneReverso(p)}<div class="fila"><button class="btn l" data-verif="${p.token}">Ver lo que muestra el QR</button></div></div>`;
+  return `<div class="verif">${cab('Mi carnet', esc(emp(p.empresa).nombre))}<p class="nota">Esto es lo que ve ${esc(p.nombre.split(' ')[0])} al abrir el enlace de su carnet. Puede agregarlo a la pantalla de inicio del celular para tenerlo siempre a mano.</p>${carneFrente(p)}${carneReverso(p)}<div class="fila"><button class="btn l" data-verif="${p.token}">Ver lo que muestra el QR</button></div></div>`;
 };
 
 V.verificar = (tk) => {
   const p = D.personas.find(x => x.token === tk);
-  if (!p) return `<div class="verif"><div class="estado no"><b>NO ENCONTRADO</b>Este código no corresponde a ningún carné.</div><button class="btn l" data-volver>Volver</button></div>`;
+  if (!p) return `<div class="verif"><div class="estado no"><b>NO ENCONTRADO</b>Este código no corresponde a ningún carnet.</div><button class="btn l" data-volver>Volver</button></div>`;
   const e = emp(p.empresa); const st = estadoCarne(p);
   return `<div class="verif"><p class="nota" style="text-align:center">${URL_VERIF}${esc(p.token)}</p>
-    <div class="estado ${st.ok ? 'ok' : 'no'}"><b>${st.ok ? 'VIGENTE' : 'NO VIGENTE'}</b>${st.ok ? 'Carné válido de ' + esc(e.nombre) : esc(st.motivo)}</div>
+    <div class="estado ${st.ok ? 'ok' : 'no'}"><b>${st.ok ? 'VIGENTE' : 'NO VIGENTE'}</b>${st.ok ? 'Carnet válido de ' + esc(e.nombre) : esc(st.motivo)}</div>
     ${e.verif === 'reducida' ? `<div class="caja ficha"><div><h2 style="font-size:24px">${esc(nomCorto(p.nombre))}</h2><div>${esc(p.rol)}</div><div class="nota">${esc(e.largo || e.nombre)}</div><div class="nota">Vence: ${fmtF(p.vence)}</div><div class="nota">Esta institución protege más los datos: la verificación pública no muestra foto ni detalles.</div></div></div>` : `<div class="caja ficha"><img src="${imgOk(p.foto) ? p.foto : avatar(p.nombre, e.c1)}" alt="Foto de ${esc(p.nombre)}"><div><h2 style="font-size:24px">${esc(p.nombre)}</h2><div>${esc(p.rol)} · ${esc(p.detalle)}</div><div class="nota">${esc(e.largo || e.nombre)}</div><div class="nota">Vence: ${fmtF(p.vence)}</div></div></div>`}
     <p class="nota">Por su seguridad, la verificación nunca muestra el número de documento. Consultado ${fmtH(Date.now())}.</p>
     <p class="nota">Verificación de Identidad IA · SkyNet Genesis · contacto@skynetgenesis.com</p>
@@ -844,10 +844,10 @@ let SESION = null, PUB = 'portada', REC_CORREO = '', CLAVE_PARA = '';
 const bitQ = (quien, que) => { D.bitacora.unshift({ t: Date.now(), quien, que }); D.bitacora = D.bitacora.slice(0, 300); };
 const campoClave = (id, etq, ac) => `<label class="c" for="${id}">${etq}<span class="clave-caja"><input type="password" id="${id}" autocomplete="${ac}"><button type="button" class="ojo" data-ojo="${id}">Mostrar</button></span></label>`;
 const FOTOS = {
-  hero: 'Estudiante en la entrada de su institución mostrando el carné en el celular',
-  porteria: 'Vigilante en la portería escaneando el QR de un carné con el celular',
-  impresion: 'Persona recibiendo su carné impreso en tarjeta plástica',
-  equipo: 'Secretaria de una institución revisando la lista de carnés en el computador'
+  hero: 'Estudiante en la entrada de su institución mostrando el carnet en el celular',
+  porteria: 'Vigilante en la portería escaneando el QR de un carnet con el celular',
+  impresion: 'Persona recibiendo su carnet impreso en tarjeta plástica',
+  equipo: 'Secretaria de una institución revisando la lista de carnets en el computador'
 };
 const FOTO_URL = { hero: 'photo-1758270704689-2850704b7338', porteria: 'photo-1485230405346-71acb9518d9c', equipo: 'photo-1713946598544-c3d106930f72' };
 const fotoSec = k => `<figure class="foto-sec">${FOTO_URL[k] ? `<img src="https://images.unsplash.com/${FOTO_URL[k]}?w=900&q=70&auto=format&fit=crop" alt="${FOTOS[k]}" loading="lazy" onerror="this.remove()">` : ''}<figcaption>${FOTOS[k]}</figcaption></figure>`;
@@ -855,33 +855,33 @@ V.portada = () => {
   const ej = D.personas.find(p => p.empresa === 'e-poli' && estadoCarne(p).ok) || D.personas[0];
   return `<section class="hero">
     <div><span class="pill p-ok">15 días gratis · sin tarjeta</span>
-      <h1>Carnés con QR que cualquiera verifica en segundos</h1>
-      <p>Entregue a su gente el carné en el celular y, si quiere, en tarjeta plástica. Al escanear el QR se ve al instante si la persona sigue activa, sin mostrar nunca su número de documento.</p>
+      <h1>Carnets con QR que cualquiera verifica en segundos</h1>
+      <p>Entregue a su gente el carnet en el celular y, si quiere, en tarjeta plástica. Al escanear el QR se ve al instante si la persona sigue activa, sin mostrar nunca su número de documento.</p>
       <div class="fila"><button class="btn v grande" data-pub="registro">¡Quiero Identidad IA ya para mi institución!</button><button class="btn l" data-pub="demo">Probar la demostración</button></div>
       <p class="nota" style="margin-top:10px">¿Dudas? <a href="${WA}" target="_blank" rel="noopener">Hablar con un asesor</a></p></div>
     <div class="lado">${carneFrente(ej)}${fotoSec('hero')}</div>
   </section>
-  <section class="sec"><h2>¿Le pasa esto con los carnés?</h2><div class="tarjetas">
-    <div class="tarjeta"><span class="ic">🪪</span><b>Se copian y se prestan</b><span class="nota">Un carné de papel o una foto en el celular se falsifica en minutos.</span></div>
-    <div class="tarjeta"><span class="ic">❓</span><b>Nadie sabe si sigue activo</b><span class="nota">La persona se retiró o dejó de pagar, y el carné sigue abriendo puertas.</span></div>
+  <section class="sec"><h2>¿Le pasa esto con los carnets?</h2><div class="tarjetas">
+    <div class="tarjeta"><span class="ic">🪪</span><b>Se copian y se prestan</b><span class="nota">Un carnet de papel o una foto en el celular se falsifica en minutos.</span></div>
+    <div class="tarjeta"><span class="ic">❓</span><b>Nadie sabe si sigue activo</b><span class="nota">La persona se retiró o dejó de pagar, y el carnet sigue abriendo puertas.</span></div>
     <div class="tarjeta"><span class="ic">⏳</span><b>Imprimir cuesta y demora</b><span class="nota">Cada año hay que volver a tomar fotos, diseñar e imprimir todo.</span></div>
   </div></section>
   <section class="sec"><h2>Así funciona</h2><div class="dos"><div class="tarjetas" style="grid-template-columns:1fr">
     <div class="tarjeta"><span class="paso-n">1</span><b>Cargue a su gente</b><span class="nota">Desde un Excel o, si ya usa AcademIA, Colegio-IA o Clínica-IA, los datos llegan solos.</span></div>
-    <div class="tarjeta"><span class="paso-n">2</span><b>Autorice y entregue</b><span class="nota">Cada persona recibe su carné en el celular. Si quiere, lo imprime en tarjeta plástica o nos lo pide impreso.</span></div>
+    <div class="tarjeta"><span class="paso-n">2</span><b>Autorice y entregue</b><span class="nota">Cada persona recibe su carnet en el celular. Si quiere, lo imprime en tarjeta plástica o nos lo pide impreso.</span></div>
     <div class="tarjeta"><span class="paso-n">3</span><b>Verifique en la puerta</b><span class="nota">Cualquier celular escanea el QR: VIGENTE o NO VIGENTE, con foto y nombre. Cada entrada queda registrada.</span></div>
   </div>${fotoSec('porteria')}</div></section>
   <section class="sec"><h2>Lo que nos hace diferentes</h2><div class="tarjetas">
-    <div class="tarjeta"><b>NO VIGENTE automático</b><span class="nota">Si la persona no está al día o se retiró, el carné deja de valer solo, al instante.</span></div>
+    <div class="tarjeta"><b>NO VIGENTE automático</b><span class="nota">Si la persona no está al día o se retiró, el carnet deja de valer solo, al instante.</span></div>
     <div class="tarjeta"><b>Nunca muestra el documento</b><span class="nota">El QR no revela la cédula. Para menores de edad y pacientes hay un modo reducido, sin foto.</span></div>
     <div class="tarjeta"><b>Portería con cualquier celular</b><span class="nota">Sin lectores costosos: registra entradas y salidas desde el celular del vigilante, o con un lector QR de mesa.</span></div>
     <div class="tarjeta"><b>Control de asistencia</b><span class="nota">Retardos, faltas, horas y quién está adentro ahora. Informes listos para Excel: adiós a la planilla a mano.</span></div>
     <div class="tarjeta"><b>Impresos a todo el país</b><span class="nota">Pídalos impresos por las dos caras a ${peso(PRECIO_IMPRESO)} cada uno y se los enviamos.</span></div>
-    <div class="tarjeta"><b>Usuarios ilimitados</b><span class="nota">Administradores y porteros sin costo por usuario: paga por carnés activos.</span></div>
+    <div class="tarjeta"><b>Usuarios ilimitados</b><span class="nota">Administradores y porteros sin costo por usuario: paga por carnets activos.</span></div>
   </div></section>
   <section class="sec"><h2>Arme su plan</h2>${armePlanHTML(null)}</section>
   <section class="sec"><h2>Cómo empezar</h2><div class="dos">${fotoSec('equipo')}<div class="tarjetas" style="grid-template-columns:1fr">
-    <div class="tarjeta"><b>1. Cree su cuenta gratis</b><span class="nota">En dos minutos, sin tarjeta. Tiene 15 días y hasta 10 carnés de prueba.</span></div>
+    <div class="tarjeta"><b>1. Cree su cuenta gratis</b><span class="nota">En dos minutos, sin tarjeta. Tiene 15 días y hasta 10 carnets de prueba.</span></div>
     <div class="tarjeta"><b>2. Arme su plan y pague</b><span class="nota">Un solo pago con tarjeta débito o crédito, PSE, Nequi o llave Bre-B. El resto del primer mes no se cobra.</span></div>
     <div class="tarjeta"><b>3. Siga pagando mes a mes</b><span class="nota">Sin permanencia: si deja de pagar, el servicio se cierra el día 5 y ya, sin multas.</span></div>
   </div></div></section>
@@ -891,15 +891,15 @@ V.portada = () => {
   </div></section>
   <section class="sec"><h2>Preguntas frecuentes</h2>
     <details class="faq"><summary>¿El QR muestra la cédula de la persona?</summary><p>No. Muestra foto, nombre, tipo y vigencia. Su institución puede escoger el modo reducido: solo nombre corto y vigencia, sin foto.</p></details>
-    <details class="faq"><summary>¿Qué pasa si una persona se retira o deja de pagar?</summary><p>El carné pasa a NO VIGENTE al instante: lo suspende la institución o llega solo desde su app (AcademIA, Colegio-IA, Clínica-IA).</p></details>
+    <details class="faq"><summary>¿Qué pasa si una persona se retira o deja de pagar?</summary><p>El carnet pasa a NO VIGENTE al instante: lo suspende la institución o llega solo desde su app (AcademIA, Colegio-IA, Clínica-IA).</p></details>
     <details class="faq"><summary>¿Puedo imprimirlos en tarjeta plástica?</summary><p>Sí. La app le entrega el diseño listo para imprimir por las dos caras, o nos los pide impresos a ${peso(PRECIO_IMPRESO)} cada uno con envío a todo el país.</p></details>
     <details class="faq"><summary>¿Necesito comprar un lector para la portería?</summary><p>No. Basta un celular con cámara e internet. Si prefiere, funciona también con un lector QR de mesa (USB) conectado al computador de la portería.</p></details>
     <details class="faq"><summary>¿Sirve para controlar la asistencia de empleados o estudiantes?</summary><p>Sí, con el módulo de control de acceso y asistencia (desde ${peso(ASIS.p100)} al mes adicionales): usted pone el horario y la app le dice quién llegó tarde, quién faltó y cuántas horas estuvo cada uno, con informes que se descargan para Excel. No necesita tener Colegio-IA ni ninguna otra app nuestra.</p></details>
   </section>
-  <section class="final"><h2>Empiece hoy: 15 días gratis</h2><p style="margin:0">Cree su cuenta en dos minutos y entregue los primeros carnés esta misma semana.</p><button class="btn v grande" data-pub="registro">¡Quiero Identidad IA ya para mi institución!</button></section>
+  <section class="final"><h2>Empiece hoy: 15 días gratis</h2><p style="margin:0">Cree su cuenta en dos minutos y entregue los primeros carnets esta misma semana.</p><button class="btn v grande" data-pub="registro">¡Quiero Identidad IA ya para mi institución!</button></section>
   <div class="barra-fija"><span><b>Desde ${peso(PLANES[0].precio)}</b> <span class="nota">al mes</span></span><button class="btn v" data-pub="registro">¡La quiero!</button></div>`;
 };
-const DESC_PERFIL = { super: 'Ve todas las instituciones, los cobros, las cuentas y los pedidos de impresión.', 'adm-poli': 'Institución interna conectada con AcademIA: el carné sale NO VIGENTE si el estudiante no está al día.', 'adm-anglo': 'Colegio con verificación reducida para proteger a los menores de edad.', 'adm-reina': 'IPS: carnés de pacientes sin ningún dato de salud.', 'adm-gym': 'Cliente que ya paga: carnés de afiliados, su plan y pedidos impresos.', 'adm-conj': 'Cliente en prueba gratis de 15 días.', 'port-poli': 'El celular de la portería: escanea carnés y registra entradas.', pers: 'Lo que ve una persona al abrir su carné.' };
+const DESC_PERFIL = { super: 'Ve todas las instituciones, los cobros, las cuentas y los pedidos de impresión.', 'adm-poli': 'Institución interna conectada con AcademIA: el carnet sale NO VIGENTE si el estudiante no está al día.', 'adm-anglo': 'Colegio con verificación reducida para proteger a los menores de edad.', 'adm-reina': 'IPS: carnets de pacientes sin ningún dato de salud.', 'adm-gym': 'Cliente que ya paga: carnets de afiliados, su plan y pedidos impresos.', 'adm-conj': 'Cliente en prueba gratis de 15 días.', 'port-poli': 'El celular de la portería: escanea carnets y registra entradas.', pers: 'Lo que ve una persona al abrir su carnet.' };
 V.demo = () => cab('Probar la demostración', 'Escoja con qué perfil quiere entrar. Los datos son de ejemplo.') + `<div class="tarjetas">${PERFILES.map(p => `<div class="tarjeta"><b>${esc(p.nombre)}</b><span class="nota">${DESC_PERFIL[p.id] || ''}</span><button class="btn v chico" data-demo="${p.id}" style="align-self:flex-start">Entrar así</button></div>`).join('')}</div><div class="fila"><button class="btn l" data-pub="portada">← Volver</button><span class="espacio"></span><button class="btn v" data-pub="registro">¡Quiero Identidad IA ya para mi institución!</button></div>`;
 V.ingresar = () => `<div class="ingreso" style="display:flex;flex-direction:column;gap:14px">${cab('Ingresar', 'Administradores, portería y Superadministrador')}<div class="caja" style="display:flex;flex-direction:column;gap:12px">
   <label class="c" for="lgCor">Correo<input type="email" id="lgCor" autocomplete="username" inputmode="email"></label>
@@ -928,14 +928,14 @@ V.registro = () => cab('Cree la cuenta de su institución', '15 días gratis, si
     <label class="c" for="rAdm">Nombre de quien administra<input type="text" id="rAdm" autocomplete="name"></label>
     <label class="c" for="rCor">Correo de quien administra<input type="email" id="rCor" autocomplete="email" inputmode="email"></label>
     <label class="c" for="rCel">Celular<input type="text" id="rCel" inputmode="tel" autocomplete="tel"></label>
-    <label class="c" for="rCant">¿Cuántas personas tendrán carné, más o menos?<input type="number" id="rCant" min="1" value="100"></label>
+    <label class="c" for="rCant">¿Cuántas personas tendrán carnet, más o menos?<input type="number" id="rCant" min="1" value="100"></label>
   </div>
   <label class="c chk" for="rAcepto"><input type="checkbox" id="rAcepto"><span>Acepto los términos de uso y el encargo de tratamiento de datos personales (Ley 1581 de 2012). <button type="button" class="enlace" data-terminos>Leerlos</button></span></label>
-  <div class="aviso azul"><div><b>¿Qué pasa después?</b><ol style="margin:6px 0 0;padding-left:18px"><li>Le llega un correo para crear su contraseña.</li><li>Usa todo gratis por 15 días, con hasta 10 carnés de prueba.</li><li>Cuando quiera, arma su plan y paga en un solo pago.</li><li>Después solo paga la mensualidad y los carnés nuevos.</li></ol></div></div>
+  <div class="aviso azul"><div><b>¿Qué pasa después?</b><ol style="margin:6px 0 0;padding-left:18px"><li>Le llega un correo para crear su contraseña.</li><li>Usa todo gratis por 15 días, con hasta 10 carnets de prueba.</li><li>Cuando quiera, arma su plan y paga en un solo pago.</li><li>Después solo paga la mensualidad y los carnets nuevos.</li></ol></div></div>
   <div class="fila"><button class="btn v" data-registrar>Crear la cuenta gratis</button><button class="btn l" data-pub="portada">← Volver</button></div></div>`;
 V.registrado = () => `<div class="ingreso" style="display:flex;flex-direction:column;gap:14px">${cab('¡Listo! Su cuenta quedó creada', '')}<div class="caja" style="display:flex;flex-direction:column;gap:12px">
   <p style="margin:0">Le enviamos a <b>${esc(PROD ? REG_PARA : mask(CLAVE_PARA))}</b> un enlace para crear su contraseña. Vence en 1 hora y sirve una sola vez.</p>
-  <p class="nota" style="margin:0">Tiene 15 días gratis y hasta 10 carnés de prueba. Para seguir después, entre a «Mi plan», arme su plan y pague.</p>
+  <p class="nota" style="margin:0">Tiene 15 días gratis y hasta 10 carnets de prueba. Para seguir después, entre a «Mi plan», arme su plan y pague.</p>
   ${PROD ? '<p class="nota" style="margin:0">Revise también la carpeta de spam o correo no deseado.</p>' : '<button class="btn v" data-abrirenlace>Abrir el enlace del correo (simulado en la versión de prueba)</button>'}</div></div>`;
 V.cuenta = () => SESION && SESION.demo ? cab('Mi cuenta', '') + '<div class="aviso azul">En la demostración no se cambian contraseñas. Cree su cuenta para tener la suya.</div>' : cab('Mi cuenta', esc(SESION.correo)) + `<div class="caja ingreso" style="display:flex;flex-direction:column;gap:12px;margin:0"><b>Cambiar contraseña</b>
   ${campoClave('cc0', 'Contraseña actual', 'current-password')}${campoClave('cc1', 'Contraseña nueva (mínimo 10 caracteres)', 'new-password')}${campoClave('cc2', 'Escríbala otra vez', 'new-password')}
@@ -1003,7 +1003,7 @@ function registrar() {
   bitQ(cor, 'Creó la cuenta de ' + nom + ' (prueba de 15 días)'); guardar(); CLAVE_PARA = cor; PUB = 'registrado'; pintar(); window.scrollTo(0, 0);
 }
 function verTerminos() {
-  ventana(`<h2>Términos de uso (resumen)</h2><p>Identidad IA es un servicio de SkyNet Genesis. Su institución es la responsable de los datos de las personas a las que les da carné; SkyNet Genesis los trata solo por encargo suyo, para hacer y verificar los carnés (Ley 1581 de 2012).</p><ul><li>La verificación pública nunca muestra el número de documento.</li><li>No entregamos datos a terceros, salvo orden escrita de autoridad.</li><li>Prueba gratis de 15 días, una sola vez. Después, pago mes a mes por adelantado; si no paga, el servicio se cierra el día 5, sin multas.</li><li>Al terminar el servicio, sus datos quedan 90 días para descargarlos y luego se eliminan.</li></ul><p class="nota">En la versión publicada, el texto completo se descarga en PDF y la aceptación queda guardada con fecha.</p><div class="fila"><button class="btn v" data-cerrar>Entendido</button></div>`);
+  ventana(`<h2>Términos de uso (resumen)</h2><p>Identidad IA es un servicio de SkyNet Genesis. Su institución es la responsable de los datos de las personas a las que les da carnet; SkyNet Genesis los trata solo por encargo suyo, para hacer y verificar los carnets (Ley 1581 de 2012).</p><ul><li>La verificación pública nunca muestra el número de documento.</li><li>No entregamos datos a terceros, salvo orden escrita de autoridad.</li><li>Prueba gratis de 15 días, una sola vez. Después, pago mes a mes por adelantado; si no paga, el servicio se cierra el día 5, sin multas.</li><li>Al terminar el servicio, sus datos quedan 90 días para descargarlos y luego se eliminan.</li></ul><p class="nota">En la versión publicada, el texto completo se descarga en PDF y la aceptación queda guardada con fecha.</p><div class="fila"><button class="btn v" data-cerrar>Entendido</button></div>`);
 }
 function salir(pub) { if (REAL()) return salirReal(); cerrar(); SESION = null; PERFIL = PERFILES[1]; VISTA = 'inicio'; PUB = pub || 'portada'; history.replaceState(null, '', location.pathname); pintar(); window.scrollTo(0, 0); }
 function pagarPlan(d) {
@@ -1011,8 +1011,8 @@ function pagarPlan(d) {
   const hasta = phTrasPago(e, meses);
   e.plan = d.pagarplan; e.pagadoHasta = hasta; e.cupoCarnes = (e.cupoCarnes || 0) + nu; e.ultimoPago = { t: Date.now(), valor: total, meses, carnes: nu };
   if (d.asis === '1') e.asistencia = { ...(e.asistencia || ASIS_DEF), activa: true, hasta };
-  bit('Pagó ' + peso(total) + ' (simulado): al día hasta ' + hasta + (nu ? ' y ' + nu + ' carnés' : '')); guardar(); pintar();
-  toast('Pago aprobado (simulado en la versión de prueba). Queda al día hasta el ' + fmtF(hasta) + '. Carnés disponibles: ' + dispTxt(e));
+  bit('Pagó ' + peso(total) + ' (simulado): al día hasta ' + hasta + (nu ? ' y ' + nu + ' carnets' : '')); guardar(); pintar();
+  toast('Pago aprobado (simulado en la versión de prueba). Queda al día hasta el ' + fmtF(hasta) + '. Carnets disponibles: ' + dispTxt(e));
 }
 function pintarBarra() {
   const b = $('#barraDer');
@@ -1037,7 +1037,7 @@ const enlaceCarne = p => p.secreto ? 'https://identidad-ia.skynetgenesis.com/?c=
 function verCarne(id) {
   const p = D.personas.find(x => x.id === id); const st = estadoCarne(p); const e = emp(p.empresa);
   ventana(`<h2>${esc(p.nombre)}</h2><div class="fila">${pillEstado(p)}<span class="nota">Emitido: ${fmtF(p.emitido)} · Documento ${esc(p.documento)} (solo lo ve la institución)</span></div><div class="dos-caras">${carneFrente(p)}${carneReverso(p)}</div>
-  <div class="caja" style="padding:12px"><b>Enlace del carné</b><div class="fila"><code style="word-break:break-all;flex:1">${esc(enlaceCarne(p))}</code><button class="btn chico l" id="copiar">Copiar</button></div><p class="nota" style="margin:6px 0 0">Cópielo y envíeselo a la persona por WhatsApp o correo: con este enlace ve su carné en el celular. Es personal; el QR del carné es el que se escanea en la entrada.</p></div>
+  <div class="caja" style="padding:12px"><b>Enlace del carnet</b><div class="fila"><code style="word-break:break-all;flex:1">${esc(enlaceCarne(p))}</code><button class="btn chico l" id="copiar">Copiar</button></div><p class="nota" style="margin:6px 0 0">Cópielo y envíeselo a la persona por WhatsApp o correo: con este enlace ve su carnet en el celular. Es personal; el QR del carnet es el que se escanea en la entrada.</p></div>
   <div class="fila"><button class="btn l" data-verif="${p.token}">Ver lo que muestra el QR</button>${p.estado === 'activo' ? `<button class="btn r" data-suspender="${p.id}">Suspender</button>` : `<button class="btn v" data-reactivar="${p.id}">Reactivar</button>`}<button class="btn r" data-anular="${p.id}">Anular y dar uno nuevo</button><span class="espacio"></span><button class="btn l" data-cerrar>Cerrar</button></div>
   ${!st.ok ? `<p class="nota">Motivo: ${esc(st.motivo)}.</p>` : ''}`, w => {
     w.querySelector('#copiar').onclick = () => { const t = enlaceCarne(p); navigator.clipboard.writeText(t).then(() => toast('Enlace copiado')).catch(() => { const r = document.createRange(); r.selectNodeContents(w.querySelector('code')); getSelection().removeAllRanges(); getSelection().addRange(r); toast('Enlace seleccionado: cópielo con Ctrl+C'); }); };
@@ -1063,10 +1063,10 @@ function editarPersona(id) {
       const n = w.querySelector('#fN').value.trim(); if (n.length < 5) return toast('Escriba el nombre completo');
       const datos = { nombre: n, documento: w.querySelector('#fD').value.replace(/[^0-9A-Za-z]/g, ''), rol: w.querySelector('#fR').value, detalle: w.querySelector('#fDet').value.trim(), rh: w.querySelector('#fRh').value.trim(), vence: w.querySelector('#fV').value, emergencia: w.querySelector('#fE').value.trim(), foto, alDia: e.alDiaDesdeApp ? w.querySelector('#fAl').checked : true };
       if (REAL()) return p_editarPersona(id, datos, w);
-      if (!id && !usarCupo(e, 1)) return toast('No tiene carnés disponibles. Compre más en «Mi plan»');
+      if (!id && !usarCupo(e, 1)) return toast('No tiene carnets disponibles. Compre más en «Mi plan»');
       if (id) { Object.assign(p, datos); bit('Editó a ' + n); }
-      else { D.personas.push({ id: uid('p'), empresa: e.id, estado: 'activo', token: token(), pagado: !e.requierePago, autorizado: false, emitido: '', origen: 'manual', ...datos }); bit('Creó el carné de ' + n + ' (queda por autorizar)'); }
-      guardar(); cerrar(); pintar(); toast(id ? 'Datos guardados' : 'Persona creada: queda por autorizar' + (e.interna ? '' : ' · le quedan ' + dispTxt(e) + ' carnés disponibles'));
+      else { D.personas.push({ id: uid('p'), empresa: e.id, estado: 'activo', token: token(), pagado: !e.requierePago, autorizado: false, emitido: '', origen: 'manual', ...datos }); bit('Creó el carnet de ' + n + ' (queda por autorizar)'); }
+      guardar(); cerrar(); pintar(); toast(id ? 'Datos guardados' : 'Persona creada: queda por autorizar' + (e.interna ? '' : ' · le quedan ' + dispTxt(e) + ' carnets disponibles'));
     };
   });
 }
@@ -1082,15 +1082,15 @@ function cargarCSV() {
       const e = emp(PERFIL.empresa); let n = 0; const filas = [];
       w.querySelector('#csvT').value.split(/\r?\n/).forEach((l, i) => { const c = l.split(/[;,\t]/).map(x => x.trim()); if (!c[0] || c[0].toLowerCase() === 'nombre' || c[0].length < 5) return; filas.push({ id: uid('p'), empresa: e.id, nombre: c[0], documento: (c[1] || '').replace(/[^0-9A-Za-z]/g, ''), rol: ROLES.find(r => r.toLowerCase() === (c[2] || '').toLowerCase()) || 'Empleado', detalle: c[3] || '', rh: c[4] || '', emergencia: c[5] || '', foto: '', alDia: true, estado: 'activo', token: token(), pagado: !e.requierePago, autorizado: false, emitido: '', vence: sumMeses(hoy(), e.vigencia), origen: 'csv' }); n++; });
       if (!n) return toast('No se encontró ninguna fila válida');
-      if (!usarCupo(e, n)) return toast('Va a cargar ' + n + ' personas y solo tiene ' + dispTxt(e) + ' carnés disponibles. Compre más en «Mi plan»');
+      if (!usarCupo(e, n)) return toast('Va a cargar ' + n + ' personas y solo tiene ' + dispTxt(e) + ' carnets disponibles. Compre más en «Mi plan»');
       D.personas.push(...filas);
-      bit('Cargó ' + n + ' personas desde CSV'); guardar(); cerrar(); pintar(); toast(n + ' personas cargadas: quedan por autorizar' + (e.interna ? '' : ' · le quedan ' + dispTxt(e) + ' carnés disponibles'));
+      bit('Cargó ' + n + ' personas desde CSV'); guardar(); cerrar(); pintar(); toast(n + ' personas cargadas: quedan por autorizar' + (e.interna ? '' : ' · le quedan ' + dispTxt(e) + ' carnets disponibles'));
     };
   });
 }
 
 function nuevaEmpresa() {
-  ventana(`<h2>Nueva institución</h2><div class="form"><label class="c" for="nN">Nombre<input type="text" id="nN"></label><label class="c" for="nT">Tipo<select id="nT">${['Institución educativa', 'Colegio', 'IPS', 'Empresa', 'Gimnasio', 'Conjunto residencial', 'Iglesia', 'Evento'].map(x => `<option>${x}</option>`).join('')}</select></label><label class="c" for="nNit">NIT<input type="text" id="nNit"></label><label class="c" for="nP">Plan<select id="nP">${PLANES.map(p => `<option value="${p.id}">${p.nombre} · ${peso(p.precio)}</option>`).join('')}</select></label></div><label class="c" for="nC">Correo del administrador<input type="email" id="nC"></label><p class="nota">Arranca con 15 días de prueba gratis y hasta 10 carnés de prueba. Al administrador le llega el enlace para crear su contraseña.</p><div class="fila"><button class="btn v" id="nG">Crear</button><button class="btn l" data-cerrar>Cancelar</button></div>`, w => {
+  ventana(`<h2>Nueva institución</h2><div class="form"><label class="c" for="nN">Nombre<input type="text" id="nN"></label><label class="c" for="nT">Tipo<select id="nT">${['Institución educativa', 'Colegio', 'IPS', 'Empresa', 'Gimnasio', 'Conjunto residencial', 'Iglesia', 'Evento'].map(x => `<option>${x}</option>`).join('')}</select></label><label class="c" for="nNit">NIT<input type="text" id="nNit"></label><label class="c" for="nP">Plan<select id="nP">${PLANES.map(p => `<option value="${p.id}">${p.nombre} · ${peso(p.precio)}</option>`).join('')}</select></label></div><label class="c" for="nC">Correo del administrador<input type="email" id="nC"></label><p class="nota">Arranca con 15 días de prueba gratis y hasta 10 carnets de prueba. Al administrador le llega el enlace para crear su contraseña.</p><div class="fila"><button class="btn v" id="nG">Crear</button><button class="btn l" data-cerrar>Cancelar</button></div>`, w => {
     w.querySelector('#nG').onclick = () => { const n = w.querySelector('#nN').value.trim(), c = w.querySelector('#nC').value.trim(); if (n.length < 3 || !/^\S+@\S+\.\S+$/.test(c)) return toast('Escriba el nombre y un correo válido'); if (REAL()) return p_nuevaEmpresa(w); const id = uid('e'); D.empresas.push({ id, nombre: n, largo: n, nit: w.querySelector('#nNit').value.trim(), tipo: w.querySelector('#nT').value, c1: '#0B4F8A', c2: '#14A38B', interna: false, plan: w.querySelector('#nP').value, pagadoHasta: '', pruebaHasta: sumDias(hoy(), 14), cupoCarnes: 0, usadosPrueba: 0, verif: 'completa', origen: 'manual', vigencia: 12, requierePago: false, valor: 0, reverso: 'Documento de identificación personal e intransferible.', firma: 'Administración', alDiaDesdeApp: false }); D.cuentas.push({ correo: c, nombre: 'Administrador', empresa: id, perfil: 'admin', clave: false, ultimo: 0 }); bit('Creó la institución ' + n); guardar(); cerrar(); pintar(); toast('Institución creada. Se envió el enlace a ' + c); };
   });
 }
@@ -1100,7 +1100,7 @@ function leerCodigo(raw, modo) {
   if (REAL()) return p_leerCodigo(raw, modo);
   const tk = String(raw || '').trim().toLowerCase().split(/[\/=]/).pop().replace(/[^a-z0-9]/g, '');
   const p = D.personas.find(x => x.token === tk && x.empresa === PERFIL.empresa); const e = emp(PERFIL.empresa); let j;
-  if (!p) { D.accesos.unshift({ t: new Date().toISOString(), empresa: e.id, persona: '', ok: false, motivo: 'Carné no encontrado', salida: modo === 'salida', quien: PERFIL.nombre }); j = { encontrado: false }; }
+  if (!p) { D.accesos.unshift({ t: new Date().toISOString(), empresa: e.id, persona: '', ok: false, motivo: 'Carnet no encontrado', salida: modo === 'salida', quien: PERFIL.nombre }); j = { encontrado: false }; }
   else {
     const st = estadoCarne(p); const t0 = hoy() + 'T05:00:00';
     const ult = D.accesos.find(a => a.persona === p.id && a.ok && a.t >= t0);
@@ -1174,13 +1174,13 @@ function prodClick(d, b) {
   const accP = ['autorizar', 'suspender', 'reactivar', 'anular'].find(k => d[k]);
   if (accP) {
     ocupado(b, async () => { await api('POST', '/api/personas/' + encodeURIComponent(d[accP]) + '/' + accP); cerrar(); await recargar();
-      toast({ autorizar: 'Carné autorizado. Abra el carné, copie el enlace «Mi carné» y envíeselo a la persona', suspender: 'Carné suspendido: el QR mostrará NO VIGENTE', reactivar: 'Carné reactivado', anular: 'El carné anterior ya no sirve. El nuevo queda por autorizar' }[accP]); });
+      toast({ autorizar: 'Carnet autorizado. Abra el carnet, copie el enlace «Mi carnet» y envíeselo a la persona', suspender: 'Carnet suspendido: el QR mostrará NO VIGENTE', reactivar: 'Carnet reactivado', anular: 'El carnet anterior ya no sirve. El nuevo queda por autorizar' }[accP]); });
     return true;
   }
   if ('pedir' in d) {
     const ci = $('#pCiudad'), di = $('#pDir'); if (ci) PED.ciudad = ci.value; if (di) PED.dir = di.value;
     const ids = misPersonas().filter(p => estadoCarne(p).ok && PED.sel && PED.sel.has(p.id)).map(p => p.id);
-    if (!ids.length) { toast('Elija al menos un carné'); return true; }
+    if (!ids.length) { toast('Elija al menos un carnet'); return true; }
     ocupado(b, async () => { const j = await api('POST', '/api/impresos', { personas: ids, entrega: PED.entrega, ciudad: PED.ciudad, dir: PED.dir }); PED = { sel: null, entrega: 'recoger', ciudad: '', dir: '' }; await recargar();
       if (j.pagar) { toast('Pedido creado. Se abre la pasarela de pagos'); abrirBold(j.firma); } else toast('Pedido recibido: pasa a impresión'); });
     return true;
@@ -1189,7 +1189,7 @@ function prodClick(d, b) {
     const x = D.pedidos.find(o => o.id === d.pedavanza); const s = sigPed(x);
     const enviar = guia => ocupado(b, async () => { const j = await api('POST', '/api/sa/impreso', { id: x.id, guia }); cerrar(); await recargar(); toast('Pedido marcado como ' + j.estado.toLowerCase() + (j.estado === 'Enviado' ? ': se le avisó al cliente con la guía' : '')); });
     if (x.estado === 'Por pagar') { toast('Ese pedido aún no está pagado'); return true; }
-    if (s === 'Enviado') ventana(`<h2>Guía de Interrapidísimo</h2><p>${x.cantidad} carnés para ${esc(x.ciudad)}.</p><label class="c" for="gNum">Número de guía<input type="text" id="gNum" inputmode="numeric" autocomplete="off"></label><div class="fila"><button class="btn v" id="gOk">Guardar y avisar al cliente</button><button class="btn l" data-cerrar>Cancelar</button></div>`, w => { w.querySelector('#gOk').onclick = () => { const g = w.querySelector('#gNum').value.trim(); if (g.length < 5) return toast('Escriba el número de guía'); enviar(g); }; });
+    if (s === 'Enviado') ventana(`<h2>Guía de Interrapidísimo</h2><p>${x.cantidad} carnets para ${esc(x.ciudad)}.</p><label class="c" for="gNum">Número de guía<input type="text" id="gNum" inputmode="numeric" autocomplete="off"></label><div class="fila"><button class="btn v" id="gOk">Guardar y avisar al cliente</button><button class="btn l" data-cerrar>Cancelar</button></div>`, w => { w.querySelector('#gOk').onclick = () => { const g = w.querySelector('#gNum').value.trim(); if (g.length < 5) return toast('Escriba el número de guía'); enviar(g); }; });
     else enviar('');
     return true;
   }
@@ -1217,7 +1217,7 @@ function prodClick(d, b) {
   if ('gcon' in d) { ocupado(b, async () => { await api('PUT', '/api/empresa', { origen: $('#cOrigen').value }); await recargar(); toast('Origen de los datos guardado'); }); return true; }
   if ('genllave' in d) { const e = emp(PERFIL.empresa); if (e.llave && !d.seguro) { d.seguro = '1'; b.textContent = 'La llave actual dejará de servir. Pulse otra vez para confirmar'; return true; } ocupado(b, async () => { const j = await api('POST', '/api/integracion/llave'); window.__llaveNueva = j.llave; await recargar(); toast('Llave generada: cópiela y péguela en su app'); }); return true; }
   if ('quitllave' in d) { if (!d.seguro) { d.seguro = '1'; b.textContent = 'Su app dejará de enviar personas. Pulse otra vez'; return true; } ocupado(b, async () => { await api('POST', '/api/integracion/quitar'); window.__llaveNueva = ''; await recargar(); toast('App desconectada'); }); return true; }
-  if (d.autall) { ocupado(b, async () => { const j = await api('POST', '/api/personas-autorizar-todos', { ids: d.autall.split(',') }); await recargar(); toast(j.autorizados + ' carnés autorizados'); }); return true; }
+  if (d.autall) { ocupado(b, async () => { const j = await api('POST', '/api/personas-autorizar-todos', { ids: d.autall.split(',') }); await recargar(); toast(j.autorizados + ' carnets autorizados'); }); return true; }
   if (d.pagarplan) {
     const cant = Math.max(1, parseInt(($('#mCant') || {}).value, 10) || 1);
     ocupado(b, async () => { const j = await api('POST', '/api/bold/pedido', { cantidad: cant, nuevos: +d.nuevos || 0, asistencia: d.asis === '1' }); toast('Con este pago queda al día hasta el ' + fmtF(j.hasta) + '. Se abre la pasarela de pagos'); abrirBold(j.firma); });
@@ -1263,7 +1263,7 @@ function p_registrar() {
 }
 function p_editarPersona(id, datos, w) {
   ocupado(w.querySelector('#fG'), async () => { const j = id ? await api('PUT', '/api/personas/' + encodeURIComponent(id), datos) : await api('POST', '/api/personas', datos); cerrar(); await recargar();
-    toast(id ? 'Datos guardados' : 'Persona creada: queda por autorizar' + (j.disponibles != null ? ' · le quedan ' + j.disponibles + ' carnés disponibles' : '')); });
+    toast(id ? 'Datos guardados' : 'Persona creada: queda por autorizar' + (j.disponibles != null ? ' · le quedan ' + j.disponibles + ' carnets disponibles' : '')); });
 }
 function p_csv(texto, w) {
   const filas = texto.split(/\r?\n/).map(l => l.split(/[;,\t]/).map(x => x.trim())).filter(c => c[0] && c[0].toLowerCase() !== 'nombre' && c[0].length >= 5).map(c => ({ nombre: c[0], documento: c[1] || '', tipo: c[2] || '', detalle: c[3] || '', rh: c[4] || '', emergencia: c[5] || '' }));
@@ -1277,42 +1277,42 @@ function p_nuevaEmpresa(w) {
 function p_leerCodigo(raw, modo) {
   ocupado(null, async () => {
     const j = await api('POST', '/api/porteria/leer', { codigo: raw, modo });
-    if (!j.repetido) D.accesos.unshift({ t: j.t || new Date().toISOString(), empresa: PERFIL.empresa, persona: j.persona ? j.persona.id : '', nombre: j.persona ? j.persona.nombre : '', ok: !!(j.encontrado && j.ok), motivo: j.encontrado ? j.motivo : 'Carné no encontrado', salida: !!j.salida, quien: YO ? YO.nombre : '' });
+    if (!j.repetido) D.accesos.unshift({ t: j.t || new Date().toISOString(), empresa: PERFIL.empresa, persona: j.persona ? j.persona.id : '', nombre: j.persona ? j.persona.nombre : '', ok: !!(j.encontrado && j.ok), motivo: j.encontrado ? j.motivo : 'Carnet no encontrado', salida: !!j.salida, quien: YO ? YO.nombre : '' });
     mostrarLectura(j);
   });
 }
 function p_guardarDiseno(datos) {
   ocupado($('[data-gdiseno]'), async () => { await api('PUT', '/api/empresa', datos); await recargar(); toast('Diseño guardado'); });
 }
-/* verificación pública (?v=) y «Mi carné» (?c=) */
+/* verificación pública (?v=) y «Mi carnet» (?c=) */
 async function pintarPublico(tipo, codigo) {
   const app = document.querySelector('.app'); app.classList.add('sinmenu'); $('#menu').innerHTML = ''; pintarBarra();
   $('#vista').innerHTML = '<div class="verif"><p class="nota" style="text-align:center">Consultando…</p></div>';
   try {
     if (tipo === 'v') {
       const j = await api('GET', '/api/v/' + encodeURIComponent(codigo));
-      if (!j.encontrado) { $('#vista').innerHTML = `<div class="verif"><div class="estado no"><b>NO ENCONTRADO</b>Este código no corresponde a ningún carné.</div></div>`; return; }
-      $('#vista').innerHTML = `<div class="verif"><div class="estado ${j.ok ? 'ok' : 'no'}"><b>${j.ok ? 'VIGENTE' : 'NO VIGENTE'}</b>${j.ok ? 'Carné válido de ' + esc(j.institucion.nombre) : esc(j.motivo)}</div>
+      if (!j.encontrado) { $('#vista').innerHTML = `<div class="verif"><div class="estado no"><b>NO ENCONTRADO</b>Este código no corresponde a ningún carnet.</div></div>`; return; }
+      $('#vista').innerHTML = `<div class="verif"><div class="estado ${j.ok ? 'ok' : 'no'}"><b>${j.ok ? 'VIGENTE' : 'NO VIGENTE'}</b>${j.ok ? 'Carnet válido de ' + esc(j.institucion.nombre) : esc(j.motivo)}</div>
         <div class="caja ficha">${j.reducida ? '' : `<img src="${imgOk(j.foto) ? j.foto : avatar(j.nombre, j.institucion.c1 || '#0B4F8A')}" alt="Foto de ${esc(j.nombre)}">`}<div><h2 style="font-size:24px">${esc(j.nombre)}</h2><div>${esc(j.rol)}${j.detalle ? ' · ' + esc(j.detalle) : ''}</div><div class="nota">${esc(j.institucion.largo)}</div><div class="nota">Vence: ${fmtF(j.vence)}</div>${j.reducida ? '<div class="nota">Esta institución protege más los datos: la verificación pública no muestra foto ni detalles.</div>' : ''}</div></div>
         <p class="nota">Por su seguridad, la verificación nunca muestra el número de documento. Consultado ${fmtH(Date.now())}.</p><p class="nota">Verificación de Identidad IA · SkyNet Genesis · contacto@skynetgenesis.com</p></div>`;
     } else {
       const j = await api('GET', '/api/carne/' + encodeURIComponent(codigo));
-      if (!j.encontrado) { $('#vista').innerHTML = `<div class="verif"><div class="estado no"><b>ENLACE NO VÁLIDO</b>Pídale a su institución el enlace nuevo de su carné.</div></div>`; return; }
+      if (!j.encontrado) { $('#vista').innerHTML = `<div class="verif"><div class="estado no"><b>ENLACE NO VÁLIDO</b>Pídale a su institución el enlace nuevo de su carnet.</div></div>`; return; }
       const viejo = D; D = { ...D, empresas: [j.empresa], personas: [j.persona] };
-      try { $('#vista').innerHTML = `<div class="verif">${cab('Mi carné', esc(j.empresa.nombre))}${carneFrente(j.persona)}${carneReverso(j.persona)}<p class="nota">Guarde este enlace o agréguelo a la pantalla de inicio del celular para tener su carné siempre a mano. Muéstrelo en la entrada: lo verifican escaneando el QR.</p></div>`; } finally { D = viejo; }
+      try { $('#vista').innerHTML = `<div class="verif">${cab('Mi carnet', esc(j.empresa.nombre))}${carneFrente(j.persona)}${carneReverso(j.persona)}<p class="nota">Guarde este enlace o agréguelo a la pantalla de inicio del celular para tener su carnet siempre a mano. Muéstrelo en la entrada: lo verifican escaneando el QR.</p></div>`; } finally { D = viejo; }
     }
   } catch (e) { $('#vista').innerHTML = `<div class="verif"><div class="estado no"><b>SIN CONEXIÓN</b>${esc(e.message)}</div></div>`; }
 }
 V.usuarios = () => {
   const cs = D.cuentas.filter(c => c.empresa === PERFIL.empresa);
-  return cab('Usuarios', 'Personas de su institución que entran a Identidad IA. Portería solo escanea carnés; administración maneja todo.') + `<div class="caja" style="display:flex;flex-direction:column;gap:12px"><b>Nueva cuenta</b><div class="form"><label class="c" for="uNom">Nombre<input type="text" id="uNom"></label><label class="c" for="uCor">Correo<input type="email" id="uCor" inputmode="email"></label><label class="c" for="uPer">Perfil<select id="uPer"><option value="porteria">Portería</option><option value="admin">Administración</option></select></label></div><button class="btn v" data-nuevousuario style="align-self:flex-start">Crear y enviar enlace</button><p class="nota" style="margin:0">A la persona le llega un correo para crear su contraseña (vence en 1 hora).</p></div>
+  return cab('Usuarios', 'Personas de su institución que entran a Identidad IA. Portería solo escanea carnets; administración maneja todo.') + `<div class="caja" style="display:flex;flex-direction:column;gap:12px"><b>Nueva cuenta</b><div class="form"><label class="c" for="uNom">Nombre<input type="text" id="uNom"></label><label class="c" for="uCor">Correo<input type="email" id="uCor" inputmode="email"></label><label class="c" for="uPer">Perfil<select id="uPer"><option value="porteria">Portería</option><option value="admin">Administración</option></select></label></div><button class="btn v" data-nuevousuario style="align-self:flex-start">Crear y enviar enlace</button><p class="nota" style="margin:0">A la persona le llega un correo para crear su contraseña (vence en 1 hora).</p></div>
   <div class="tabla"><table><thead><tr><th>Nombre</th><th>Correo</th><th>Perfil</th><th>Contraseña</th><th></th></tr></thead><tbody>${cs.map(c => `<tr><td>${esc(c.nombre)}</td><td>${esc(c.correo)}</td><td>${c.perfil === 'porteria' ? 'Portería' : 'Administración'}${c.activo === false ? ' <span class="pill p-no">Retirada</span>' : ''}</td><td>${c.clave ? '<span class="pill p-ok">Creada</span>' : '<span class="pill p-esp">Sin crear</span>'}</td><td class="fila"><button class="btn chico l" data-enlace="${esc(c.correo)}">Enviar enlace</button>${(SESION && SESION.correo === c.correo) ? '' : (c.activo === false ? `<button class="btn chico v" data-reactivaru="${esc(c.id || '')}">Reactivar</button>` : `<button class="btn chico r" data-retirar="${esc(c.id || '')}">Retirar</button>`)}</td></tr>`).join('') || '<tr><td colspan="5" class="nota">Aún no hay cuentas.</td></tr>'}</tbody></table></div>`;
 };
 /* imprimir en tarjeta plástica: una página CR80 por cara */
 function imprimirCarnes(ps) {
-  if (!ps.length) return toast('Elija al menos un carné vigente');
+  if (!ps.length) return toast('Elija al menos un carnet vigente');
   const css = [...document.querySelectorAll('style')].map(s => s.outerHTML).join('');
-  const html = `<!doctype html><html><head><meta charset="utf-8"><title>Carnés para imprimir</title>${css}<style>@page{size:85.6mm 54mm;margin:0}html,body{margin:0;background:#fff}.carne{width:85.6mm!important;border-radius:0!important;box-shadow:none!important;page-break-after:always;break-after:page}</style></head><body>${ps.map(p => carneFrente(p) + carneReverso(p)).join('')}</body></html>`;
+  const html = `<!doctype html><html><head><meta charset="utf-8"><title>Carnets para imprimir</title>${css}<style>@page{size:85.6mm 54mm;margin:0}html,body{margin:0;background:#fff}.carne{width:85.6mm!important;border-radius:0!important;box-shadow:none!important;page-break-after:always;break-after:page}</style></head><body>${ps.map(p => carneFrente(p) + carneReverso(p)).join('')}</body></html>`;
   const f = document.createElement('iframe'); f.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0'; document.body.appendChild(f);
   f.contentDocument.open(); f.contentDocument.write(html); f.contentDocument.close();
   setTimeout(() => { try { f.contentWindow.focus(); f.contentWindow.print(); } catch (e) { toast('Su navegador no dejó abrir la impresión. Intente desde Chrome en el computador.'); } setTimeout(() => f.remove(), 60000); }, 400);
@@ -1340,10 +1340,10 @@ document.addEventListener('click', ev => {
   else if ('csv' in d) cargarCSV();
   else if ('nuevaemp' in d) nuevaEmpresa();
   else if (d.filtro) { FILTRO = d.filtro; pintar(); }
-  else if (d.autorizar) { const p = D.personas.find(x => x.id === d.autorizar); p.autorizado = true; p.emitido = hoy(); bit('Autorizó el carné de ' + p.nombre); guardar(); pintar(); toast('Carné autorizado. Se le envió el enlace a ' + p.nombre.split(' ')[0]); }
-  else if (d.suspender) { const p = D.personas.find(x => x.id === d.suspender); p.estado = 'suspendido'; bit('Suspendió el carné de ' + p.nombre); guardar(); cerrar(); pintar(); toast('Carné suspendido: el QR mostrará NO VIGENTE'); }
-  else if (d.reactivar) { const p = D.personas.find(x => x.id === d.reactivar); p.estado = 'activo'; bit('Reactivó el carné de ' + p.nombre); guardar(); cerrar(); pintar(); toast('Carné reactivado'); }
-  else if (d.anular) { const p = D.personas.find(x => x.id === d.anular); if (!usarCupo(emp(p.empresa), 1)) return toast('No tiene carnés disponibles para el duplicado. Compre más en «Mi plan»'); const viejo = p.token; p.token = token(); p.autorizado = false; p.emitido = ''; bit('Anuló el código ' + viejo.toUpperCase() + ' de ' + p.nombre + ' y generó uno nuevo (por autorizar)'); guardar(); cerrar(); pintar(); toast('El carné anterior ya no sirve. El nuevo queda por autorizar' + (emp(p.empresa).interna ? '' : ' · se usó 1 carné de su saldo')); }
+  else if (d.autorizar) { const p = D.personas.find(x => x.id === d.autorizar); p.autorizado = true; p.emitido = hoy(); bit('Autorizó el carnet de ' + p.nombre); guardar(); pintar(); toast('Carnet autorizado. Se le envió el enlace a ' + p.nombre.split(' ')[0]); }
+  else if (d.suspender) { const p = D.personas.find(x => x.id === d.suspender); p.estado = 'suspendido'; bit('Suspendió el carnet de ' + p.nombre); guardar(); cerrar(); pintar(); toast('Carnet suspendido: el QR mostrará NO VIGENTE'); }
+  else if (d.reactivar) { const p = D.personas.find(x => x.id === d.reactivar); p.estado = 'activo'; bit('Reactivó el carnet de ' + p.nombre); guardar(); cerrar(); pintar(); toast('Carnet reactivado'); }
+  else if (d.anular) { const p = D.personas.find(x => x.id === d.anular); if (!usarCupo(emp(p.empresa), 1)) return toast('No tiene carnets disponibles para el duplicado. Compre más en «Mi plan»'); const viejo = p.token; p.token = token(); p.autorizado = false; p.emitido = ''; bit('Anuló el código ' + viejo.toUpperCase() + ' de ' + p.nombre + ' y generó uno nuevo (por autorizar)'); guardar(); cerrar(); pintar(); toast('El carnet anterior ya no sirve. El nuevo queda por autorizar' + (emp(p.empresa).interna ? '' : ' · se usó 1 carnet de su saldo')); }
   else if (d.verif) { cerrar(); location.hash = 'v-' + d.verif; }
   else if ('volver' in d) { history.replaceState(null, '', location.pathname); pintar(); }
   else if (d.sel) { SEL_IMP.has(d.sel) ? SEL_IMP.delete(d.sel) : SEL_IMP.add(d.sel); pintar(); }
@@ -1370,16 +1370,16 @@ document.addEventListener('click', ev => {
   else if ('pedir' in d) {
     const e = emp(PERFIL.empresa); const ci = $('#pCiudad'), di = $('#pDir'); if (ci) PED.ciudad = ci.value; if (di) PED.dir = di.value;
     const ids = misPersonas().filter(p => estadoCarne(p).ok && PED.sel && PED.sel.has(p.id)).map(p => p.id);
-    if (!ids.length) return toast('Elija al menos un carné');
+    if (!ids.length) return toast('Elija al menos un carnet');
     if (PED.entrega === 'envio' && (PED.ciudad.trim().length < 3 || PED.dir.trim().length < 8)) return toast('Escriba la ciudad y la dirección de entrega');
     const valor = e.interna ? 0 : ids.length * PRECIO_IMPRESO; const envio = PED.entrega === 'recoger' ? 0 : envioAprox(ids.length);
     D.pedidos.unshift({ id: uid('o'), t: Date.now(), empresa: e.id, personas: ids, cantidad: ids.length, entrega: PED.entrega, ciudad: PED.ciudad.trim(), dir: PED.dir.trim(), total: valor + envio, estado: 'Pagado', guia: '' });
-    bit('Pidió ' + ids.length + ' carnés impresos (' + peso(valor + envio) + ')'); guardar(); PED = { sel: null, entrega: 'recoger', ciudad: '', dir: '' }; pintar();
+    bit('Pidió ' + ids.length + ' carnets impresos (' + peso(valor + envio) + ')'); guardar(); PED = { sel: null, entrega: 'recoger', ciudad: '', dir: '' }; pintar();
     toast(valor + envio ? 'En la versión publicada se abre Bold; cuando Bold confirma, el pedido pasa a impresión' : 'Pedido recibido: pasa a impresión');
   }
   else if (d.pedavanza) {
     const x = D.pedidos.find(o => o.id === d.pedavanza); const s = sigPed(x);
-    if (s === 'Enviado') ventana(`<h2>Guía de Interrapidísimo</h2><p>Pedido de ${esc(emp(x.empresa).nombre)}: ${x.cantidad} carnés para ${esc(x.ciudad)}.</p><label class="c" for="gNum">Número de guía<input type="text" id="gNum" inputmode="numeric" autocomplete="off"></label><div class="fila"><button class="btn v" id="gOk">Guardar y avisar al cliente</button><button class="btn l" data-cerrar>Cancelar</button></div>`, w => { w.querySelector('#gOk').onclick = () => { const g = w.querySelector('#gNum').value.trim(); if (g.length < 5) return toast('Escriba el número de guía'); x.guia = g; x.estado = 'Enviado'; bit('Envió el pedido de ' + emp(x.empresa).nombre + ' (guía ' + g + ')'); guardar(); cerrar(); pintar(); toast('Pedido enviado: se le avisó al cliente con la guía'); }; });
+    if (s === 'Enviado') ventana(`<h2>Guía de Interrapidísimo</h2><p>Pedido de ${esc(emp(x.empresa).nombre)}: ${x.cantidad} carnets para ${esc(x.ciudad)}.</p><label class="c" for="gNum">Número de guía<input type="text" id="gNum" inputmode="numeric" autocomplete="off"></label><div class="fila"><button class="btn v" id="gOk">Guardar y avisar al cliente</button><button class="btn l" data-cerrar>Cancelar</button></div>`, w => { w.querySelector('#gOk').onclick = () => { const g = w.querySelector('#gNum').value.trim(); if (g.length < 5) return toast('Escriba el número de guía'); x.guia = g; x.estado = 'Enviado'; bit('Envió el pedido de ' + emp(x.empresa).nombre + ' (guía ' + g + ')'); guardar(); cerrar(); pintar(); toast('Pedido enviado: se le avisó al cliente con la guía'); }; });
     else { x.estado = s; bit('Pedido de ' + emp(x.empresa).nombre + ': ' + s); guardar(); pintar(); toast('Pedido marcado como ' + s.toLowerCase()); }
   }
   else if ('pdf' in d) imprimirCarnes(misPersonas().filter(p => estadoCarne(p).ok && SEL_IMP && SEL_IMP.has(p.id)));
@@ -1397,7 +1397,7 @@ document.addEventListener('click', ev => {
   }
   else if (d.enlace) toast('Se envió el enlace para crear la contraseña a ' + d.enlace);
   else if (d.bloq) { const c = D.cuentas.find(x => x.correo === d.bloq); c.bloqueada = !c.bloqueada; bit((c.bloqueada ? 'Bloqueó ' : 'Desbloqueó ') + c.correo); guardar(); pintar(); }
-  else if ('leer' in d) { const f = $('#fotoQR').files[0]; if (f) { leerFoto(f, modoLectura()); $('#fotoQR').value = ''; } else if ($('#codQR').value.trim()) leerDesdeCampo(); else toast('Pase el carné por el lector, abra la cámara o escriba el código'); }
+  else if ('leer' in d) { const f = $('#fotoQR').files[0]; if (f) { leerFoto(f, modoLectura()); $('#fotoQR').value = ''; } else if ($('#codQR').value.trim()) leerDesdeCampo(); else toast('Pase el carnet por el lector, abra la cámara o escriba el código'); }
   else if ('camara' in d) abrirCamara();
   else if (d.sim) leerCodigo(d.sim);
   else if (d.asistab) { ASIS_F.tab = d.asistab; pintar(); }
@@ -1414,7 +1414,7 @@ document.addEventListener('click', ev => {
   else if ('gcon' in d) { const e = emp(PERFIL.empresa); e.origen = $('#cOrigen').value; bit('Cambió el origen de datos a ' + e.origen); guardar(); pintar(); toast('Conexión guardada'); }
   else if ('genllave' in d) { const e = emp(PERFIL.empresa); window.__llaveNueva = 'iia_' + e.id + '_' + 'DEMO' + Math.random().toString(36).slice(2, 14).padEnd(28, 'x'); e.llave = { creada: new Date().toISOString(), ultimo: '', pista: window.__llaveNueva.slice(-4) }; bit('Generó una llave de conexión (demostración)'); guardar(); pintar(); toast('Llave de demostración generada'); }
   else if ('quitllave' in d) { const e = emp(PERFIL.empresa); delete e.llave; window.__llaveNueva = ''; guardar(); pintar(); toast('App desconectada'); }
-  else if (d.autall) { const ids = d.autall.split(','); D.personas.filter(p => ids.includes(p.id)).forEach(p => { p.autorizado = true; p.emitido = hoy(); }); bit('Autorizó ' + ids.length + ' carnés de una vez'); guardar(); pintar(); toast(ids.length + ' carnés autorizados'); }
+  else if (d.autall) { const ids = d.autall.split(','); D.personas.filter(p => ids.includes(p.id)).forEach(p => { p.autorizado = true; p.emitido = hoy(); }); bit('Autorizó ' + ids.length + ' carnets de una vez'); guardar(); pintar(); toast(ids.length + ' carnets autorizados'); }
   else if ('copllave' in d) { navigator.clipboard.writeText(window.__llaveNueva || '').then(() => toast('Llave copiada')).catch(() => toast('Seleccione la llave y cópiela con Ctrl+C')); }
 });
 document.addEventListener('change', ev => {
@@ -1449,7 +1449,7 @@ function guardarDiseno() {
   if (REAL()) { const f = $('#dLogo').files[0]; if (!f) return p_guardarDiseno(datos); const r = new FileReader(); r.onload = () => { const im = new Image(); im.onload = () => { const c = document.createElement('canvas'); const s = Math.min(1, 200 / Math.max(im.width, im.height)); c.width = im.width * s; c.height = im.height * s; c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); p_guardarDiseno({ ...datos, logo: c.toDataURL('image/png') }); }; im.src = r.result; }; r.readAsDataURL(f); return; }
   Object.assign(e, { c1: $('#dC1').value, c2: $('#dC2').value, largo: $('#dLargo').value.trim(), reverso: $('#dRev').value.trim(), firma: $('#dFirma').value.trim(), vigencia: Math.max(1, Math.min(60, +$('#dVig').value || 12)), requierePago: $('#dPago').value === '1', valor: Math.max(0, +$('#dValor').value || 0), alDiaDesdeApp: $('#dAldia').value === '1', verif: $('#dVerif').value === 'reducida' ? 'reducida' : 'completa' });
   const f = $('#dLogo').files[0];
-  const fin = () => { bit('Cambió el diseño del carné'); guardar(); pintar(); toast('Diseño guardado'); };
+  const fin = () => { bit('Cambió el diseño del carnet'); guardar(); pintar(); toast('Diseño guardado'); };
   if (f) { const r = new FileReader(); r.onload = () => { const im = new Image(); im.onload = () => { const c = document.createElement('canvas'); const s = Math.min(1, 200 / Math.max(im.width, im.height)); c.width = im.width * s; c.height = im.height * s; c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); e.logo = c.toDataURL('image/png'); fin(); }; im.src = r.result; }; r.readAsDataURL(f); } else fin();
 }
 
