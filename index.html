@@ -231,7 +231,7 @@ const nomCorto = n => { const p = String(n).split(/\s+/).filter(Boolean); return
 const avatar = (nombre, c = '#0B4F8A') => { const ini = nombre.split(/\s+/).filter(Boolean).slice(0, 2).map(x => x[0]).join('').toUpperCase(); const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 160"><rect width="120" height="160" fill="#E8F1FA"/><circle cx="60" cy="58" r="30" fill="${c}" opacity=".25"/><rect x="18" y="98" width="84" height="70" rx="40" fill="${c}" opacity=".25"/><text x="60" y="70" font-family="Arial" font-weight="700" font-size="30" text-anchor="middle" fill="${c}">${ini}</text></svg>`; return 'data:image/svg+xml;base64,' + btoa(svg); };
 
 /* ================= datos ================= */
-const CLAVE = 'identidadia_v4';
+const CLAVE = 'identidadia_v3';
 const PLANES = [
   { id: 'p100', nombre: 'Hasta 100 carnets', max: 100, precio: 39000 },
   { id: 'p500', nombre: 'Hasta 500 carnets', max: 500, precio: 89000 },
@@ -263,7 +263,7 @@ const horasTxt = m => m ? Math.floor(m / 60) + ' h ' + String(m % 60).padStart(2
 function calcAsistencia({ personas, accesos, cfg, desde, hasta, hoy, ahoraMin }) {
   cfg = asisCfg(cfg); const fin = hasta < hoy ? hasta : hoy;
   const porP = new Map();
-  for (const a of accesos) { if (!a.ok || !a.persona) continue; const l = locCO(a.t); if (l.f < desde || l.f > fin) continue; const k = a.persona + '|' + l.f; if (!porP.has(k)) porP.set(k, []); porP.get(k).push({ m: l.m, salida: !!a.salida }); }
+  for (const a of accesos) { if (!a.ok || !a.persona) continue; const l = locCO(a.t); if (l.f < desde || l.f > fin) continue; const k = a.persona + '|' + l.f; if (!porP.has(k)) porP.set(k, []); porP.get(k).push({ m: l.m, salida: !!a.salida, t: a.t }); }
   const detalle = [], resumen = [], hoyC = { presentes: [], salieron: [], sinLlegar: [], retardos: [] };
   const ps = personas.filter(p => p.autorizado && p.estado !== 'anulado');
   for (const p of ps) {
@@ -271,7 +271,7 @@ function calcAsistencia({ personas, accesos, cfg, desde, hasta, hoy, ahoraMin })
     const r = { persona: p.id, nombre: p.nombre, rol: p.rol, detalle: p.detalle || '', asistidos: 0, retardos: 0, minRetardo: 0, faltas: 0, minutos: 0, sinSalida: 0 };
     for (let f = desde; f <= fin; f = sigDia(f)) {
       const dow = new Date(f + 'T12:00:00Z').getUTCDay(); const laboral = cfg.dias.includes(dow);
-      const ev = (porP.get(p.id + '|' + f) || []).sort((a, b) => a.m - b.m);
+      const ev = (porP.get(p.id + '|' + f) || []).sort((a, b) => a.m - b.m || (a.t < b.t ? -1 : a.t > b.t ? 1 : 0));
       if (!ev.length) {
         if (!laboral || p.estado !== 'activo' || (p.emitido && f < p.emitido)) continue;
         if (f < hoy || ahoraMin > hS) { r.faltas++; detalle.push({ persona: p.id, nombre: p.nombre, rol: p.rol, fecha: f, entrada: '', salida: '', minutos: 0, retardo: 0, estado: 'Falta' }); }
@@ -326,9 +326,9 @@ function accesosDemo(P) {
 function semilla() {
   const f = hoy();
   const E = [
-    { id: 'e-poli', nombre: 'Instituto Horizonte', largo: 'Instituto Técnico Horizonte (ejemplo)', nit: '900555111-2', tipo: 'Institución ETDH', c1: '#0B2E59', c2: '#1867B0', interna: true, plan: 'p500', pagadoHasta: '', origen: 'AcademIA', vigencia: 6, requierePago: true, valor: 25000, reverso: 'Este carnet identifica a su portador como miembro de Instituto Horizonte, institución de educación para el trabajo y el desarrollo humano. Es personal e intransferible. Si lo encuentra, devuélvalo en la secretaría de la institución.', firma: 'Rector', alDiaDesdeApp: true },
-    { id: 'e-anglo', nombre: 'Colegio Los Almendros', largo: 'Colegio Los Almendros (ejemplo)', nit: '', tipo: 'Colegio', c1: '#7A1F2B', c2: '#C0392B', interna: true, plan: 'p500', pagadoHasta: '', origen: 'Colegio-IA', vigencia: 12, requierePago: false, valor: 0, reverso: 'Carnet escolar del Colegio Los Almendros. En caso de emergencia, comuníquese con el acudiente registrado.', firma: 'Rectoría', alDiaDesdeApp: true, verif: 'reducida' },
-    { id: 'e-reina', nombre: 'IPS Salud Integral', largo: 'IPS Salud Integral (ejemplo)', nit: '', tipo: 'IPS', c1: '#0E8571', c2: '#14A38B', interna: true, plan: 'p500', pagadoHasta: '', origen: 'Clínica-IA', vigencia: 12, requierePago: false, valor: 0, reverso: 'Carnet de paciente de la IPS Salud Integral. Preséntelo en recepción para agilizar su atención.', firma: 'Dirección', alDiaDesdeApp: false, verif: 'reducida' },
+    { id: 'e-poli', nombre: 'POLIANDES', largo: 'Politécnico Industrial de Los Andes', nit: '900043963-7', tipo: 'Institución ETDH', c1: '#0B2E59', c2: '#1867B0', interna: true, plan: 'p500', pagadoHasta: '', origen: 'AcademIA', vigencia: 6, requierePago: true, valor: 25000, reverso: 'Este carnet identifica a su portador como miembro de POLIANDES, institución de educación para el trabajo y el desarrollo humano. Es personal e intransferible. Si lo encuentra, devuélvalo en la Calle 11D No. 22-90, Santa Marta.', firma: 'Rector', alDiaDesdeApp: true },
+    { id: 'e-anglo', nombre: 'Colegio Anglocolombiano', largo: 'Colegio Cristiano Anglocolombiano', nit: '', tipo: 'Colegio', c1: '#7A1F2B', c2: '#C0392B', interna: true, plan: 'p500', pagadoHasta: '', origen: 'Colegio-IA', vigencia: 12, requierePago: false, valor: 0, reverso: 'Carnet escolar del Colegio Cristiano Anglocolombiano. En caso de emergencia, comuníquese con el acudiente registrado.', firma: 'Rectoría', alDiaDesdeApp: true, verif: 'reducida' },
+    { id: 'e-reina', nombre: 'Reina Elizabeth IPS', largo: 'Clínica Reina Elizabeth IPS', nit: '', tipo: 'IPS', c1: '#0E8571', c2: '#14A38B', interna: true, plan: 'p500', pagadoHasta: '', origen: 'Clínica-IA', vigencia: 12, requierePago: false, valor: 0, reverso: 'Carnet de paciente de la Clínica Reina Elizabeth IPS. Preséntelo en recepción para agilizar su atención. Calle 22 No. 18-18, Santa Marta.', firma: 'Dirección', alDiaDesdeApp: false, verif: 'reducida' },
     { id: 'e-gym', nombre: 'Gimnasio Fuerza Caribe', largo: 'Gimnasio Fuerza Caribe (ejemplo)', nit: '901000000-1', tipo: 'Gimnasio', c1: '#1C2B39', c2: '#0B4F8A', interna: false, plan: 'p100', pagadoHasta: finMes(f), origen: 'manual', vigencia: 1, requierePago: false, valor: 0, reverso: 'Membresía personal. Preséntela en la entrada.', firma: 'Administración', alDiaDesdeApp: false, verif: 'completa', cupoCarnes: 48, usadosPrueba: 0 },
     { id: 'e-conj', nombre: 'Conjunto Altos del Mar', largo: 'Conjunto Residencial Altos del Mar (ejemplo)', nit: '901222333-4', tipo: 'Conjunto residencial', c1: '#0E8571', c2: '#0B4F8A', interna: false, plan: 'p500', pagadoHasta: '', pruebaHasta: sumDias(f, 8), origen: 'manual', vigencia: 12, requierePago: false, valor: 0, reverso: 'Carnet de residente. Preséntelo en la portería.', firma: 'Administración', alDiaDesdeApp: false, verif: 'completa', cupoCarnes: 0, usadosPrueba: 2, cantidad: 300 }
   ];
@@ -347,10 +347,10 @@ function semilla() {
   E.forEach(e => { e.asistencia = { activa: e.interna || e.id === 'e-conj', ...ASIS_DEF, hasta: '' }; });
   return { empresas: E, personas: P, accesos: accesosDemo(P), bitacora: [{ t: Date.now(), quien: 'Sistema', que: 'Datos de ejemplo creados' }], cuentas: [
     { correo: 'superadmin.identidad@skynetgenesis.com', nombre: 'Superadministrador', empresa: '', perfil: 'superadmin', clave: true, ultimo: Date.now() },
-    { correo: 'rectoria@horizonte-demo.co', nombre: 'Rectoría Instituto Horizonte', empresa: 'e-poli', perfil: 'admin', clave: true, ultimo: Date.now() - 864e5 },
-    { correo: 'rectoria@losalmendros-demo.co', nombre: 'Rectoría Los Almendros', empresa: 'e-anglo', perfil: 'admin', clave: true, ultimo: Date.now() - 3 * 864e5 },
-    { correo: 'recepcion@saludintegral-demo.co', nombre: 'Recepción IPS Salud Integral', empresa: 'e-reina', perfil: 'admin', clave: false, ultimo: 0 },
-    { correo: 'porteria@horizonte-demo.co', nombre: 'Portería Instituto Horizonte', empresa: 'e-poli', perfil: 'porteria', clave: true, ultimo: Date.now() - 36e5 },
+    { correo: 'rector@poliandes.com', nombre: 'Rectoría POLIANDES', empresa: 'e-poli', perfil: 'admin', clave: true, ultimo: Date.now() - 864e5 },
+    { correo: 'anglo@anglocolombiano.com', nombre: 'Rectoría Anglo', empresa: 'e-anglo', perfil: 'admin', clave: true, ultimo: Date.now() - 3 * 864e5 },
+    { correo: 'contacto@reinaelizabeth.com', nombre: 'Recepción Reina Elizabeth', empresa: 'e-reina', perfil: 'admin', clave: false, ultimo: 0 },
+    { correo: 'porteria@poliandes.com', nombre: 'Portería POLIANDES', empresa: 'e-poli', perfil: 'porteria', clave: true, ultimo: Date.now() - 36e5 },
     { correo: 'demo@skynetgenesis.com', nombre: 'Gimnasio (ejemplo)', empresa: 'e-gym', perfil: 'admin', clave: true, ultimo: Date.now() - 7 * 864e5 },
     { correo: 'admin@altosdelmar.com', nombre: 'Administración Altos del Mar', empresa: 'e-conj', perfil: 'admin', clave: false, ultimo: 0 }
   ] };
@@ -418,12 +418,12 @@ const activosDe = e => typeof e.activos === 'number' ? e.activos : D.personas.fi
 /* ================= perfiles (para probar) ================= */
 const PERFILES = [
   { id: 'super', nombre: 'Superadministrador SkyNet', tipo: 'super' },
-  { id: 'adm-poli', nombre: 'Rectoría · Instituto Horizonte', tipo: 'admin', empresa: 'e-poli' },
-  { id: 'adm-anglo', nombre: 'Rectoría · Los Almendros', tipo: 'admin', empresa: 'e-anglo' },
-  { id: 'adm-reina', nombre: 'Recepción · IPS Salud Integral', tipo: 'admin', empresa: 'e-reina' },
+  { id: 'adm-poli', nombre: 'Rectoría · POLIANDES', tipo: 'admin', empresa: 'e-poli' },
+  { id: 'adm-anglo', nombre: 'Rectoría · Anglocolombiano', tipo: 'admin', empresa: 'e-anglo' },
+  { id: 'adm-reina', nombre: 'Recepción · Reina Elizabeth', tipo: 'admin', empresa: 'e-reina' },
   { id: 'adm-gym', nombre: 'Administrador · Gimnasio (cliente que paga)', tipo: 'admin', empresa: 'e-gym' },
   { id: 'adm-conj', nombre: 'Administrador · Conjunto (en prueba)', tipo: 'admin', empresa: 'e-conj' },
-  { id: 'port-poli', nombre: 'Portería · Instituto Horizonte', tipo: 'porteria', empresa: 'e-poli' },
+  { id: 'port-poli', nombre: 'Portería · POLIANDES', tipo: 'porteria', empresa: 'e-poli' },
   { id: 'pers', nombre: 'Estudiante (ver mi carnet)', tipo: 'persona' }
 ];
 let PERFIL = PERFILES[1];
@@ -512,7 +512,7 @@ V.inicio = () => {
 function tablaEmpresas() {
   return `<div class="tabla"><table><thead><tr><th>Institución</th><th>Tipo</th><th>Origen de datos</th><th>Carnets</th><th>Plan</th><th>Pagado hasta</th><th>Estado</th><th></th></tr></thead><tbody>${D.empresas.map(e => { const c = estadoCuenta(e); return `<tr><td><b>${esc(e.nombre)}</b></td><td>${esc(e.tipo)}</td><td>${esc(e.origen === 'manual' ? 'Excel / a mano' : e.origen)}</td><td style="font-variant-numeric:tabular-nums">${activosDe(e)}</td><td>${e.interna ? '—' : esc(planDe(e).nombre) + ' · ' + peso(planDe(e).precio) + ((e.asistencia || {}).activa ? ' + asistencia ' + peso(ASIS[planDe(e).id]) : '')}</td><td>${e.interna ? '—' : `<input type="date" value="${esc(e.pagadoHasta)}" data-ph="${e.id}" aria-label="Pagado hasta" style="max-width:150px">`}</td><td><span class="pill ${c.clase}">${c.txt}</span></td><td><button class="btn chico l" data-interna="${e.id}">${e.interna ? 'Quitar interna' : 'Hacer interna'}</button></td></tr>`; }).join('')}</tbody></table></div>`;
 }
-V.empresas = () => cab('Instituciones', 'Clientes que pagan y empresas internas de SkyNet Genesis', '<button class="btn v" data-nuevaemp>＋ Nueva institución</button>') + tablaEmpresas() + `<p class="nota">Al cambiar «Pagado hasta», el acceso se restablece de inmediato. Si el cliente no paga, el acceso se cierra el día 5 del mes siguiente, sin multas; las empresas internas nunca se cobran.</p>`;
+V.empresas = () => cab('Instituciones', 'Clientes que pagan y empresas internas de SkyNet Genesis (POLIANDES, Anglocolombiano, Reina Elizabeth)', '<button class="btn v" data-nuevaemp>＋ Nueva institución</button>') + tablaEmpresas() + `<p class="nota">Al cambiar «Pagado hasta», el acceso se restablece de inmediato. Si el cliente no paga, el acceso se cierra el día 5 del mes siguiente, sin multas; las empresas internas nunca se cobran.</p>`;
 
 V.cuentas = () => cab('Cuentas y accesos', 'Las contraseñas se guardan cifradas: nadie puede verlas (Ley 1581 de 2012). Desde aquí se envía el enlace para crearlas o cambiarlas.', '<input type="text" id="busCta" placeholder="Buscar correo o institución" style="max-width:260px">') + `<div class="tabla"><table><thead><tr><th>Correo</th><th>Persona</th><th>Institución</th><th>Perfil</th><th>Contraseña</th><th>Último ingreso</th><th></th></tr></thead><tbody id="tCtas">${filasCuentas('')}</tbody></table></div>`;
 function filasCuentas(q) {
@@ -557,7 +557,7 @@ V.imprimir = () => {
 let PED = { sel: null, entrega: 'recoger', ciudad: '', dir: '' };
 const sigPed = x => x.estado === 'Pagado' ? 'Impreso' : x.estado === 'Impreso' ? (x.entrega === 'envio' ? 'Enviado' : 'Entregado') : 'Entregado';
 function tablaPedidos(lst, admin) {
-  return `<div class="tabla"><table><thead><tr><th>Fecha</th>${admin ? '<th>Institución</th>' : ''}<th>Carnets</th><th>Entrega</th><th>Total</th><th>Estado</th>${admin ? '<th></th>' : ''}</tr></thead><tbody>${lst.map(x => `<tr><td style="white-space:nowrap">${fmtH(x.t)}</td>${admin ? `<td>${esc(emp(x.empresa)?.nombre || '')}</td>` : ''}<td style="font-variant-numeric:tabular-nums">${x.cantidad}</td><td>${x.entrega === 'envio' ? 'Interrapidísimo · ' + esc(x.ciudad) + (x.guia ? ' · guía ' + esc(x.guia) : '') + (admin ? '<br><span class="nota">' + esc(x.dir) + '</span>' : '') : 'Recoge en la sede'}</td><td style="font-variant-numeric:tabular-nums">${peso(x.total)}</td><td><span class="pill ${x.estado === 'Entregado' ? 'p-ok' : 'p-esp'}">${esc(x.estado)}</span></td>${admin ? `<td>${x.estado !== 'Entregado' ? `<button class="btn chico v" data-pedavanza="${x.id}">Marcar ${esc(sigPed(x).toLowerCase())}</button>` : ''}</td>` : ''}</tr>`).join('') || `<tr><td colspan="${admin ? 7 : 5}" class="nota">Todavía no hay pedidos.</td></tr>`}</tbody></table></div>`;
+  return `<div class="tabla"><table><thead><tr><th>Fecha</th>${admin ? '<th>Institución</th>' : ''}<th>Carnets</th><th>Entrega</th><th>Total</th><th>Estado</th>${admin ? '<th></th>' : ''}</tr></thead><tbody>${lst.map(x => `<tr><td style="white-space:nowrap">${fmtH(x.t)}</td>${admin ? `<td>${esc(emp(x.empresa)?.nombre || '')}</td>` : ''}<td style="font-variant-numeric:tabular-nums">${x.cantidad}</td><td>${x.entrega === 'envio' ? 'Interrapidísimo · ' + esc(x.ciudad) + (x.guia ? ' · guía ' + esc(x.guia) : '') + (admin ? '<br><span class="nota">' + esc(x.dir) + '</span>' : '') : 'Recoge en Santa Marta'}</td><td style="font-variant-numeric:tabular-nums">${peso(x.total)}</td><td><span class="pill ${x.estado === 'Entregado' ? 'p-ok' : 'p-esp'}">${esc(x.estado)}</span></td>${admin ? `<td>${x.estado !== 'Entregado' ? `<button class="btn chico v" data-pedavanza="${x.id}">Marcar ${esc(sigPed(x).toLowerCase())}</button>` : ''}</td>` : ''}</tr>`).join('') || `<tr><td colspan="${admin ? 7 : 5}" class="nota">Todavía no hay pedidos.</td></tr>`}</tbody></table></div>`;
 }
 V.pedido = () => {
   const e = emp(PERFIL.empresa);
@@ -572,7 +572,7 @@ V.pedido = () => {
       <div class="chips">${ps.map(p => `<button class="chip ${PED.sel.has(p.id) ? 'on' : ''}" data-pedsel="${p.id}">${esc(p.nombre)}</button>`).join('') || '<span class="nota">No hay carnets vigentes para imprimir.</span>'}</div>
       <p class="nota">Solo se imprimen carnets vigentes y autorizados.</p></div>
     <div class="caja" style="display:flex;flex-direction:column;gap:12px">
-      <label class="c" for="pEntrega">Entrega<select id="pEntrega"><option value="recoger" ${PED.entrega === 'recoger' ? 'selected' : ''}>Recoger en la sede (sin costo)</option><option value="envio" ${PED.entrega === 'envio' ? 'selected' : ''}>Envío por Interrapidísimo</option></select></label>
+      <label class="c" for="pEntrega">Entrega<select id="pEntrega"><option value="recoger" ${PED.entrega === 'recoger' ? 'selected' : ''}>Recoger en la sede de Santa Marta (sin costo)</option><option value="envio" ${PED.entrega === 'envio' ? 'selected' : ''}>Envío por Interrapidísimo</option></select></label>
       ${PED.entrega === 'envio' ? `<label class="c" for="pCiudad">Ciudad<input type="text" id="pCiudad" value="${esc(PED.ciudad)}" placeholder="Ejemplo: Barranquilla"></label><label class="c" for="pDir">Dirección y quién recibe<input type="text" id="pDir" value="${esc(PED.dir)}" placeholder="Calle, número, barrio · nombre y celular"></label>` : ''}
       <div class="tabla"><table><tbody><tr><td>${n} carnets impresos × ${e.interna ? '$0' : peso(PRECIO_IMPRESO)}</td><td style="text-align:right;font-variant-numeric:tabular-nums">${peso(valor)}</td></tr><tr><td>Envío${PED.entrega === 'envio' ? ' <span class="nota">(aproximado: el valor exacto sale de la cotización de Interrapidísimo al pagar)</span>' : ''}</td><td style="text-align:right;font-variant-numeric:tabular-nums">${peso(envio)}</td></tr><tr><td><b>Total</b></td><td style="text-align:right;font-variant-numeric:tabular-nums"><b>${peso(valor + envio)}</b></td></tr></tbody></table></div>
       <button class="btn v" data-pedir ${n ? '' : 'disabled'}>${valor + envio ? 'Pagar con Bold y pedir' : 'Hacer el pedido'}</button>
@@ -1197,7 +1197,7 @@ function prodClick(d, b) {
   if (d.interna) {
     const e = emp(d.interna);
     if (e.interna) { ocupado(b, async () => { await api('POST', '/api/sa/interna', { id: e.id }); await recargar(); toast(e.nombre + ' vuelve a pagar'); }); return true; }
-    ventana(`<h2>Hacer interna a ${esc(e.nombre)}</h2><div class="aviso rojo">Solo para las empresas propias del dueño. Una empresa interna no paga nada: nunca se usa para regalar el servicio a un cliente.</div><label class="c" for="iMot">Motivo (queda en la bitácora)<input type="text" id="iMot"></label><div class="fila"><button class="btn v" id="iOk">Hacer interna</button><button class="btn l" data-cerrar>Cancelar</button></div>`, w => {
+    ventana(`<h2>Hacer interna a ${esc(e.nombre)}</h2><div class="aviso rojo">Solo para las empresas propias del dueño (POLIANDES, Colegio Anglocolombiano, Reina Elizabeth IPS, SkyNet Genesis). Una empresa interna no paga nada: nunca se usa para regalar el servicio a un cliente.</div><label class="c" for="iMot">Motivo (queda en la bitácora)<input type="text" id="iMot"></label><div class="fila"><button class="btn v" id="iOk">Hacer interna</button><button class="btn l" data-cerrar>Cancelar</button></div>`, w => {
       w.querySelector('#iOk').onclick = () => { const m = w.querySelector('#iMot').value.trim(); if (m.length < 10) return toast('Escriba el motivo (mínimo 10 caracteres)'); ocupado(w.querySelector('#iOk'), async () => { await api('POST', '/api/sa/interna', { id: e.id, motivo: m }); cerrar(); await recargar(); toast(e.nombre + ' queda sin cobro'); }); };
     });
     return true;
@@ -1392,7 +1392,7 @@ document.addEventListener('click', ev => {
   else if (d.interna) {
     const e = emp(d.interna);
     if (e.interna) { e.interna = false; bit('Quitó interna a ' + e.nombre); guardar(); pintar(); toast(e.nombre + ' vuelve a pagar'); return; }
-    ventana(`<h2>Hacer interna a ${esc(e.nombre)}</h2><div class="aviso rojo">Solo para las empresas propias del dueño. Una empresa interna no paga nada: nunca se usa para regalar el servicio a un cliente.</div><label class="c" for="iMot">Motivo (queda en la bitácora)<input type="text" id="iMot" placeholder="Ejemplo: empresa propia del dueño"></label><div class="fila"><button class="btn v" id="iOk">Hacer interna</button><button class="btn l" data-cerrar>Cancelar</button></div>`, w => {
+    ventana(`<h2>Hacer interna a ${esc(e.nombre)}</h2><div class="aviso rojo">Solo para las empresas propias del dueño (POLIANDES, Colegio Anglocolombiano, Reina Elizabeth IPS, SkyNet Genesis). Una empresa interna no paga nada: nunca se usa para regalar el servicio a un cliente.</div><label class="c" for="iMot">Motivo (queda en la bitácora)<input type="text" id="iMot" placeholder="Ejemplo: empresa propia del dueño"></label><div class="fila"><button class="btn v" id="iOk">Hacer interna</button><button class="btn l" data-cerrar>Cancelar</button></div>`, w => {
       w.querySelector('#iOk').onclick = () => { const m = w.querySelector('#iMot').value.trim(); if (m.length < 10) return toast('Escriba el motivo (mínimo 10 caracteres)'); e.interna = true; bit('Hizo interna a ' + e.nombre + '. Motivo: ' + m); guardar(); cerrar(); pintar(); toast(e.nombre + ' queda sin cobro'); };
     });
   }
