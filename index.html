@@ -120,7 +120,7 @@ tr:last-child td{border-bottom:0}
 .velo{position:fixed;inset:0;background:rgba(28,43,57,.45);display:grid;place-items:center;z-index:30;padding:16px}
 .ventana{background:var(--sup);border-radius:16px;max-width:640px;width:100%;max-height:90vh;overflow:auto;padding:20px;display:flex;flex-direction:column;gap:14px}
 .ventana h2{color:var(--azul);font-size:26px}
-.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(24px + env(safe-area-inset-bottom,0px));background:var(--azul);color:#fff;font-weight:700;font-size:16px;padding:14px 22px;border-radius:12px;z-index:50;box-shadow:0 8px 24px rgba(0,0,0,.2);max-width:calc(100% - 32px)}
+.toast{pointer-events:none;position:fixed;left:50%;transform:translateX(-50%);bottom:calc(24px + env(safe-area-inset-bottom,0px));background:var(--azul);color:#fff;font-weight:700;font-size:16px;padding:14px 22px;border-radius:12px;z-index:50;box-shadow:0 8px 24px rgba(0,0,0,.2);max-width:calc(100% - 32px)}
 .chips{display:flex;gap:6px;flex-wrap:wrap}
 .chip{border:1px solid var(--borde);background:var(--sup);border-radius:99px;padding:6px 12px;font-size:13px}
 .chip.on{background:var(--azul);border-color:var(--azul);color:#fff}
@@ -502,7 +502,7 @@ V.inicio = () => {
     <div class="caja" style="display:flex;flex-direction:column;gap:12px"><h2 style="font-size:22px;color:var(--azul)">Así se ve un carnet de ${esc(e.nombre)}</h2>${ps[0] ? carneFrente(ps[0]) : '<p class="nota">Aún no hay personas.</p>'}<p class="nota">Cada persona recibe un enlace para abrir su carnet en el celular. El QR lo puede escanear cualquiera: muestra foto, nombre y si está vigente, nunca el número de documento.</p></div>
     <div class="caja" style="display:flex;flex-direction:column;gap:10px"><h2 style="font-size:22px;color:var(--azul)">Qué hacer hoy</h2>
       ${esp ? `<div class="aviso azul">Hay ${esp} carnet(s) esperando pago o autorización.<span class="espacio"></span><button class="btn chico" data-ir="autorizar">Revisar</button></div>` : '<div class="aviso verde">No hay carnets esperando autorización.</div>'}
-      <div class="aviso azul">Datos que llegan solos desde <b>${esc(e.origen === 'manual' ? 'su archivo de Excel' : e.origen)}</b>.<span class="espacio"></span><button class="btn chico l" data-ir="conexion">Ver conexión</button></div>
+      <div class="aviso azul">${e.origen === 'manual' ? 'Cargue a su gente desde Excel, o conecte su software para que las personas lleguen solas.' : 'Las personas llegan solas desde <b>' + esc(e.origen) + '</b>.'}<span class="espacio"></span><button class="btn chico l" data-ir="conexion">Ver conexión</button></div>
       <div class="aviso azul">Imprima carnets en PVC por lote o uno por uno.<span class="espacio"></span><button class="btn chico l" data-ir="imprimir">Imprimir</button></div>
       <div class="aviso azul">${asisOn(e) ? 'Vea quién está adentro, quién llegó tarde y quién no ha llegado.' : 'Controle la asistencia con el mismo carnet: retardos, faltas e informes para Excel.'}<span class="espacio"></span><button class="btn chico l" data-ir="asistencia">Asistencia</button></div>
     </div>
@@ -539,8 +539,8 @@ V.autorizar = () => {
   const e = emp(PERFIL.empresa);
   const ps = misPersonas().filter(p => p.estado === 'activo' && (!p.autorizado || (e.requierePago && !p.pagado)));
   return cab('Por autorizar', 'Ningún carnet sale solo: primero el pago (si su institución lo cobra) y luego la autorización de una persona de la institución.') + (e.requierePago ? `<div class="aviso azul">El carnet cuesta ${peso(e.valor)} y lo paga la persona en el portal de ${esc(e.origen)}. Cuando el pago se confirma, aparece aquí listo para autorizar.</div>` : '') + `
-  ${(() => { const listos = ps.filter(p => !(e.requierePago && !p.pagado)); return listos.length > 1 ? `<div class="fila" style="margin-bottom:10px"><button class="btn v" data-autall="${listos.map(p => p.id).join(',')}">✍ Autorizar los ${listos.length} listos</button><span class="nota">Revise antes las fotos con «Revisar». Los que llegan desde su app tienen la etiqueta «Llegó de ${esc(e.origen === 'manual' ? 'su app' : e.origen)}».</span></div>` : ''; })()}
-  <div class="tabla"><table><thead><tr><th>Persona</th><th>Tipo</th><th>Pago</th><th>Estado</th><th></th></tr></thead><tbody>${ps.map(p => `<tr><td><b>${esc(p.nombre)}</b>${p.llego ? ` <span class="pill p-esp">Llegó de ${esc(e.origen === 'manual' ? 'su app' : e.origen)}</span>` : ''}<br><span class="nota">${esc(p.detalle)}</span></td><td>${esc(p.rol)}</td><td>${e.requierePago ? (p.pagado ? '<span class="pill p-ok">Pagado</span>' : '<span class="pill p-esp">Sin pagar</span>') : '<span class="nota">No se cobra</span>'}</td><td>${pillEstado(p)}</td><td class="fila"><button class="btn chico" data-ver="${p.id}">Revisar</button><button class="btn chico v" data-autorizar="${p.id}" ${e.requierePago && !p.pagado ? 'disabled title="Primero debe estar pagado"' : ''}>✍ Autorizar</button></td></tr>`).join('') || '<tr><td colspan="5" class="nota">No hay carnets esperando. Todo está al día.</td></tr>'}</tbody></table></div>`;
+  ${(() => { const listos = ps.filter(p => p.foto && !(e.requierePago && !p.pagado)); return listos.length > 1 ? `<div class="fila" style="margin-bottom:10px"><button class="btn v" data-autall="${listos.map(p => p.id).join(',')}">✍ Autorizar los ${listos.length} listos</button><span class="nota">Revise antes las fotos con «Revisar». Los que llegan desde su app tienen la etiqueta «Llegó de ${esc(e.origen === 'manual' ? 'su app' : e.origen)}».</span></div>` : ''; })()}
+  <div class="tabla"><table><thead><tr><th>Persona</th><th>Tipo</th><th>Pago</th><th>Estado</th><th></th></tr></thead><tbody>${ps.map(p => `<tr><td><b>${esc(p.nombre)}</b>${p.llego ? ` <span class="pill p-esp">Llegó de ${esc(e.origen === 'manual' ? 'su app' : e.origen)}</span>` : ''}<br><span class="nota">${esc(p.detalle)}</span></td><td>${esc(p.rol)}</td><td>${e.requierePago ? (p.pagado ? '<span class="pill p-ok">Pagado</span>' : '<span class="pill p-esp">Sin pagar</span>') : '<span class="nota">No se cobra</span>'}</td><td>${pillEstado(p)}</td><td class="fila"><button class="btn chico" data-ver="${p.id}">Revisar</button><button class="btn chico v" data-autorizar="${p.id}" ${!p.foto ? 'disabled title="Falta la foto: ábralo con «Revisar» y agréguela"' : e.requierePago && !p.pagado ? 'disabled title="Primero debe estar pagado"' : ''}>✍ Autorizar</button>${!p.foto ? '<br><span class="nota">Falta la foto</span>' : ''}</td></tr>`).join('') || '<tr><td colspan="5" class="nota">No hay carnets esperando. Todo está al día.</td></tr>'}</tbody></table></div>`;
 };
 
 let SEL_IMP = null, SEL_EMP = '';
@@ -696,7 +696,7 @@ V.asistencia = () => {
   const f = ASIS_F || (ASIS_F = { ...rangoAsis('hoy'), rol: '', tab: 'hoy' });
   const cfg = asisCfg(e.asistencia); const roles = [...new Set(misPersonas().map(p => p.rol))].sort();
   const dias = DIAS_N.filter(([d]) => cfg.dias.includes(d)).map(x => x[1].slice(0, 3)).join(', ') || 'ningún día';
-  const top = avisoCobro(e) + cab('Asistencia y reportes', `Horario: ${cfg.entrada} a ${cfg.salida} · ${cfg.tolerancia} min de tolerancia · ${esc(dias)}`, `<button class="btn l" data-asiscfg>⚙ Horarios</button><button class="btn v" data-asiscsv>⬇ Descargar para Excel</button>`) + `
+  const top = avisoCobro(e) + cab('Asistencia y reportes', `Horario: ${cfg.entrada} a ${cfg.salida} · ${cfg.tolerancia} min de tolerancia · ${esc(dias)}${Object.keys(cfg.porRol || {}).length ? ' · ' + Object.entries(cfg.porRol).map(([r, x]) => esc(r) + ': ' + (x.entrada || cfg.entrada) + ' a ' + (x.salida || cfg.salida)).join(' · ') : ''}`, `<button class="btn l" data-asiscfg>⚙ Horarios</button><button class="btn v" data-asiscsv>⬇ Descargar para Excel</button>`) + `
   <div class="caja" style="display:flex;flex-direction:column;gap:10px"><div class="form"><label class="c" for="asD">Desde<input type="date" id="asD" value="${f.desde}" max="${hoy()}"></label><label class="c" for="asH">Hasta<input type="date" id="asH" value="${f.hasta}" max="${hoy()}"></label><label class="c" for="asR">Tipo de persona<select id="asR"><option value="">Todos</option>${roles.map(r => `<option ${f.rol === r ? 'selected' : ''}>${esc(r)}</option>`).join('')}</select></label></div>
   <div class="fila">${[['hoy', 'Hoy'], ['ayer', 'Ayer'], ['semana', 'Esta semana'], ['mes', 'Este mes']].map(([k, t]) => `<button class="btn chico l" data-asisrango="${k}">${t}</button>`).join('')}${REAL() ? '<button class="btn chico l" data-asisact>⟳ Actualizar</button>' : ''}</div></div>
   <div class="fila" role="tablist">${[['hoy', 'Quién está hoy'], ['resumen', 'Resumen por persona'], ['detalle', 'Detalle por día']].map(([k, t]) => `<button class="btn chico ${f.tab === k ? 'v' : 'l'}" role="tab" aria-selected="${f.tab === k}" data-asistab="${k}">${t}</button>`).join('')}</div>`;
@@ -923,7 +923,7 @@ const TIPOS = ['Institución educativa', 'Colegio', 'IPS', 'Empresa', 'Gimnasio'
 V.registro = () => cab('Cree la cuenta de su institución', '15 días gratis, sin tarjeta. Después arma su plan y paga solo si le sirve.') + `<div class="caja" style="display:flex;flex-direction:column;gap:14px">
   <div class="form">
     <label class="c" for="rNom">Nombre de la institución o empresa<input type="text" id="rNom" autocomplete="organization"></label>
-    <label class="c" for="rTipo">Tipo<select id="rTipo">${TIPOS.map(t => `<option>${t}</option>`).join('')}</select></label>
+    <label class="c" for="rTipo">Tipo<select id="rTipo"><option value="">Elija una opción</option>${TIPOS.map(t => `<option>${t}</option>`).join('')}</select></label>
     <label class="c" for="rNit">NIT (opcional)<input type="text" id="rNit" inputmode="numeric"></label>
     <label class="c" for="rCiu">Ciudad<input type="text" id="rCiu" autocomplete="address-level2"></label>
     <label class="c" for="rAdm">Nombre de quien administra<input type="text" id="rAdm" autocomplete="name"></label>
@@ -935,7 +935,7 @@ V.registro = () => cab('Cree la cuenta de su institución', '15 días gratis, si
   <div class="aviso azul"><div><b>¿Qué pasa después?</b><ol style="margin:6px 0 0;padding-left:18px"><li>Le llega un correo para crear su contraseña.</li><li>Usa todo gratis por 15 días, con hasta 10 carnets de prueba.</li><li>Cuando quiera, arma su plan y paga en un solo pago.</li><li>Después solo paga la mensualidad y los carnets nuevos.</li></ol></div></div>
   <div class="fila"><button class="btn v" data-registrar>Crear la cuenta gratis</button><button class="btn l" data-pub="portada">← Volver</button></div></div>`;
 V.registrado = () => `<div class="ingreso" style="display:flex;flex-direction:column;gap:14px">${cab('¡Listo! Su cuenta quedó creada', '')}<div class="caja" style="display:flex;flex-direction:column;gap:12px">
-  <p style="margin:0">Le enviamos a <b>${esc(PROD ? REG_PARA : mask(CLAVE_PARA))}</b> un enlace para crear su contraseña. Vence en 1 hora y sirve una sola vez.</p>
+  <p style="margin:0">Le enviamos a <b>${esc(PROD ? REG_PARA : mask(CLAVE_PARA))}</b> un enlace para crear su contraseña. Vence en 48 horas y sirve una sola vez. Si no lo ve, revise la carpeta de spam o «Promociones».</p>
   <p class="nota" style="margin:0">Tiene 15 días gratis y hasta 10 carnets de prueba. Para seguir después, entre a «Mi plan», arme su plan y pague.</p>
   ${PROD ? '<p class="nota" style="margin:0">Revise también la carpeta de spam o correo no deseado.</p>' : '<button class="btn v" data-abrirenlace>Abrir el enlace del correo (simulado en la versión de prueba)</button>'}</div></div>`;
 V.cuenta = () => SESION && SESION.demo ? cab('Mi cuenta', '') + '<div class="aviso azul">En la demostración no se cambian contraseñas. Cree su cuenta para tener la suya.</div>' : cab('Mi cuenta', esc(SESION.correo)) + `<div class="caja ingreso" style="display:flex;flex-direction:column;gap:12px;margin:0"><b>Cambiar contraseña</b>
@@ -985,15 +985,16 @@ function cambiarClave() {
   D.claves[c.correo] = hashS(a); bitQ(c.correo, 'Cambió su contraseña'); guardar(); ['cc0', 'cc1', 'cc2'].forEach(i => { $('#' + i).value = ''; }); toast('Contraseña cambiada');
 }
 function registrar() {
-  if (PROD) return p_registrar();
   const v = id => ($('#' + id).value || '').trim();
   const nom = v('rNom'), tipo = v('rTipo'), nit = v('rNit').replace(/[^0-9-]/g, ''), ciu = v('rCiu'), adm = v('rAdm'), cor = v('rCor').toLowerCase(), cel = v('rCel').replace(/\D/g, ''), cant = Math.max(1, parseInt(v('rCant'), 10) || 1);
   if (nom.length < 3) return toast('Escriba el nombre de la institución');
+  if (!tipo) return toast('Elija el tipo de institución');
   if (ciu.length < 3) return toast('Escriba la ciudad');
   if (adm.length < 5) return toast('Escriba el nombre completo de quien administra');
   if (!/^\S+@\S+\.\S+$/.test(cor)) return toast('Escriba un correo válido');
   if (cel.length < 10) return toast('Escriba un celular de 10 dígitos');
   if (!$('#rAcepto').checked) return toast('Para crear la cuenta debe aceptar los términos y el tratamiento de datos');
+  if (PROD) return p_registrar();
   const norm = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
   const llave = norm(nom) + '|' + norm(ciu);
   if (D.cuentas.some(c => c.correo === cor) || D.empresas.some(e => norm(e.nombre) === norm(nom)) || D.registros.some(r => r.correo === cor || r.cel === cel || r.llave === llave || (nit && r.nit === nit))) return toast('Ya existe una cuenta o una prueba con esos datos. Ingrese con su correo o escríbanos por WhatsApp');
@@ -1052,17 +1053,18 @@ function editarPersona(id) {
   let foto = p.foto;
   ventana(`<h2>${id ? 'Editar persona' : 'Nueva persona'}</h2>
   <div class="form"><label class="c" for="fN">Nombre completo<input type="text" id="fN" value="${esc(p.nombre)}"></label><label class="c" for="fD">Documento (solo lo ve la institución)<input type="text" id="fD" inputmode="numeric" value="${esc(p.documento)}"></label>
-  <label class="c" for="fR">Tipo<select id="fR">${ROLES.map(r => `<option ${r === p.rol ? 'selected' : ''}>${r}</option>`).join('')}</select></label><label class="c" for="fDet">Detalle (programa, grado, cargo…)<input type="text" id="fDet" value="${esc(p.detalle)}"></label>
+  <label class="c" for="fR">Tipo<select id="fR">${ROLES.map(r => `<option ${r === p.rol ? 'selected' : ''}>${r}</option>`).join('')}</select></label><label class="c" for="fDet">${e.tipo === 'IPS' ? 'Detalle (cargo o área; nunca diagnósticos ni datos de salud. En pacientes no se guarda)' : 'Detalle (programa, grado, cargo…)'}<input type="text" id="fDet" value="${esc(p.detalle)}"></label>
   <label class="c" for="fRh">RH<input type="text" id="fRh" value="${esc(p.rh)}"></label><label class="c" for="fV">Vence<input type="date" id="fV" value="${esc(p.vence)}"></label></div>
   <label class="c" for="fE">Contacto de emergencia<input type="text" id="fE" value="${esc(p.emergencia)}"></label>
-  <div class="fila"><img id="fPrev" class="mini" style="width:64px;height:84px;border-radius:10px" src="${foto || avatar(p.nombre || 'N N', e.c1)}" alt=""><label class="c" for="fF" style="flex:1">Foto (de frente, fondo claro)<input type="file" id="fF" accept="image/*"></label></div>
+  <div class="fila"><img id="fPrev" class="mini" style="width:64px;height:84px;border-radius:10px" src="${foto || avatar(p.nombre || 'N N', e.c1)}" alt=""><label class="c" for="fF" style="flex:1">Foto (obligatoria: de frente, fondo claro)<input type="file" id="fF" accept="image/*"></label></div>
   ${e.alDiaDesdeApp ? `<label class="c" style="flex-direction:row;gap:8px;align-items:center" for="fAl"><input type="checkbox" id="fAl" ${p.alDia ? 'checked' : ''}> Está al día con la institución</label>` : ''}
   <p class="nota">${e.origen !== 'manual' ? 'En su institución estos datos llegan solos desde ' + esc(e.origen) + '; aquí puede completar la foto o el contacto de emergencia.' : ''}</p>
   <div class="fila"><button class="btn v" id="fG">Guardar</button><button class="btn l" data-cerrar>Cancelar</button></div>`, w => {
     w.querySelector('#fF').onchange = ev => { const f = ev.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => { const im = new Image(); im.onload = () => { const c = document.createElement('canvas'); const W = 300, H = 400; c.width = W; c.height = H; const g = c.getContext('2d'); const s = Math.max(W / im.width, H / im.height); g.drawImage(im, (W - im.width * s) / 2, (H - im.height * s) / 2, im.width * s, im.height * s); foto = c.toDataURL('image/jpeg', .82); w.querySelector('#fPrev').src = foto; }; im.src = r.result; }; r.readAsDataURL(f); };
     w.querySelector('#fG').onclick = () => {
       const n = w.querySelector('#fN').value.trim(); if (n.length < 5) return toast('Escriba el nombre completo');
-      const datos = { nombre: n, documento: w.querySelector('#fD').value.replace(/[^0-9A-Za-z]/g, ''), rol: w.querySelector('#fR').value, detalle: w.querySelector('#fDet').value.trim(), rh: w.querySelector('#fRh').value.trim(), vence: w.querySelector('#fV').value, emergencia: w.querySelector('#fE').value.trim(), foto, alDia: e.alDiaDesdeApp ? w.querySelector('#fAl').checked : true };
+      if (!id && !foto) return toast('Agregue la foto de la persona: es obligatoria para el carnet');
+      const datos = { nombre: n, documento: w.querySelector('#fD').value.replace(/[^0-9A-Za-z]/g, ''), rol: w.querySelector('#fR').value, detalle: e.tipo === 'IPS' && w.querySelector('#fR').value === 'Paciente' ? '' : w.querySelector('#fDet').value.trim(), rh: w.querySelector('#fRh').value.trim(), vence: w.querySelector('#fV').value, emergencia: w.querySelector('#fE').value.trim(), foto, alDia: e.alDiaDesdeApp ? w.querySelector('#fAl').checked : true };
       if (REAL()) return p_editarPersona(id, datos, w);
       if (!id && !usarCupo(e, 1)) return toast('No tiene carnets disponibles. Compre más en «Mi plan»');
       if (id) { Object.assign(p, datos); bit('Editó a ' + n); }
@@ -1076,14 +1078,20 @@ function cargarCSV() {
   ventana(`<h2>Cargar desde Excel</h2><p>Guarde su Excel como CSV con estas columnas: <b>nombre; documento; tipo; detalle; rh; emergencia</b>. Las personas nuevas quedan por autorizar.</p>
   <label class="c" for="csvF">Archivo CSV<input type="file" id="csvF" accept=".csv,text/csv"></label>
   <label class="c" for="csvT">O pegue aquí las filas<textarea id="csvT" placeholder="Carlos Pérez Díaz;1012345678;Empleado;Bodega;O+;Esposa 300 111 2222"></textarea></label>
+  <p class="nota">Tipos válidos: ${ROLES.join(', ')}. Si deja el tipo vacío, queda «Empleado». Cada persona necesita su foto antes de autorizar: agréguela con «Revisar».</p><div id="csvAv"></div>
   <div class="fila"><button class="btn v" id="csvG">Cargar</button><button class="btn l" data-cerrar>Cancelar</button></div>`, w => {
     w.querySelector('#csvF').onchange = ev => { const f = ev.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => { w.querySelector('#csvT').value = r.result; }; r.readAsText(f); };
     w.querySelector('#csvG').onclick = () => {
       if (REAL()) return p_csv(w.querySelector('#csvT').value, w);
       const e = emp(PERFIL.empresa); let n = 0; const filas = [];
-      w.querySelector('#csvT').value.split(/\r?\n/).forEach((l, i) => { const c = l.split(/[;,\t]/).map(x => x.trim()); if (!c[0] || c[0].toLowerCase() === 'nombre' || c[0].length < 5) return; filas.push({ id: uid('p'), empresa: e.id, nombre: c[0], documento: (c[1] || '').replace(/[^0-9A-Za-z]/g, ''), rol: ROLES.find(r => r.toLowerCase() === (c[2] || '').toLowerCase()) || 'Empleado', detalle: c[3] || '', rh: c[4] || '', emergencia: c[5] || '', foto: '', alDia: true, estado: 'activo', token: token(), pagado: !e.requierePago, autorizado: false, emitido: '', vence: sumMeses(hoy(), e.vigencia), origen: 'csv' }); n++; });
-      if (!n) return toast('No se encontró ninguna fila válida');
-      if (!usarCupo(e, n)) return toast('Va a cargar ' + n + ' personas y solo tiene ' + dispTxt(e) + ' carnets disponibles. Compre más en «Mi plan»');
+      const errs = []; const nrm = x => String(x || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
+      w.querySelector('#csvT').value.split(/\r?\n/).forEach((l, i) => { const c = l.split(/[;,\t]/).map(x => x.trim()); if (!c.join('')) return; if (i === 0 && c[0].toLowerCase() === 'nombre') return;
+        if (!c[0] || c[0].length < 5) return errs.push('Fila ' + (i + 1) + ': nombre incompleto'); const rol = c[2] ? ROLES.find(r => nrm(r) === nrm(c[2])) : 'Empleado'; if (!rol) return errs.push('Fila ' + (i + 1) + ': el tipo «' + c[2] + '» no existe');
+        filas.push({ id: uid('p'), empresa: e.id, nombre: c[0], documento: (c[1] || '').replace(/[^0-9A-Za-z]/g, ''), rol, detalle: c[3] || '', rh: c[4] || '', emergencia: c[5] || '', foto: '', alDia: true, estado: 'activo', token: token(), pagado: !e.requierePago, autorizado: false, emitido: '', vence: sumMeses(hoy(), e.vigencia), origen: 'csv' }); n++; });
+      const av = w.querySelector('#csvAv');
+      if (!n) { av.innerHTML = '<div class="aviso rojo">No se encontró ninguna fila válida. ' + esc(errs.slice(0, 5).join('; ')) + '</div>'; return; }
+      if (!usarCupo(e, n)) { av.innerHTML = '<div class="aviso rojo">Va a cargar ' + n + ' personas y solo tiene ' + dispTxt(e) + ' carnets disponibles. Compre más en «Mi plan» o deje en el archivo solo las que caben.</div>'; return; }
+      if (errs.length) setTimeout(() => ventana('<h2>Filas que no se cargaron</h2><ul>' + errs.map(x => '<li>' + esc(x) + '</li>').join('') + '</ul><div class="fila"><button class="btn v" data-cerrar>Entendido</button></div>'), 50);
       D.personas.push(...filas);
       bit('Cargó ' + n + ' personas desde CSV'); guardar(); cerrar(); pintar(); toast(n + ' personas cargadas: quedan por autorizar' + (e.interna ? '' : ' · le quedan ' + dispTxt(e) + ' carnets disponibles'));
     };
@@ -1091,8 +1099,8 @@ function cargarCSV() {
 }
 
 function nuevaEmpresa() {
-  ventana(`<h2>Nueva institución</h2><div class="form"><label class="c" for="nN">Nombre<input type="text" id="nN"></label><label class="c" for="nT">Tipo<select id="nT">${['Institución educativa', 'Colegio', 'IPS', 'Empresa', 'Gimnasio', 'Conjunto residencial', 'Iglesia', 'Evento'].map(x => `<option>${x}</option>`).join('')}</select></label><label class="c" for="nNit">NIT<input type="text" id="nNit"></label><label class="c" for="nP">Plan<select id="nP">${PLANES.map(p => `<option value="${p.id}">${p.nombre} · ${peso(p.precio)}</option>`).join('')}</select></label></div><label class="c" for="nC">Correo del administrador<input type="email" id="nC"></label><p class="nota">Arranca con 15 días de prueba gratis y hasta 10 carnets de prueba. Al administrador le llega el enlace para crear su contraseña.</p><div class="fila"><button class="btn v" id="nG">Crear</button><button class="btn l" data-cerrar>Cancelar</button></div>`, w => {
-    w.querySelector('#nG').onclick = () => { const n = w.querySelector('#nN').value.trim(), c = w.querySelector('#nC').value.trim(); if (n.length < 3 || !/^\S+@\S+\.\S+$/.test(c)) return toast('Escriba el nombre y un correo válido'); if (REAL()) return p_nuevaEmpresa(w); const id = uid('e'); D.empresas.push({ id, nombre: n, largo: n, nit: w.querySelector('#nNit').value.trim(), tipo: w.querySelector('#nT').value, c1: '#0B4F8A', c2: '#14A38B', interna: false, plan: w.querySelector('#nP').value, pagadoHasta: '', pruebaHasta: sumDias(hoy(), 14), cupoCarnes: 0, usadosPrueba: 0, verif: 'completa', origen: 'manual', vigencia: 12, requierePago: false, valor: 0, reverso: 'Documento de identificación personal e intransferible.', firma: 'Administración', alDiaDesdeApp: false }); D.cuentas.push({ correo: c, nombre: 'Administrador', empresa: id, perfil: 'admin', clave: false, ultimo: 0 }); bit('Creó la institución ' + n); guardar(); cerrar(); pintar(); toast('Institución creada. Se envió el enlace a ' + c); };
+  ventana(`<h2>Nueva institución</h2><div class="form"><label class="c" for="nN">Nombre<input type="text" id="nN"></label><label class="c" for="nT">Tipo<select id="nT"><option value="">Elija una opción</option>${['Institución educativa', 'Colegio', 'IPS', 'Empresa', 'Gimnasio', 'Conjunto residencial', 'Iglesia', 'Evento'].map(x => `<option>${x}</option>`).join('')}</select></label><label class="c" for="nNit">NIT<input type="text" id="nNit"></label><label class="c" for="nP">Plan<select id="nP">${PLANES.map(p => `<option value="${p.id}">${p.nombre} · ${peso(p.precio)}</option>`).join('')}</select></label></div><label class="c" for="nC">Correo del administrador<input type="email" id="nC"></label><p class="nota">Arranca con 15 días de prueba gratis y hasta 10 carnets de prueba. Al administrador le llega el enlace para crear su contraseña.</p><div class="fila"><button class="btn v" id="nG">Crear</button><button class="btn l" data-cerrar>Cancelar</button></div>`, w => {
+    w.querySelector('#nG').onclick = () => { const n = w.querySelector('#nN').value.trim(), c = w.querySelector('#nC').value.trim(); if (!w.querySelector('#nT').value) return toast('Elija el tipo de institución'); if (n.length < 3 || !/^\S+@\S+\.\S+$/.test(c)) return toast('Escriba el nombre y un correo válido'); if (REAL()) return p_nuevaEmpresa(w); const id = uid('e'); D.empresas.push({ id, nombre: n, largo: n, nit: w.querySelector('#nNit').value.trim(), tipo: w.querySelector('#nT').value, c1: '#0B4F8A', c2: '#14A38B', interna: false, plan: w.querySelector('#nP').value, pagadoHasta: '', pruebaHasta: sumDias(hoy(), 14), cupoCarnes: 0, usadosPrueba: 0, verif: 'completa', origen: 'manual', vigencia: 12, requierePago: false, valor: 0, reverso: 'Documento de identificación personal e intransferible.', firma: 'Administración', alDiaDesdeApp: false }); D.cuentas.push({ correo: c, nombre: 'Administrador', empresa: id, perfil: 'admin', clave: false, ultimo: 0 }); bit('Creó la institución ' + n); guardar(); cerrar(); pintar(); toast('Institución creada. Se envió el enlace a ' + c); };
   });
 }
 
@@ -1122,11 +1130,13 @@ let DEMO_D = null, YO = null, CLAVE_TOKEN = '', REG_PARA = '';
 const ALM = { get: k => { try { return localStorage.getItem('identidadia_' + k) || ''; } catch (e) { return ''; } }, set: (k, v) => { try { v ? localStorage.setItem('identidadia_' + k, v) : localStorage.removeItem('identidadia_' + k); } catch (e) { } } };
 async function api(metodo, ruta, cuerpo) {
   let r; const tk = ALM.get('tok');
+  const lento = setTimeout(() => toast('Un momento: el servidor se está despertando. Puede tardar hasta 30 segundos…'), 4000);
   try { r = await fetch(API + ruta, { method: metodo, headers: { 'content-type': 'application/json', ...(tk ? { authorization: 'Bearer ' + tk } : {}) }, body: cuerpo ? JSON.stringify(cuerpo) : undefined }); }
-  catch (e) { throw new Error('No hay conexión con el servidor. Revise su internet e intente de nuevo; si el servidor estaba dormido, tarda hasta un minuto en despertar.'); }
+  catch (e) { clearTimeout(lento); throw new Error('No hay conexión con el servidor. Revise su internet e intente de nuevo; si el servidor estaba dormido, tarda hasta un minuto en despertar.'); }
+  clearTimeout(lento);
   let j = {}; try { j = await r.json(); } catch (e) { }
   if (r.status === 401 && REAL()) { salirReal('Su sesión terminó. Ingrese de nuevo.'); }
-  if (!r.ok) throw Object.assign(new Error(j.error || 'Ocurrió un error. Intente de nuevo.'), { status: r.status });
+  if (!r.ok) throw Object.assign(new Error(j.error || 'Ocurrió un error. Intente de nuevo.'), { status: r.status, caben: j.caben });
   return j;
 }
 async function ocupado(b, fn) { if (b) { if (b.disabled) return; b.disabled = true; } try { return await fn(); } catch (e) { toast(e.message); } finally { if (b && b.isConnected) b.disabled = false; } }
@@ -1220,6 +1230,7 @@ function prodClick(d, b) {
   if ('quitllave' in d) { if (!d.seguro) { d.seguro = '1'; b.textContent = 'Su app dejará de enviar personas. Pulse otra vez'; return true; } ocupado(b, async () => { await api('POST', '/api/integracion/quitar'); window.__llaveNueva = ''; await recargar(); toast('App desconectada'); }); return true; }
   if (d.autall) { ocupado(b, async () => { const j = await api('POST', '/api/personas-autorizar-todos', { ids: d.autall.split(',') }); await recargar(); toast(j.autorizados + ' carnets autorizados'); }); return true; }
   if (d.pagarplan) {
+    if (YO && YO.perfil === 'super') { toast('Este pago lo hace el administrador de la institución desde su propia cuenta. Como Superadministrador puede cambiar «Pagado hasta» en el panel.'); return true; }
     const cant = Math.max(1, parseInt(($('#mCant') || {}).value, 10) || 1);
     ocupado(b, async () => { const j = await api('POST', '/api/bold/pedido', { cantidad: cant, nuevos: +d.nuevos || 0, asistencia: d.asis === '1' }); toast('Con este pago queda al día hasta el ' + fmtF(j.hasta) + '. Se abre la pasarela de pagos'); abrirBold(j.firma); });
     return true;
@@ -1266,10 +1277,17 @@ function p_editarPersona(id, datos, w) {
   ocupado(w.querySelector('#fG'), async () => { const j = id ? await api('PUT', '/api/personas/' + encodeURIComponent(id), datos) : await api('POST', '/api/personas', datos); cerrar(); await recargar();
     toast(id ? 'Datos guardados' : 'Persona creada: queda por autorizar' + (j.disponibles != null ? ' · le quedan ' + j.disponibles + ' carnets disponibles' : '')); });
 }
-function p_csv(texto, w) {
-  const filas = texto.split(/\r?\n/).map(l => l.split(/[;,\t]/).map(x => x.trim())).filter(c => c[0] && c[0].toLowerCase() !== 'nombre' && c[0].length >= 5).map(c => ({ nombre: c[0], documento: c[1] || '', tipo: c[2] || '', detalle: c[3] || '', rh: c[4] || '', emergencia: c[5] || '' }));
-  if (!filas.length) return toast('No se encontró ninguna fila válida');
-  ocupado(w.querySelector('#csvG'), async () => { const j = await api('POST', '/api/personas/csv', { filas }); cerrar(); await recargar(); toast(j.cargadas + ' personas cargadas: quedan por autorizar' + (j.errores.length ? ' · ' + j.errores.length + ' filas con problemas: ' + j.errores.slice(0, 3).join('; ') : '')); });
+function p_csv(texto, w, limite) {
+  const filas = []; texto.split(/\r?\n/).forEach((l, i) => { const c = l.split(/[;,\t]/).map(x => x.trim()); if (!c.join('')) return; if (i === 0 && c[0].toLowerCase() === 'nombre') return;
+    filas.push({ fila: i + 1, nombre: c[0] || '', documento: c[1] || '', tipo: c[2] || '', detalle: c[3] || '', rh: c[4] || '', emergencia: c[5] || '' }); });
+  if (!filas.length) return toast('El archivo está vacío');
+  const av = w.querySelector('#csvAv'); if (av) av.innerHTML = '';
+  ocupado(w.querySelector('#csvG'), async () => {
+    let j; try { j = await api('POST', '/api/personas/csv', { filas, limite: limite || 0 }); }
+    catch (er) { if (er.status === 409 && er.caben > 0 && av) { av.innerHTML = `<div class="aviso rojo">${esc(er.message)}<span class="espacio"></span><button class="btn chico v" id="csvParcial">Cargar solo ${er.caben}</button></div>`; av.querySelector('#csvParcial').onclick = () => p_csv(texto, w, er.caben); return; } if (av) { av.innerHTML = '<div class="aviso rojo">' + esc(er.message) + '</div>'; return; } throw er; }
+    cerrar(); await recargar(); toast(j.cargadas + ' personas cargadas: quedan por autorizar' + (j.errores.length ? ' · ' + j.errores.length + ' filas con problemas: ' + j.errores.slice(0, 3).join('; ') : ''));
+    if (j.errores.length) ventana('<h2>Filas que no se cargaron</h2><ul>' + j.errores.map(x => '<li>' + esc(x) + '</li>').join('') + '</ul><div class="fila"><button class="btn v" data-cerrar>Entendido</button></div>');
+  });
 }
 function p_nuevaEmpresa(w) {
   const n = w.querySelector('#nN').value.trim(), c = w.querySelector('#nC').value.trim();
@@ -1306,7 +1324,7 @@ async function pintarPublico(tipo, codigo) {
 }
 V.usuarios = () => {
   const cs = D.cuentas.filter(c => c.empresa === PERFIL.empresa);
-  return cab('Usuarios', 'Personas de su institución que entran a Identidad IA. Portería solo escanea carnets; administración maneja todo.') + `<div class="caja" style="display:flex;flex-direction:column;gap:12px"><b>Nueva cuenta</b><div class="form"><label class="c" for="uNom">Nombre<input type="text" id="uNom"></label><label class="c" for="uCor">Correo<input type="email" id="uCor" inputmode="email"></label><label class="c" for="uPer">Perfil<select id="uPer"><option value="porteria">Portería</option><option value="admin">Administración</option></select></label></div><button class="btn v" data-nuevousuario style="align-self:flex-start">Crear y enviar enlace</button><p class="nota" style="margin:0">A la persona le llega un correo para crear su contraseña (vence en 1 hora).</p></div>
+  return cab('Usuarios', 'Personas de su institución que entran a Identidad IA. Portería solo escanea carnets; administración maneja todo.') + `<div class="caja" style="display:flex;flex-direction:column;gap:12px"><b>Nueva cuenta</b><div class="form"><label class="c" for="uNom">Nombre<input type="text" id="uNom"></label><label class="c" for="uCor">Correo<input type="email" id="uCor" inputmode="email"></label><label class="c" for="uPer">Perfil<select id="uPer"><option value="porteria">Portería</option><option value="admin">Administración</option></select></label></div><button class="btn v" data-nuevousuario style="align-self:flex-start">Crear y enviar enlace</button><p class="nota" style="margin:0">A la persona le llega un correo para crear su contraseña (vence en 48 horas).</p></div>
   <div class="tabla"><table><thead><tr><th>Nombre</th><th>Correo</th><th>Perfil</th><th>Contraseña</th><th></th></tr></thead><tbody>${cs.map(c => `<tr><td>${esc(c.nombre)}</td><td>${esc(c.correo)}</td><td>${c.perfil === 'porteria' ? 'Portería' : 'Administración'}${c.activo === false ? ' <span class="pill p-no">Retirada</span>' : ''}</td><td>${c.clave ? '<span class="pill p-ok">Creada</span>' : '<span class="pill p-esp">Sin crear</span>'}</td><td class="fila"><button class="btn chico l" data-enlace="${esc(c.correo)}">Enviar enlace</button>${(SESION && SESION.correo === c.correo) ? '' : (c.activo === false ? `<button class="btn chico v" data-reactivaru="${esc(c.id || '')}">Reactivar</button>` : `<button class="btn chico r" data-retirar="${esc(c.id || '')}">Retirar</button>`)}</td></tr>`).join('') || '<tr><td colspan="5" class="nota">Aún no hay cuentas.</td></tr>'}</tbody></table></div>`;
 };
 /* imprimir en tarjeta plástica: una página CR80 por cara */
@@ -1341,7 +1359,7 @@ document.addEventListener('click', ev => {
   else if ('csv' in d) cargarCSV();
   else if ('nuevaemp' in d) nuevaEmpresa();
   else if (d.filtro) { FILTRO = d.filtro; pintar(); }
-  else if (d.autorizar) { const p = D.personas.find(x => x.id === d.autorizar); p.autorizado = true; p.emitido = hoy(); bit('Autorizó el carnet de ' + p.nombre); guardar(); pintar(); toast('Carnet autorizado. Se le envió el enlace a ' + p.nombre.split(' ')[0]); }
+  else if (d.autorizar) { const p = D.personas.find(x => x.id === d.autorizar); if (!p.foto) return toast('Falta la foto. Ábralo con «Revisar», agregue la foto y luego autorice'); p.autorizado = true; p.emitido = hoy(); bit('Autorizó el carnet de ' + p.nombre); guardar(); pintar(); toast('Carnet autorizado. Se le envió el enlace a ' + p.nombre.split(' ')[0]); }
   else if (d.suspender) { const p = D.personas.find(x => x.id === d.suspender); p.estado = 'suspendido'; bit('Suspendió el carnet de ' + p.nombre); guardar(); cerrar(); pintar(); toast('Carnet suspendido: el QR mostrará NO VIGENTE'); }
   else if (d.reactivar) { const p = D.personas.find(x => x.id === d.reactivar); p.estado = 'activo'; bit('Reactivó el carnet de ' + p.nombre); guardar(); cerrar(); pintar(); toast('Carnet reactivado'); }
   else if (d.anular) { const p = D.personas.find(x => x.id === d.anular); if (!usarCupo(emp(p.empresa), 1)) return toast('No tiene carnets disponibles para el duplicado. Compre más en «Mi plan»'); const viejo = p.token; p.token = token(); p.autorizado = false; p.emitido = ''; bit('Anuló el código ' + viejo.toUpperCase() + ' de ' + p.nombre + ' y generó uno nuevo (por autorizar)'); guardar(); cerrar(); pintar(); toast('El carnet anterior ya no sirve. El nuevo queda por autorizar' + (emp(p.empresa).interna ? '' : ' · se usó 1 carnet de su saldo')); }
@@ -1461,6 +1479,7 @@ function pintar() {
   document.body.classList.remove('con-fija');
   if (CAM) cerrarCamara();
   pintarBarra();
+  { const k = (SESION ? 's:' + VISTA : 'p:' + PUB); if (k !== window.__ultVista) { window.__ultVista = k; setTimeout(() => window.scrollTo(0, 0), 0); } }
   if (h.startsWith('v-')) { app.classList.add('sinmenu'); $('#menu').innerHTML = ''; $('#vista').innerHTML = V.verificar(h.slice(2)); window.scrollTo(0, 0); return; }
   if (!SESION) { app.classList.add('sinmenu'); $('#menu').innerHTML = ''; $('#vista').innerHTML = (V[PUB] || V.portada)(); if (PUB === 'portada') document.body.classList.add('con-fija'); return; }
   app.classList.remove('sinmenu');
@@ -1470,7 +1489,11 @@ function pintar() {
   const f = V[VISTA] || V.inicio; $('#vista').innerHTML = f();
   if (VISTA === 'porteria') { const c = $('#codQR'); if (c && ptrFino()) c.focus(); }
 }
-window.addEventListener('hashchange', () => { const h = location.hash.slice(1); if (h.startsWith('clave-') && !REAL()) { CLAVE_TOKEN = h.slice(6); PUB = 'clave'; history.replaceState(null, '', location.pathname); } pintar(); });
+window.addEventListener('hashchange', () => { const h = location.hash.slice(1);
+  if (h.startsWith('clave-') && !REAL()) { CLAVE_TOKEN = h.slice(6); PUB = 'clave'; history.replaceState(null, '', location.pathname); }
+  else if (h.startsWith('registro') && !REAL()) { PUB = 'registro'; history.replaceState(null, '', location.pathname); }
+  else if (h === 'demo' && !REAL()) { PUB = 'demo'; history.replaceState(null, '', location.pathname); }
+  pintar(); window.scrollTo(0, 0); });
 document.addEventListener('keydown', ev => {
   if (ev.key !== 'Enter') return; const id = ev.target.id;
   if (id === 'lgCor' || id === 'lgCla') { ev.preventDefault(); ingresar(); }
@@ -1481,6 +1504,7 @@ document.addEventListener('keydown', ev => {
 (() => {
   const qs = new URLSearchParams(location.search); const h = location.hash.slice(1);
   if (PROD) { const pie = document.querySelector('.pieapp'); if (pie) pie.textContent = 'Identidad IA es una aplicación de SkyNet Genesis · contacto@skynetgenesis.com · WhatsApp 304 437 5758 · La demostración usa datos de ejemplo que se guardan solo en este navegador.'; }
+  if (PROD) try { fetch(API + '/api/ping', { cache: 'no-store' }).catch(() => {}); } catch (e) { }
   if (PROD && qs.get('v')) return pintarPublico('v', qs.get('v'));
   if (PROD && qs.get('c')) return pintarPublico('c', qs.get('c'));
   if (h.startsWith('clave-')) { CLAVE_TOKEN = h.slice(6); PUB = 'clave'; history.replaceState(null, '', location.pathname + location.search); }
