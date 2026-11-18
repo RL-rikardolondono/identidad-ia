@@ -1023,7 +1023,7 @@ function pintarBarra() {
     const s = $('#selPerfil'); s.onchange = () => { PERFIL = PERFILES.find(p => p.id === s.value); VISTA = MENU[PERFIL.tipo].find(x => x.length === 3)[0]; history.replaceState(null, '', location.pathname); pintar(); };
     return;
   }
-  b.innerHTML = `<button class="btn l chico" data-ir="cuenta">👤 ${esc(PERFIL.nombre)}</button><button class="btn l chico" data-salir>Salir</button>`;
+  b.innerHTML = `<button class="btn l chico" data-ir="cuenta" title="${esc(PERFIL.nombre)}" style="max-width:min(100%,520px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-block">👤 ${esc(PERFIL.nombre)}</button><button class="btn l chico" data-salir>Salir</button>`;
 }
 
 /* ================= ventanas ================= */
